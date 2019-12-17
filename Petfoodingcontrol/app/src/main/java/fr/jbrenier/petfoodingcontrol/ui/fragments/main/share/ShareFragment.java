@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.activities.ui.share;
+package fr.jbrenier.petfoodingcontrol.ui.fragments.main.share;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
-import fr.jbrenier.petfoodingcontrol.ui.activities.R;
+import fr.jbrenier.petfoodingcontrol.R;
 
 public class ShareFragment extends Fragment {
 

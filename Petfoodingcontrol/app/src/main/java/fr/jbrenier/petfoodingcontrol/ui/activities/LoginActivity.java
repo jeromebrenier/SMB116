@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.LoginFieldsFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginFieldsFragment;
 
 public class LoginActivity extends AppCompatActivity {
 

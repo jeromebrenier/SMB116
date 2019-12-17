@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.activities.ui.share;
+package fr.jbrenier.petfoodingcontrol.ui.fragments.main.share;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

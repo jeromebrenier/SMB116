@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.fragments;
+package fr.jbrenier.petfoodingcontrol.ui.fragments.login;
 
 import androidx.lifecycle.ViewModel;
 

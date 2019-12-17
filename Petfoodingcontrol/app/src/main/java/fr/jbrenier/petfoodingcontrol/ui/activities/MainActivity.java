@@ -21,6 +21,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
 
+import fr.jbrenier.petfoodingcontrol.R;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;

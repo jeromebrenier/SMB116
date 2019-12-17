@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.activities.ui.send;
+package fr.jbrenier.petfoodingcontrol.ui.fragments.main.send;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

@@ -19,10 +19,11 @@
         android:id="@+id/image_illustration_main"
         android:layout_width="235dp"
         android:layout_height="160dp"
+        android:contentDescription="@string/main_logo"
         app:layout_constraintBottom_toTopOf="@+id/frameLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.556"
-        app:srcCompat="@drawable/dogcat" />
+        app:srcCompat="@mipmap/main_logo" />
 </androidx.constraintlayout.widget.ConstraintLayout>
