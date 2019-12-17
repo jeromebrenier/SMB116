@@ -16,8 +16,6 @@ import fr.jbrenier.petfoodingcontrol.R;
 
 public class LoginFieldsFragment extends Fragment {
 
-    private LoginFieldsViewModel mViewModel;
-
     public static LoginFieldsFragment newInstance() {
         return new LoginFieldsFragment();
     }
@@ -31,8 +29,6 @@ public class LoginFieldsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(LoginFieldsViewModel.class);
-        // TODO: Use the ViewModel
     }
 
 }
