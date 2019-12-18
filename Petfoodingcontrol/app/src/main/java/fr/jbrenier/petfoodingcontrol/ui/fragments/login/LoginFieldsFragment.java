@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,37 +27,23 @@ public class LoginFieldsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        loginFieldsView = inflater.inflate(R.layout.login_fields_fragment, container, false);
+        loginFieldsView = inflater.inflate(R.layout.fragment_login_fields, container, false);
+        final Button loginButton = (Button)loginFieldsView.findViewById(R.id.btn_login);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String inputEmail =
+                        ((TextView) loginFieldsView.findViewById(R.id.txt_email)).getText().toString();
+                String inputPassword =
+                        ((TextView) loginFieldsView.findViewById(R.id.txt_password)).getText().toString();
+                ((LoginActivity) getActivity()).onLoginButtonClick(inputEmail, inputPassword);
+            }
+        });
         return loginFieldsView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    /**
-     * Action on the validation button click.
-     */
-    public void onLoginButtonClick() {
-        String inputEmail =
-                ((TextView) loginFieldsView.findViewById(R.id.txt_email)).getText().toString();
-        String inputPassword =
-                ((TextView) loginFieldsView.findViewById(R.id.txt_password)).getText().toString();
-        if (inputEmail.isEmpty() || inputPassword.isEmpty()) {
-            sendToastInputEmpty();
-        } else {
-            ((LoginActivity) getActivity()).onCredentialsEntered(inputEmail, inputPassword);
-        }
-    }
-
-    /**
-     * Display a toast alerting that at least one of the fields is empty.
-     */
-    private void sendToastInputEmpty() {
-        Toast toast = new Toast(this.getContext());
-        toast.setText(R.string.toast_input_empty);
-        toast.setDuration(Toast.LENGTH_LONG);
-        toast.show();
     }
 }

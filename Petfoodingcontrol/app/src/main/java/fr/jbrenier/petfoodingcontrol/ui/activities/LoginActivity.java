@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Toast;
 
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.db.DAOUser;
@@ -29,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         userLogged = isKeepLogged();
-        if (userLogged != null) {
+        if (userLogged == null) {
             loadFragment(new LoginFieldsFragment());
         } else {
             loadFragment(new LoginWelcomeFragment());
@@ -84,19 +86,35 @@ public class LoginActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    public User getUserLogged() {
+        return userLogged;
+    }
+
+    public void onLoginButtonClick(String email, String password) {
+        if (email.isEmpty() || password.isEmpty()) {
+            sendToastInputEmpty();
+        } else {
+            onCredentialsEntered(email, password);
+        }
+    }
+
     /**
      * Action when credentials have been entered and validated.
      * @param inputEmail email entered
      * @param inputPassword password entered
      */
-    public void onCredentialsEntered(String inputEmail, String inputPassword) {
+    private void onCredentialsEntered(String inputEmail, String inputPassword) {
         userLogged = checkCredentials(inputEmail, inputPassword);
         if (userLogged != null) {
             loadFragment(new LoginWelcomeFragment());
         }
     }
 
-    public User getUserLogged() {
-        return userLogged;
+    /**
+     * Display a toast alerting that at least one of the fields is empty.
+     */
+    private void sendToastInputEmpty() {
+        Toast toast = Toast.makeText(this, R.string.toast_input_empty, Toast.LENGTH_LONG);
+        toast.show();
     }
 }

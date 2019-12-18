@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import cz.msebera.android.httpclient.client.cache.Resource;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.ui.activities.LoginActivity;
 
@@ -28,7 +27,7 @@ public class LoginWelcomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.login_welcome_fragment, container, false);
+        View fragmentView = inflater.inflate(R.layout.fragment_login_welcome, container, false);
         setWelcomeText(fragmentView);
         return fragmentView;
     }
@@ -47,7 +46,4 @@ public class LoginWelcomeFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
     }
-
-
-
 }
