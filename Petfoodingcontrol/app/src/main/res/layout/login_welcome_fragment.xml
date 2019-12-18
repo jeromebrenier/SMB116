@@ -6,8 +6,12 @@
     tools:context=".ui.fragments.login.LoginWelcomeFragment">
 
     <TextView
+        android:id="@+id/txt_welcome"
+        style="@style/Widget.MaterialComponents.TextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Hello" />
+        android:text="@string/welcome"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
 </FrameLayout>

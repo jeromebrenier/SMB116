@@ -1,5 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -24,6 +25,8 @@ import android.view.Menu;
 import fr.jbrenier.petfoodingcontrol.R;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int LOGIN_REQUEST = 1;
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -53,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        launchLoginActivity();
     }
 
     @Override
@@ -67,5 +71,13 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    /**
+     * Launch login activity trough explicit intent.
+     */
+    private void launchLoginActivity() {
+        Intent loginActivityIntent = new Intent(this, LoginActivity.class);
+        startActivityForResult(loginActivityIntent, LOGIN_REQUEST);
     }
 }

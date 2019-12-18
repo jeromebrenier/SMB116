@@ -6,6 +6,9 @@
     <string name="btn_login_action">Login</string>
     <string name="checkbox_keep_login">Keep me logged in</string>
     <string name="btn_create_account">Create an account</string>
+    <string name="toast_input_empty">Please complete all fields.</string>
+    <string name="welcome">Welcome</string>
+
     <string name="title_activity_main">MainActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
