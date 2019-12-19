@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,5 +49,18 @@ public class LoginWelcomeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        (new Handler()).postDelayed(this::finishLoginActivity, 3000);
+    }
+
+    /**
+     * Finishes the Login activity.
+     */
+    private void finishLoginActivity() {
+        ((LoginActivity) getActivity()).finishLoginActivity();
     }
 }

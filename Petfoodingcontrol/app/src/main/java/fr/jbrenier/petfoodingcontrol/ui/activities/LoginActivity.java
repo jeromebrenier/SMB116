@@ -38,7 +38,6 @@ public class LoginActivity extends AppCompatActivity {
             loadFragment(new LoginFieldsFragment());
         } else {
             loadFragment(new LoginWelcomeFragment());
-            (new Handler()).postDelayed(this::finishLoginActivity, 3000);
         }
     }
 
