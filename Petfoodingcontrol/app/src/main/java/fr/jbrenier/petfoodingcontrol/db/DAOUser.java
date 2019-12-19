@@ -18,9 +18,8 @@ public class DAOUser {
     public static User getByCredentials(String email, String password) {
         String storedPassword = getUserPasswd(email);
         if (storedPassword != null && verifyPassword(password, storedPassword)) {
-            User test = new User();
-            test.setDisplayedName("test name");
-            return new User();
+            User test = new User("idTest", "Test", "test@test.fr", "password");
+            return test;
         }
         return null;
     }

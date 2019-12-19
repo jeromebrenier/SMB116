@@ -10,6 +10,7 @@
         style="@style/Widget.MaterialComponents.TextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
         android:text="@string/welcome"
         android:textSize="30sp"
         android:textStyle="bold" />

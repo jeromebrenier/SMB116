@@ -8,6 +8,7 @@
     <string name="btn_create_account">Create an account</string>
     <string name="toast_input_empty">Please complete all fields.</string>
     <string name="welcome">Welcome</string>
+    <string name="user_logged">user_logged</string>
 
     <string name="title_activity_main">MainActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>

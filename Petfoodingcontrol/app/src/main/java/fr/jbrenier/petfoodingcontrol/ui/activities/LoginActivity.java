@@ -4,11 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
+import android.os.Handler;
 import android.widget.Toast;
 
 import fr.jbrenier.petfoodingcontrol.R;
@@ -24,17 +26,19 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
 public class LoginActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPref;
-    private User userLogged;
+    private LoginActivityViewModel loginViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        userLogged = isKeepLogged();
-        if (userLogged == null) {
+        loginViewModel = ViewModelProviders.of(this).get(LoginActivityViewModel.class);
+        loginViewModel.setUserLogged(isKeepLogged());
+        if (loginViewModel.getUserLogged().getValue() == null) {
             loadFragment(new LoginFieldsFragment());
         } else {
             loadFragment(new LoginWelcomeFragment());
+            (new Handler()).postDelayed(this::finishLoginActivity, 3000);
         }
     }
 
@@ -86,10 +90,11 @@ public class LoginActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
-    public User getUserLogged() {
-        return userLogged;
-    }
-
+    /**
+     * Action invoked when login button is clicked
+     * @param email entered
+     * @param password entered
+     */
     public void onLoginButtonClick(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
             sendToastInputEmpty();
@@ -104,8 +109,8 @@ public class LoginActivity extends AppCompatActivity {
      * @param inputPassword password entered
      */
     private void onCredentialsEntered(String inputEmail, String inputPassword) {
-        userLogged = checkCredentials(inputEmail, inputPassword);
-        if (userLogged != null) {
+        loginViewModel.setUserLogged(checkCredentials(inputEmail, inputPassword));
+        if (loginViewModel.getUserLogged().getValue() != null) {
             loadFragment(new LoginWelcomeFragment());
         }
     }
@@ -116,5 +121,21 @@ public class LoginActivity extends AppCompatActivity {
     private void sendToastInputEmpty() {
         Toast toast = Toast.makeText(this, R.string.toast_input_empty, Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    /**
+     * Return to the Main activity after successful login, and finishes the Login activity.
+     * The user logged is transferred to the Main activity.
+     */
+    public void finishLoginActivity() {
+        Intent retIntent = new Intent();
+        retIntent.putExtra(getResources().getString(R.string.user_logged),
+                loginViewModel.getUserLogged().getValue());
+        setResult(RESULT_OK, retIntent);
+        finish();
+    }
+
+    public LoginActivityViewModel getLoginViewModel() {
+        return loginViewModel;
     }
 }
