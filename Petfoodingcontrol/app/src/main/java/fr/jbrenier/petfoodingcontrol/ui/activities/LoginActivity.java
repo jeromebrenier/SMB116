@@ -128,8 +128,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void finishLoginActivity() {
         Intent retIntent = new Intent();
-        retIntent.putExtra(getResources().getString(R.string.user_logged),
-                loginViewModel.getUserLogged().getValue());
+        retIntent.putExtra(getResources().getString(R.string.user_logged), loginViewModel.getUserLogged().getValue());
         setResult(RESULT_OK, retIntent);
         finish();
     }

@@ -1,13 +1,16 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
-import android.view.View;
+import android.util.Base64;
 
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -21,12 +24,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int LOGIN_REQUEST = 1;
+
+    private MainActivityViewModel mainActivityViewModel;
 
     private AppBarConfiguration mAppBarConfiguration;
 
@@ -34,16 +42,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        fab.setOnClickListener(view ->
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+                        .setAction("Action", null).show());
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -56,7 +61,23 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        mainActivityViewModel.getUserLogged().observe(this, user -> setUserDataInNavBar(user));
         launchLoginActivity();
+    }
+
+    /**
+     * Set the User elements (name, email, photo) in the navigation bar dedicated area according to
+     * the User data.
+     */
+    private void setUserDataInNavBar(User user) {
+        ((TextView) findViewById(R.id.user_name)).setText(user.getDisplayedName());
+        ((TextView) findViewById(R.id.user_email)).setText(user.getEmail());
+        if (user.getPhoto() != null && !user.getPhoto().getImage().isEmpty()) {
+            byte[] decodedString = Base64.decode(user.getPhoto().getImage(), Base64.DEFAULT);
+            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
+                    decodedString.length);
+            ((ImageView) findViewById(R.id.user_photo)).setImageBitmap(decodedByte);
+        }
     }
 
     @Override
@@ -80,4 +101,14 @@ public class MainActivity extends AppCompatActivity {
         Intent loginActivityIntent = new Intent(this, LoginActivity.class);
         startActivityForResult(loginActivityIntent, LOGIN_REQUEST);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == LOGIN_REQUEST && resultCode == RESULT_OK) {
+            User user = (User) data.getExtras().get(getResources().getString(R.string.user_logged));
+            mainActivityViewModel.setUserLogged(user);
+        }
+    }
+
 }
