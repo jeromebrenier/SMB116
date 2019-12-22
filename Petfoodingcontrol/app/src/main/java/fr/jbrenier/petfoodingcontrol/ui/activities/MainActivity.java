@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -35,7 +36,10 @@ public class MainActivity extends AppCompatActivity {
     private static final int LOGIN_REQUEST = 1;
 
     private MainActivityViewModel mainActivityViewModel;
-
+    private NavigationView navigationView;
+    private TextView user_name;
+    private TextView user_email;
+    private ImageView user_photo;
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override
@@ -50,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show());
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -61,8 +65,19 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        getUserDataView();
         mainActivityViewModel.getUserLogged().observe(this, user -> setUserDataInNavBar(user));
         launchLoginActivity();
+    }
+
+    /**
+     * Get views from the header used to display the User data.
+     */
+    private void getUserDataView() {
+        View headerView = navigationView.getHeaderView(0);
+        user_name = headerView.findViewById(R.id.txt_user_name);
+        user_email = headerView.findViewById(R.id.txt_user_email);
+        user_photo = headerView.findViewById(R.id.imv_user_photo);
     }
 
     /**
@@ -70,13 +85,13 @@ public class MainActivity extends AppCompatActivity {
      * the User data.
      */
     private void setUserDataInNavBar(User user) {
-        ((TextView) findViewById(R.id.user_name)).setText(user.getDisplayedName());
-        ((TextView) findViewById(R.id.user_email)).setText(user.getEmail());
+        user_name.setText(user.getDisplayedName());
+        user_email.setText(user.getEmail());
         if (user.getPhoto() != null && !user.getPhoto().getImage().isEmpty()) {
             byte[] decodedString = Base64.decode(user.getPhoto().getImage(), Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
                     decodedString.length);
-            ((ImageView) findViewById(R.id.user_photo)).setImageBitmap(decodedByte);
+            user_photo.setImageBitmap(decodedByte);
         }
     }
 
