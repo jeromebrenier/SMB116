@@ -23,7 +23,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.Menu;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,6 +30,10 @@ import android.widget.TextView;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
+/**
+ * Main activity of the Pet Fooding Control application.
+ * @author Jérôme Brenier
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final int LOGIN_REQUEST = 1;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView user_name;
     private TextView user_email;
     private ImageView user_photo;
+    private Toolbar toolbar;
     private AppBarConfiguration mAppBarConfiguration;
 
     @Override
@@ -47,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view ->
@@ -58,8 +62,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
-                R.id.nav_tools, R.id.nav_share, R.id.nav_send)
+                R.id.nav_home, R.id.nav_account_settings, R.id.nav_account_disconnect)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -96,13 +99,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
-    @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
@@ -126,4 +122,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public Toolbar getToolbar() {
+        return toolbar;
+    }
 }
