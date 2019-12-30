@@ -45,8 +45,8 @@ public class User implements Parcelable {
         email = in.readString();
         password = in.readString();
         photo = in.readParcelable(Photo.class.getClassLoader());
-        petOwned = in.readArrayList(null);
-        petAuthorizedToFed = in.readArrayList(null);
+        petOwned = in.readArrayList(Pet.class.getClassLoader());
+        petAuthorizedToFed = in.readArrayList(Pet.class.getClassLoader());
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -87,5 +87,13 @@ public class User implements Parcelable {
 
     public Photo getPhoto() {
         return photo;
+    }
+
+    public List<Pet> getPetOwned() {
+        return petOwned;
+    }
+
+    public List<Pet> getPetAuthorizedToFed() {
+        return petAuthorizedToFed;
     }
 }

@@ -18,12 +18,16 @@ import fr.jbrenier.petfoodingcontrol.ui.activities.MainActivity;
 public class AccountDisconnectFragment extends Fragment {
 
     private AccountDisconnectViewModel accountDisconnectViewModel;
+    private MainActivity mainActivity;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         accountDisconnectViewModel =
                 ViewModelProviders.of(this).get(AccountDisconnectViewModel.class);
         View root = inflater.inflate(R.layout.fragment_account_settings, container, false);
+        mainActivity = (MainActivity)getActivity();
+        // Toolbar title
+        mainActivity.setToolBarTitle(R.string.menu_account_disconnect);
         final TextView textView = root.findViewById(R.id.text_send);
         accountDisconnectViewModel.getText().observe(this, new Observer<String>() {
             @Override
@@ -31,8 +35,6 @@ public class AccountDisconnectFragment extends Fragment {
                 textView.setText(s);
             }
         });
-        ((MainActivity) getActivity()).getToolbar().setTitle(
-                getActivity().getResources().getString(R.string.menu_account_disconnect));
         return root;
     }
 }

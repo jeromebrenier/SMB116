@@ -27,14 +27,19 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
 
 /**
  * Main activity of the Pet Fooding Control application.
  * @author Jérôme Brenier
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PetFragment.OnListFragmentInteractionListener {
 
     private static final int LOGIN_REQUEST = 1;
 
@@ -62,14 +67,17 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_account_settings, R.id.nav_account_disconnect)
+                R.id.nav_pets, R.id.nav_account_settings, R.id.nav_account_disconnect)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         getUserDataView();
-        mainActivityViewModel.getUserLogged().observe(this, user -> setUserDataInNavBar(user));
+        mainActivityViewModel.getUserLogged().observe(this, user -> {
+            setUserPets(user);
+            setUserDataInNavBar(user);
+        });
         launchLoginActivity();
     }
 
@@ -86,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Set the User elements (name, email, photo) in the navigation bar dedicated area according to
      * the User data.
+     * @param user : the logged User
      */
     private void setUserDataInNavBar(User user) {
         user_name.setText(user.getDisplayedName());
@@ -96,6 +105,17 @@ public class MainActivity extends AppCompatActivity {
                     decodedString.length);
             user_photo.setImageBitmap(decodedByte);
         }
+    }
+
+    /**
+     * Set the User pets (owned and authorized to fed) in the viewmodel.
+     * @param user : the logged User
+     */
+    private void setUserPets(User user) {
+        List<Pet> listPets = new ArrayList<>();
+        user.getPetOwned().stream().forEach(pet -> listPets.add(pet));
+        user.getPetAuthorizedToFed().stream().forEach(pet -> listPets.add(pet));
+        mainActivityViewModel.getUserPets().setValue(listPets);
     }
 
     @Override
@@ -122,7 +142,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public Toolbar getToolbar() {
-        return toolbar;
+    /**
+     * Set the correct localized toolbar title.
+     */
+    public void setToolBarTitle(int stringId) {
+        toolbar.setTitle(getResources().getString(stringId));
+    }
+
+    public MainActivityViewModel getMainActivityViewModel() {
+        return mainActivityViewModel;
+    }
+
+    @Override
+    public void onListFragmentInteraction(Pet pet) {
+
     }
 }
