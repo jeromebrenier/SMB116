@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.fragments.main.accountdisconnect;
+package fr.jbrenier.petfoodingcontrol.ui.fragments.main.accountsettings;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,21 +15,21 @@ import androidx.lifecycle.ViewModelProviders;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.ui.activities.MainActivity;
 
-public class AccountDisconnectFragment extends Fragment {
+public class AccountSettingsFragment extends Fragment {
 
-    private AccountDisconnectViewModel accountDisconnectViewModel;
+    private AccountSettingsViewModel accountSettingsViewModel;
     private MainActivity mainActivity;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        accountDisconnectViewModel =
-                ViewModelProviders.of(this).get(AccountDisconnectViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_account_disconnect, container, false);
+        accountSettingsViewModel =
+                ViewModelProviders.of(this).get(AccountSettingsViewModel.class);
+        View root = inflater.inflate(R.layout.fragment_account_settings, container, false);
         mainActivity = (MainActivity)getActivity();
         // Toolbar title
         mainActivity.setToolBarTitle(R.string.menu_account_disconnect);
         final TextView textView = root.findViewById(R.id.text_send);
-        accountDisconnectViewModel.getText().observe(this, new Observer<String>() {
+        accountSettingsViewModel.getText().observe(this, new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
