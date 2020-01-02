@@ -3,12 +3,9 @@ package fr.jbrenier.petfoodingcontrol.db;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 
 /**
- * Class for getting data about Pets.
+ * DAO interface for Pet's data access.
  * @author Jérôme Brenier
  */
-public class DAOPet {
-
-    public static Pet getById(String id) {
-        return null;
-    }
+public interface DAOPet {
+    Pet getById(String id);
 }

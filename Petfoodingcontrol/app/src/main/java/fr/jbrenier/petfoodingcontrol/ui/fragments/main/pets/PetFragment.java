@@ -50,7 +50,7 @@ public class PetFragment extends Fragment {
         petFragmentViewModel = ViewModelProviders.of(this).get(PetFragmentViewModel.class);
         mainActivity = (MainActivity)getActivity();
         // Toolbar title
-        mainActivity.setToolBarTitle(R.string.menu_home);
+        mainActivity.setToolBarTitle(R.string.menu_pets);
          // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();

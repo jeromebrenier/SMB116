@@ -10,9 +10,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.Toast;
 
+import javax.inject.Inject;
+
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.db.DAOUser;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
@@ -25,12 +27,16 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    @Inject
+    DAOUser daoUser;
+
     private SharedPreferences sharedPref;
     private LoginActivityViewModel loginViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PetFoodingControl.getDAOComponent().inject(this);
         setContentView(R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this).get(LoginActivityViewModel.class);
         loginViewModel.setUserLogged(isKeepLogged());
@@ -75,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
      * @return corresponding User
      */
     private User checkCredentials(String email, String password) {
-        return DAOUser.getByCredentials(email, password);
+        return daoUser.getByCredentials(email, password);
     }
 
     /**

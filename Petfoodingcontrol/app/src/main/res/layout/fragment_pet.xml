@@ -32,5 +32,6 @@
         android:layout_height="76dp"
         android:layout_gravity="center_vertical"
         android:layout_marginStart="10dp"
+        android:contentDescription="@string/imv_card_pet_desc"
         tools:srcCompat="@tools:sample/avatars" />
 </com.google.android.material.card.MaterialCardView>
