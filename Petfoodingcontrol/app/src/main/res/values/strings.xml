@@ -26,6 +26,8 @@
     <!-- Pets -->
     <string name="menu_pets">Pets</string>
     <string name="imv_card_pet_desc">Pet image</string>
+    <string name="pet_status_unknown">Unknown status</string>
+    <string name="txt_pet_card_is_owner">Owner</string>
 
     <!-- Account Settings -->
     <string name="menu_account_settings">Manage account</string>

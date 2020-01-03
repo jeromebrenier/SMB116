@@ -66,11 +66,15 @@ public class PetFragment extends Fragment {
         petFragmentViewModel.refresh(
                 mainActivity.getMainActivityViewModel().getUserPets().getValue());
         adapter = new MyPetRecyclerViewAdapter(petFragmentViewModel.getUserPets(), mListener);
+        adapter.setUserLogged(mainActivity.getMainActivityViewModel().getUserLogged().getValue());
         recyclerView.setAdapter(adapter);
         mainActivity.getMainActivityViewModel().getUserPets().observe(this, list -> {
-            System.out.println("getUserPets().observe(");
             petFragmentViewModel.refresh(
                     mainActivity.getMainActivityViewModel().getUserPets().getValue());
+            adapter.notifyDataSetChanged();
+        });
+        mainActivity.getMainActivityViewModel().getUserLogged().observe(this, list -> {
+            adapter.setUserLogged(mainActivity.getMainActivityViewModel().getUserLogged().getValue());
             adapter.notifyDataSetChanged();
         });
     }

@@ -8,6 +8,7 @@ import java.util.List;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 
 public class PetFragmentViewModel extends ViewModel {
+
     private List<Pet> userPets = new ArrayList<>();
 
     public void refresh(List<Pet> newList) {

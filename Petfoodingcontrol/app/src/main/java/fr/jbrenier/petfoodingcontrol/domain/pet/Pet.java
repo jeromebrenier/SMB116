@@ -24,7 +24,7 @@ public class Pet implements Parcelable {
     private List<String> authorizedFeeders = new ArrayList<>();
 
     public Pet(String id, String name, Photo photo, Date birthDate, FoodSettings foodSettings,
-               List<String> authorizedFeeder) {
+               List<String> authorizedFeeders) {
         this.id = id;
         this.name = name;
         this.photo = photo;
@@ -78,5 +78,13 @@ public class Pet implements Parcelable {
 
     public String getName() {
         return name;
+    }
+
+    public Photo getPhoto() {
+        return photo;
+    }
+
+    public List<String> getAuthorizedFeeders() {
+        return authorizedFeeders;
     }
 }

@@ -1,6 +1,5 @@
 package fr.jbrenier.petfoodingcontrol.db;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;
