@@ -35,5 +35,8 @@
     <!-- Disconnect -->
     <string name="menu_account_disconnect">Disconnect</string>
 
-
+    <!-- Add a pet -->
+    <string name="title_add_a_pet_activity">Add a pet</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 </resources>

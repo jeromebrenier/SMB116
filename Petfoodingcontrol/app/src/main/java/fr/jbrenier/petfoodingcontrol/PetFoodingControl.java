@@ -2,19 +2,37 @@ package fr.jbrenier.petfoodingcontrol;
 
 import android.app.Application;
 
-import fr.jbrenier.petfoodingcontrol.db.DAOComponent;
-import fr.jbrenier.petfoodingcontrol.db.DaggerDAOComponent;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import java.util.List;
+
+import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.repository.DaggerRepositoryComponent;
+import fr.jbrenier.petfoodingcontrol.repository.RepositoryComponent;
 
 public class PetFoodingControl extends Application {
-    private static DAOComponent daoComponent;
+
+    private final MutableLiveData<User> userLogged = new MutableLiveData<User>();
+
+    private RepositoryComponent repositoryComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        daoComponent = DaggerDAOComponent.builder().build();
+        repositoryComponent = DaggerRepositoryComponent.builder().build();
     }
 
-    public static DAOComponent getDAOComponent() {
-        return daoComponent;
+    public void setUserLogged(User user) {
+        userLogged.setValue(user);
+    }
+
+    public MutableLiveData<User> getUserLogged() {
+        return userLogged;
+    }
+
+    public RepositoryComponent getRepositoryComponent() {
+        return repositoryComponent;
     }
 }

@@ -12,9 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.ui.activities.MainActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 
 /**
  * A fragment representing a list of Items.
@@ -66,15 +67,16 @@ public class PetFragment extends Fragment {
         petFragmentViewModel.refresh(
                 mainActivity.getMainActivityViewModel().getUserPets().getValue());
         adapter = new MyPetRecyclerViewAdapter(petFragmentViewModel.getUserPets(), mListener);
-        adapter.setUserLogged(mainActivity.getMainActivityViewModel().getUserLogged().getValue());
+        PetFoodingControl pfc = ((PetFoodingControl)mainActivity.getApplicationContext());
+        adapter.setUserLogged(pfc.getUserLogged().getValue());
         recyclerView.setAdapter(adapter);
         mainActivity.getMainActivityViewModel().getUserPets().observe(this, list -> {
             petFragmentViewModel.refresh(
                     mainActivity.getMainActivityViewModel().getUserPets().getValue());
             adapter.notifyDataSetChanged();
         });
-        mainActivity.getMainActivityViewModel().getUserLogged().observe(this, list -> {
-            adapter.setUserLogged(mainActivity.getMainActivityViewModel().getUserLogged().getValue());
+        pfc.getUserLogged().observe(this, list -> {
+            adapter.setUserLogged(pfc.getUserLogged().getValue());
             adapter.notifyDataSetChanged();
         });
     }

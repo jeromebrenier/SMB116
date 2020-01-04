@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.activities;
+package fr.jbrenier.petfoodingcontrol.ui.activities.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -16,8 +16,8 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.db.DAOUser;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.repository.UserRepository;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginFieldsFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
 
@@ -28,7 +28,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
 public class LoginActivity extends AppCompatActivity {
 
     @Inject
-    DAOUser daoUser;
+    UserRepository userRepository;
 
     private SharedPreferences sharedPref;
     private LoginActivityViewModel loginViewModel;
@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PetFoodingControl.getDAOComponent().inject(this);
+        ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
         setContentView(R.layout.activity_login);
         loginViewModel = ViewModelProviders.of(this).get(LoginActivityViewModel.class);
         loginViewModel.setUserLogged(isKeepLogged());
@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
      * @return corresponding User
      */
     private User checkCredentials(String email, String password) {
-        return daoUser.getByCredentials(email, password);
+        return userRepository.getByCredentials(email, password);
     }
 
     /**
@@ -91,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
     private void loadFragment(Fragment fragment) {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.replace(R.id.login_frameLayout, fragment);
         fragmentTransaction.commit();
     }
 

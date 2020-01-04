@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.activities;
+package fr.jbrenier.petfoodingcontrol.ui.activities.login;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

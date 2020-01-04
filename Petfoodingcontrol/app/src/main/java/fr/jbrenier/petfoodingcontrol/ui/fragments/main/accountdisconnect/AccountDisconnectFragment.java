@@ -13,7 +13,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.ui.activities.MainActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 
 public class AccountDisconnectFragment extends Fragment {
 

@@ -1,19 +1,17 @@
-package fr.jbrenier.petfoodingcontrol.db;
+package fr.jbrenier.petfoodingcontrol.repository;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 
 /**
- * Class for getting data about Pets.
+ * Data repository for Pet
  * @author Jérôme Brenier
  */
-@Singleton
-public class DAOPetImpl implements DAOPet {
+public class PetRepository {
 
     @Inject
-    public DAOPetImpl() {
+    public PetRepository() {
     }
 
     public Pet getById(String id) {

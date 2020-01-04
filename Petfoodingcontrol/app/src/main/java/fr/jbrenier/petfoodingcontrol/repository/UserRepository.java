@@ -1,24 +1,22 @@
-package fr.jbrenier.petfoodingcontrol.db;
+package fr.jbrenier.petfoodingcontrol.repository;
 
 import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
 /**
- * Class for getting data about User.
+ * Data repository for User
  * @author Jérôme Brenier
  */
-@Singleton
-public class DAOUserImpl implements DAOUser {
+public class UserRepository {
 
     @Inject
-    public DAOUserImpl() {
+    public UserRepository() {
     }
 
     /**

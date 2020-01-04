@@ -14,8 +14,8 @@ import android.widget.TextView;
 
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
-import fr.jbrenier.petfoodingcontrol.ui.activities.LoginActivity;
-import fr.jbrenier.petfoodingcontrol.ui.activities.LoginActivityViewModel;
+import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivityViewModel;
 
 /**
  * Fragment displaying the customized welcome message.

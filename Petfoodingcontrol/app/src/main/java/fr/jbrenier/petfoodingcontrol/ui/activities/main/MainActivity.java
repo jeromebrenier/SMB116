@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.activities;
+package fr.jbrenier.petfoodingcontrol.ui.activities.main;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import android.util.Base64;
 
@@ -30,9 +29,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
 
 /**
@@ -42,6 +44,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
 public class MainActivity extends AppCompatActivity implements PetFragment.OnListFragmentInteractionListener {
 
     private static final int LOGIN_REQUEST = 1;
+    private static final int ADD_PET_REQUEST = 2;
 
     private MainActivityViewModel mainActivityViewModel;
     private NavigationView navigationView;
@@ -58,10 +61,7 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
         mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view ->
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show());
+        setupAddButton();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -74,11 +74,27 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         getUserDataView();
-        mainActivityViewModel.getUserLogged().observe(this, user -> {
+        ((PetFoodingControl) getApplicationContext()).getUserLogged().observe(this, user -> {
             setUserPets(user);
             setUserDataInNavBar(user);
         });
-        launchLoginActivity();
+        if (((PetFoodingControl) getApplicationContext()).getUserLogged().getValue() == null) {
+            launchLoginActivity();
+        }
+    }
+
+    /**
+     * Setup the add pet button
+     */
+    private void setupAddButton() {
+        FloatingActionButton addPet = findViewById(R.id.addPet);
+        addPet.setOnClickListener(view -> sendPetAdditionActivityIntent());
+
+    }
+
+    private void sendPetAdditionActivityIntent() {
+        Intent petAdditionActivityIntent = new Intent(this, PetAdditionActivity.class);
+        startActivityForResult(petAdditionActivityIntent, ADD_PET_REQUEST);
     }
 
     /**
@@ -138,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == LOGIN_REQUEST && resultCode == RESULT_OK) {
             User user = (User) data.getExtras().get(getResources().getString(R.string.user_logged));
-            mainActivityViewModel.setUserLogged(user);
+            ((PetFoodingControl) getApplicationContext()).setUserLogged(user);
         }
     }
 

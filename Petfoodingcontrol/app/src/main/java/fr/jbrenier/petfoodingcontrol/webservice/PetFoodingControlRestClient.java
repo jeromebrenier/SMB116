@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.db;
+package fr.jbrenier.petfoodingcontrol.webservice;
 
 import com.loopj.android.http.*;
 
