@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
@@ -64,19 +63,16 @@ public class PetFragment extends Fragment {
 
 
     private void setAdapter(RecyclerView recyclerView) {
-        petFragmentViewModel.refresh(
-                mainActivity.getMainActivityViewModel().getUserPets().getValue());
+        petFragmentViewModel.refresh(mainActivity.getPetRepository().getUserPets().getValue());
         adapter = new MyPetRecyclerViewAdapter(petFragmentViewModel.getUserPets(), mListener);
-        PetFoodingControl pfc = ((PetFoodingControl)mainActivity.getApplicationContext());
-        adapter.setUserLogged(pfc.getUserLogged().getValue());
+        adapter.setUserLogged(mainActivity.getUserRepository().getUserLogged().getValue());
         recyclerView.setAdapter(adapter);
-        mainActivity.getMainActivityViewModel().getUserPets().observe(this, list -> {
-            petFragmentViewModel.refresh(
-                    mainActivity.getMainActivityViewModel().getUserPets().getValue());
+        mainActivity.getPetRepository().getUserPets().observe(this, list -> {
+            petFragmentViewModel.refresh(mainActivity.getPetRepository().getUserPets().getValue());
             adapter.notifyDataSetChanged();
         });
-        pfc.getUserLogged().observe(this, list -> {
-            adapter.setUserLogged(pfc.getUserLogged().getValue());
+        mainActivity.getUserRepository().getUserLogged().observe(this, list -> {
+            adapter.setUserLogged(mainActivity.getUserRepository().getUserLogged().getValue());
             adapter.notifyDataSetChanged();
         });
     }

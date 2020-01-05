@@ -1,5 +1,7 @@
 package fr.jbrenier.petfoodingcontrol.repository;
 
+import androidx.lifecycle.MutableLiveData;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,6 +16,8 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
  * @author Jérôme Brenier
  */
 public class UserRepository {
+
+    private final MutableLiveData<User> userLogged = new MutableLiveData<User>();
 
     @Inject
     public UserRepository() {
@@ -52,5 +56,13 @@ public class UserRepository {
 
     public boolean verifyPassword(String passwordToCheck, String storedPassword) {
         return true;
+    }
+
+    public void setUserLogged(User user) {
+        userLogged.setValue(user);
+    }
+
+    public MutableLiveData<User> getUserLogged() {
+        return userLogged;
     }
 }

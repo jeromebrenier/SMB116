@@ -29,8 +29,11 @@
     <string name="pet_status_unknown">Unknown status</string>
     <string name="txt_pet_card_is_owner">Owner</string>
 
-    <!-- Account Settings -->
+    <!-- Account Management -->
+    <string name="account_activity_management_type">AccountActivityType</string>
     <string name="menu_account_settings">Manage account</string>
+    <string name="title_account_creation">Create a new account</string>
+    <string name="title_account_modification">Modify the account</string>
 
     <!-- Disconnect -->
     <string name="menu_account_disconnect">Disconnect</string>

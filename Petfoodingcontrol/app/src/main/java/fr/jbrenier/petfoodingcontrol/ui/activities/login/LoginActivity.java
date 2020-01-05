@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Context;
 import android.content.Intent;
@@ -31,16 +30,14 @@ public class LoginActivity extends AppCompatActivity {
     UserRepository userRepository;
 
     private SharedPreferences sharedPref;
-    private LoginActivityViewModel loginViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
         setContentView(R.layout.activity_login);
-        loginViewModel = ViewModelProviders.of(this).get(LoginActivityViewModel.class);
-        loginViewModel.setUserLogged(isKeepLogged());
-        if (loginViewModel.getUserLogged().getValue() == null) {
+        userRepository.setUserLogged(isKeepLogged());
+        if (userRepository.getUserLogged().getValue() == null) {
             loadFragment(new LoginFieldsFragment());
         } else {
             loadFragment(new LoginWelcomeFragment());
@@ -114,8 +111,8 @@ public class LoginActivity extends AppCompatActivity {
      * @param inputPassword password entered
      */
     private void onCredentialsEntered(String inputEmail, String inputPassword) {
-        loginViewModel.setUserLogged(checkCredentials(inputEmail, inputPassword));
-        if (loginViewModel.getUserLogged().getValue() != null) {
+        userRepository.setUserLogged(checkCredentials(inputEmail, inputPassword));
+        if (userRepository.getUserLogged().getValue() != null) {
             loadFragment(new LoginWelcomeFragment());
         }
     }
@@ -129,17 +126,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Return to the Main activity after successful login, and finishes the Login activity.
-     * The user logged is transferred to the Main activity.
+     * Return to the Main activity, and finishes the Login activity.
      */
-    public void finishLoginActivity() {
+    public void finishLoginActivity(int resultCode) {
         Intent retIntent = new Intent();
-        retIntent.putExtra(getResources().getString(R.string.user_logged), loginViewModel.getUserLogged().getValue());
-        setResult(RESULT_OK, retIntent);
+        setResult(resultCode, retIntent);
         finish();
     }
 
-    public LoginActivityViewModel getLoginViewModel() {
-        return loginViewModel;
+    public UserRepository getUserRepository() {
+        return userRepository;
     }
 }

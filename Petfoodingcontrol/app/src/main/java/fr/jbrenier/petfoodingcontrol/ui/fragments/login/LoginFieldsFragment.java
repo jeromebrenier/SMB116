@@ -1,5 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.ui.fragments.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.ui.activities.accountmanagement.AccountManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 
 /**
@@ -31,6 +33,17 @@ public class LoginFieldsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         loginFieldsView = inflater.inflate(R.layout.fragment_login_fields, container, false);
+        setupLoginButton();
+        setupCreateAccountButton();
+        return loginFieldsView;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    private void setupLoginButton() {
         final Button loginButton = loginFieldsView.findViewById(R.id.btn_login);
         loginButton.setOnClickListener(view -> {
             String inputEmail =
@@ -39,11 +52,17 @@ public class LoginFieldsFragment extends Fragment {
                     ((TextView) loginFieldsView.findViewById(R.id.txt_password)).getText().toString();
             ((LoginActivity) getActivity()).onLoginButtonClick(inputEmail, inputPassword);
         });
-        return loginFieldsView;
     }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    private void setupCreateAccountButton() {
+        final Button createAccountButton = loginFieldsView.findViewById(R.id.btn_account_creation);
+        createAccountButton.setOnClickListener(view -> {
+            Intent launchAccountCreationActivity =
+                    new Intent(getActivity(), AccountManagementActivity.class);
+            launchAccountCreationActivity.putExtra(
+                    getResources().getString(R.string.account_activity_management_type),
+                    AccountManagementActivity.ManagementType.CREATION);
+            startActivity(launchAccountCreationActivity);
+        });
     }
 }

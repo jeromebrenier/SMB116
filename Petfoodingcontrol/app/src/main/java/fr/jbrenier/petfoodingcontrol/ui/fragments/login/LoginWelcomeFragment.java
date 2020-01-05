@@ -12,10 +12,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import javax.inject.Inject;
+
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.repository.UserRepository;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
-import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivityViewModel;
+
+import static android.app.Activity.RESULT_OK;
 
 /**
  * Fragment displaying the customized welcome message.
@@ -31,8 +35,8 @@ public class LoginWelcomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_login_welcome, container, false);
-        LoginActivityViewModel viewModel = ((LoginActivity) getActivity()).getLoginViewModel();
-        viewModel.getUserLogged().observe(this, user -> setWelcomeText(fragmentView, user));
+        ((LoginActivity) getActivity()).getUserRepository().getUserLogged().observe(this,
+                user -> setWelcomeText(fragmentView, user));
         return fragmentView;
     }
 
@@ -61,6 +65,6 @@ public class LoginWelcomeFragment extends Fragment {
      * Finishes the Login activity.
      */
     private void finishLoginActivity() {
-        ((LoginActivity) getActivity()).finishLoginActivity();
+        ((LoginActivity) getActivity()).finishLoginActivity(RESULT_OK);
     }
 }

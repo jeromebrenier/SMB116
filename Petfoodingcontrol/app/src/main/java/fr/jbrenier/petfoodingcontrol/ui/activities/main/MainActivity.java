@@ -29,10 +29,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.repository.PetRepository;
+import fr.jbrenier.petfoodingcontrol.repository.UserRepository;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
@@ -46,7 +50,12 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
     private static final int LOGIN_REQUEST = 1;
     private static final int ADD_PET_REQUEST = 2;
 
-    private MainActivityViewModel mainActivityViewModel;
+    @Inject
+    UserRepository userRepository;
+
+    @Inject
+    PetRepository petRepository;
+
     private NavigationView navigationView;
     private TextView user_name;
     private TextView user_email;
@@ -57,8 +66,8 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
         setContentView(R.layout.activity_main);
-        mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setupAddButton();
@@ -74,11 +83,13 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         getUserDataView();
-        ((PetFoodingControl) getApplicationContext()).getUserLogged().observe(this, user -> {
-            setUserPets(user);
-            setUserDataInNavBar(user);
+        userRepository.getUserLogged().observe(this, user -> {
+            if (user != null) {
+                setUserPets(user);
+                setUserDataInNavBar(user);
+            }
         });
-        if (((PetFoodingControl) getApplicationContext()).getUserLogged().getValue() == null) {
+        if (userRepository.getUserLogged().getValue() == null) {
             launchLoginActivity();
         }
     }
@@ -129,9 +140,9 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
      */
     private void setUserPets(User user) {
         List<Pet> listPets = new ArrayList<>();
-        user.getPetOwned().stream().forEach(pet -> listPets.add(pet));
-        user.getPetAuthorizedToFed().stream().forEach(pet -> listPets.add(pet));
-        mainActivityViewModel.getUserPets().setValue(listPets);
+        listPets.addAll(user.getPetOwned());
+        listPets.addAll(user.getPetAuthorizedToFed());
+        petRepository.getUserPets().setValue(listPets);
     }
 
     @Override
@@ -152,9 +163,8 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == LOGIN_REQUEST && resultCode == RESULT_OK) {
-            User user = (User) data.getExtras().get(getResources().getString(R.string.user_logged));
-            ((PetFoodingControl) getApplicationContext()).setUserLogged(user);
+        if (requestCode == LOGIN_REQUEST && resultCode != RESULT_OK) {
+            finishAndRemoveTask();
         }
     }
 
@@ -165,12 +175,16 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
         toolbar.setTitle(getResources().getString(stringId));
     }
 
-    public MainActivityViewModel getMainActivityViewModel() {
-        return mainActivityViewModel;
-    }
-
     @Override
     public void onListFragmentInteraction(Pet pet) {
 
+    }
+
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    public PetRepository getPetRepository() {
+        return petRepository;
     }
 }
