@@ -9,7 +9,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.util.Base64;
 
-import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -68,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
         super.onCreate(savedInstanceState);
         ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
         setContentView(R.layout.activity_main);
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setupAddButton();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
      * Setup the add pet button
      */
     private void setupAddButton() {
-        FloatingActionButton addPet = findViewById(R.id.addPet);
+        FloatingActionButton addPet = findViewById(R.id.main_addPet);
         addPet.setOnClickListener(view -> sendPetAdditionActivityIntent());
 
     }

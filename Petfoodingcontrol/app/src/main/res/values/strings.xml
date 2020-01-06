@@ -30,10 +30,19 @@
     <string name="txt_pet_card_is_owner">Owner</string>
 
     <!-- Account Management -->
+    <string name="title_activity_account_management">AccountManagementActivity</string>
     <string name="account_activity_management_type">AccountActivityType</string>
     <string name="menu_account_settings">Manage account</string>
     <string name="title_account_creation">Create a new account</string>
     <string name="title_account_modification">Modify the account</string>
+    <string name="content_description_user_photo">Users\'s photo</string>
+    <string name="content_description_btn_take_user_photo">take a photo button</string>
+    <string name="content_description_btn_pick_user_photo_on_disk">Pick a photo on the disk</string>
+    <string name="hint_account_username">Username</string>
+    <string name="hint_account_email">Email</string>
+    <string name="hint_account_password">Password</string>
+    <string name="hint_account_retype_password">Retype Password</string>
+    <string name="btn_account_save">Save</string>
 
     <!-- Disconnect -->
     <string name="menu_account_disconnect">Disconnect</string>

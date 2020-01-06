@@ -14,8 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ui.activities.accountmanagement.AccountManagementActivity">
-
+        <activity
+            android:name=".ui.activities.accountmanagement.AccountManagementActivity"
+            android:label="@string/title_activity_account_management"
+            android:theme="@style/AppThemeNoAppBar">
         </activity>
         <activity
             android:name=".ui.activities.petaddition.PetAdditionActivity"

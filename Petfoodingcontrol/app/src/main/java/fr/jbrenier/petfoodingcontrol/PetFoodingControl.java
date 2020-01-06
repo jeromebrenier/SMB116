@@ -2,8 +2,8 @@ package fr.jbrenier.petfoodingcontrol;
 
 import android.app.Application;
 
-import fr.jbrenier.petfoodingcontrol.repository.DaggerRepositoryComponent;
-import fr.jbrenier.petfoodingcontrol.repository.RepositoryComponent;
+import fr.jbrenier.petfoodingcontrol.di.DaggerRepositoryComponent;
+import fr.jbrenier.petfoodingcontrol.di.RepositoryComponent;
 
 /**
  * The Pet Fooding Control application class.

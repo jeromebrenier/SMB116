@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.repository;
+package fr.jbrenier.petfoodingcontrol.di;
 
 import javax.inject.Singleton;
 

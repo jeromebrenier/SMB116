@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.fragments.accountmanagement.AccountManagementFormFragment">
+
+    <ImageView
+        android:id="@+id/imv_user_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/content_description_user_photo"
+        android:minWidth="@dimen/user_photo_min_width"
+        android:minHeight="@dimen/user_photo_min_height"
+        tools:src="@tools:sample/avatars" />
+
+    <LinearLayout
+        android:id="@+id/account_photo_action_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="false"
+        android:layout_toEndOf="@id/imv_user_photo"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_take_user_photo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/content_description_btn_take_user_photo"
+            android:src="@drawable/ic_add_a_photo_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/btn_pick_user_photo_on_disk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:contentDescription="@string/content_description_btn_pick_user_photo_on_disk"
+            android:src="@drawable/ic_file_download_black_24dp" />
+    </LinearLayout>
+
+    <EditText
+        android:id="@+id/txt_account_username"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imv_user_photo"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/hint_account_username" />
+
+    <EditText
+        android:id="@+id/txt_account_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_account_username"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/hint_account_email" />
+
+    <EditText
+        android:id="@+id/txt_account_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_account_email"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:hint="@string/hint_account_password"
+        android:inputType="textPassword" />
+
+    <EditText
+        android:id="@+id/txt_account_retype_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_account_password"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:hint="@string/hint_account_retype_password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/btn_account_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txt_account_retype_password"
+        android:layout_centerHorizontal="true"
+        android:text="@string/btn_account_save" />
+
+</RelativeLayout>
