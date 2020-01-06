@@ -1,34 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_relativeLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".ui.fragments.login.LoginFieldsFragment">
+    tools:context=".ui.fragments.accountmanagement.AccountManagementFormFragment">
 
-    <EditText
-        android:id="@+id/txt_email"
+    <LinearLayout
+        android:id="@+id/login_fieldset"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/hint_email"
-        android:inputType="textEmailAddress" />
+        android:layout_marginTop="@dimen/fieldset_top_margin"
+        android:layout_marginBottom="@dimen/fieldset_bottom_margin"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/txt_password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_email"
-        android:ems="10"
-        android:hint="@string/hint_password"
-        android:inputType="textPassword" />
+        <EditText
+            android:id="@+id/txt_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fieldset_fields_spacing"
+            android:ems="10"
+            android:hint="@string/hint_email"
+            android:inputType="textEmailAddress" />
 
-    <CheckBox
-        android:id="@+id/chk_keep_logged_in"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/txt_password"
-        android:text="@string/checkbox_keep_login" />
+        <EditText
+            android:id="@+id/txt_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword" />
+
+        <CheckBox
+            android:id="@+id/chk_keep_logged_in"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fieldset_fields_spacing"
+            android:text="@string/checkbox_keep_login" />
+    </LinearLayout>
 
     <Button
         android:id="@+id/btn_login"
@@ -42,7 +53,8 @@
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/btn_validation_bottom_margin"
         android:text="@string/btn_create_account"
         android:textAllCaps="false" />
-</RelativeLayout>
+</LinearLayout>
+

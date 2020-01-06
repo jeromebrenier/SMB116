@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+<LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.activities.login.LoginActivity">
-
-    <FrameLayout
-        android:id="@+id/login_frameLayout"
-        android:layout_width="@dimen/fieldset_width"
-        android:layout_height="0dp"
-        android:layout_marginTop="@dimen/main_logo_top_bottom_spacing"
-        android:layout_marginBottom="@dimen/fieldset_bottom_spacing"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imv_image_illustration_main" />
 
     <ImageView
         android:id="@+id/imv_image_illustration_main"
         android:layout_width="235dp"
         android:layout_height="160dp"
+        android:layout_gravity="center"
         android:layout_marginTop="@dimen/main_logo_margin_top"
         android:contentDescription="@string/main_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/main_logo" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <FrameLayout
+        android:id="@+id/login_frameLayout"
+        android:layout_width="@dimen/fieldset_width"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/fieldset_top_margin"
+        android:layout_marginBottom="@dimen/fieldset_bottom_margin" />
+
+
+</LinearLayout>
+</ScrollView>
