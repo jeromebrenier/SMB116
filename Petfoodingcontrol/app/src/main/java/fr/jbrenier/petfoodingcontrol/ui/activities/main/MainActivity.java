@@ -48,8 +48,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
  * @author Jérôme Brenier
  */
 public class MainActivity extends AppCompatActivity implements
-        PetFragment.OnListFragmentInteractionListener,
-        NavigationView.OnNavigationItemSelectedListener {
+        PetFragment.OnListFragmentInteractionListener {
 
     private static final int LOGIN_REQUEST = 1;
     private static final int ADD_PET_REQUEST = 2;
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements
     private ImageView user_photo;
     private Toolbar toolbar;
     private AppBarConfiguration mAppBarConfiguration;
-    private DrawerLayout drawer;
+    private View headerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,18 +75,20 @@ public class MainActivity extends AppCompatActivity implements
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setupAddButton();
-        drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_pets, R.id.nav_account_settings, R.id.nav_account_disconnect)
+                R.id.nav_pets, R.id.nav_account_settings)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        headerView = navigationView.getHeaderView(0);
         getUserDataView();
+        setupLogoutListener();
         userRepository.getUserLogged().observe(this, user -> {
             if (user != null) {
                 setUserPets(user);
@@ -117,10 +118,21 @@ public class MainActivity extends AppCompatActivity implements
      * Get views from the header used to display the User data.
      */
     private void getUserDataView() {
-        View headerView = navigationView.getHeaderView(0);
         user_name = headerView.findViewById(R.id.txt_user_name);
         user_email = headerView.findViewById(R.id.txt_user_email);
         user_photo = headerView.findViewById(R.id.imv_user_photo);
+    }
+
+    /**
+     * Set the logout button listener
+     */
+    private void setupLogoutListener() {
+        headerView.findViewById(R.id.btn_log_out).setOnClickListener(view -> logout());
+    }
+
+    private void logout() {
+        userRepository.setUserLogged(null);
+        launchLoginActivity();
     }
 
     /**
@@ -191,21 +203,5 @@ public class MainActivity extends AppCompatActivity implements
 
     public PetRepository getPetRepository() {
         return petRepository;
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-        switch (item.getItemId()) {
-
-            case R.id.nav_account_disconnect: {
-                userRepository.setUserLogged(null);
-                launchLoginActivity();
-                break;
-            }
-        }
-        //close navigation drawer
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }

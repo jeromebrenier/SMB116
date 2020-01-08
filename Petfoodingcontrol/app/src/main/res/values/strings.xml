@@ -44,8 +44,8 @@
     <string name="hint_account_retype_password">Retype Password</string>
     <string name="btn_account_save">Save</string>
 
-    <!-- Disconnect -->
-    <string name="menu_account_disconnect">Disconnect</string>
+    <!-- Logout -->
+    <string name="btn_log_out">Log out</string>
 
     <!-- Add a pet -->
     <string name="title_add_a_pet_activity">Add a pet</string>
