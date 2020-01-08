@@ -17,7 +17,7 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
  */
 public class UserRepository {
 
-    private final MutableLiveData<User> userLogged = new MutableLiveData<User>();
+    private final MutableLiveData<User> userLogged = new MutableLiveData<>();
 
     @Inject
     public UserRepository() {

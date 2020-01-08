@@ -11,6 +11,10 @@ import android.os.Bundle;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
 
+/**
+ * Activity for creating and modifying User accounts.
+ * @author Jérôme Brenier
+ */
 public class AccountManagementActivity extends AppCompatActivity {
 
     private static final String DUMMY_TITLE = " ";
@@ -26,9 +30,14 @@ public class AccountManagementActivity extends AppCompatActivity {
         managementType = (ManagementType) getIntent().getExtras()
                 .get(getResources().getString(R.string.account_activity_management_type));
         setActivityTitle();
-        loadFragment(new AccountManagementFormFragment());
+        if (savedInstanceState == null) {
+            loadFragment(AccountManagementFormFragment.newInstance());
+        }
     }
 
+    /**
+     * Set the correct title in the toolbar.
+     */
     private void setActivityTitle() {
         Toolbar toolbar = findViewById(R.id.account_management_toolbar);
         // workaround to get the setTitle method really work afterward

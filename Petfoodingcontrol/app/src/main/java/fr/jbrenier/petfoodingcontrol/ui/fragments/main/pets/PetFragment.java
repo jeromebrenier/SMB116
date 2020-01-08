@@ -51,6 +51,10 @@ public class PetFragment extends Fragment {
         mainActivity = (MainActivity)getActivity();
         // Toolbar title
         mainActivity.setToolBarTitle(R.string.menu_pets);
+        //show the add a pet button
+        if (getActivity().findViewById(R.id.main_addPet).getVisibility() != View.VISIBLE) {
+            getActivity().findViewById(R.id.main_addPet).setVisibility(View.VISIBLE);
+        }
          // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();

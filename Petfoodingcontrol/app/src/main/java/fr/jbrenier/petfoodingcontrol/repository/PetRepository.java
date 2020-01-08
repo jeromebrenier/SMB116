@@ -14,7 +14,7 @@ import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
  */
 public class PetRepository {
 
-    private final MutableLiveData<List<Pet>> userPets = new MutableLiveData<List<Pet>>();
+    private final MutableLiveData<List<Pet>> userPets = new MutableLiveData<>();
 
     @Inject
     public PetRepository() {

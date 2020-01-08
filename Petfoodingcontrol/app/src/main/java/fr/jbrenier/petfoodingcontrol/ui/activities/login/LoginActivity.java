@@ -37,10 +37,9 @@ public class LoginActivity extends AppCompatActivity {
         ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
         setContentView(R.layout.activity_login);
         userRepository.setUserLogged(isKeepLogged());
-        if (userRepository.getUserLogged().getValue() == null) {
-            loadFragment(new LoginFieldsFragment());
-        } else {
-            loadFragment(new LoginWelcomeFragment());
+        if (savedInstanceState == null) {
+            loadFragment(userRepository.getUserLogged().getValue() == null ?
+                    LoginFieldsFragment.newInstance() : LoginWelcomeFragment.newInstance());
         }
     }
 
@@ -73,8 +72,8 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Check credentials (email and password). Return an User or null if credentials invalid.
-     * @param email
-     * @param password
+     * @param email entered
+     * @param password entered
      * @return corresponding User
      */
     private User checkCredentials(String email, String password) {

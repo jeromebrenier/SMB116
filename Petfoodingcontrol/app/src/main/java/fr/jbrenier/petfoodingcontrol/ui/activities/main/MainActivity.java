@@ -9,6 +9,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -21,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,7 +47,9 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
  * Main activity of the Pet Fooding Control application.
  * @author Jérôme Brenier
  */
-public class MainActivity extends AppCompatActivity implements PetFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements
+        PetFragment.OnListFragmentInteractionListener,
+        NavigationView.OnNavigationItemSelectedListener {
 
     private static final int LOGIN_REQUEST = 1;
     private static final int ADD_PET_REQUEST = 2;
@@ -61,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
     private ImageView user_photo;
     private Toolbar toolbar;
     private AppBarConfiguration mAppBarConfiguration;
+    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setupAddButton();
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -154,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
     /**
      * Launch login activity trough explicit intent.
      */
-    private void launchLoginActivity() {
+    public void launchLoginActivity() {
         Intent loginActivityIntent = new Intent(this, LoginActivity.class);
         startActivityForResult(loginActivityIntent, LOGIN_REQUEST);
     }
@@ -185,5 +191,21 @@ public class MainActivity extends AppCompatActivity implements PetFragment.OnLis
 
     public PetRepository getPetRepository() {
         return petRepository;
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        switch (item.getItemId()) {
+
+            case R.id.nav_account_disconnect: {
+                userRepository.setUserLogged(null);
+                launchLoginActivity();
+                break;
+            }
+        }
+        //close navigation drawer
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }
