@@ -37,20 +37,16 @@ public class Pet implements Parcelable {
     @Embedded
     private FoodSettings foodSettings;
     private Long userId;
-    private List<String> authorizedFeeders = new ArrayList<>();
 
     public Pet(Long id, String name, Photo photo, Date birthDate, FoodSettings foodSettings,
-               Long userId, List<String> authorizedFeeders) {
+               Long userId) {
         this.id = id;
         this.name = name;
         this.photo = photo;
         this.birthDate = birthDate;
         this.foodSettings = foodSettings;
         this.userId = userId;
-        if (authorizedFeeders != null) {
-            this.authorizedFeeders.addAll(authorizedFeeders);
-        }
-    }
+     }
 
 
     protected Pet(Parcel in) {
@@ -60,7 +56,6 @@ public class Pet implements Parcelable {
         birthDate = (java.util.Date) in.readSerializable();
         foodSettings = in.readParcelable(FoodSettings.class.getClassLoader());
         userId = in.readLong();
-        in.readStringList(authorizedFeeders);
     }
 
     public static final Creator<Pet> CREATOR = new Creator<Pet>() {
@@ -88,7 +83,6 @@ public class Pet implements Parcelable {
         dest.writeSerializable(birthDate);
         dest.writeParcelable(foodSettings, flags);
         dest.writeLong(userId);
-        dest.writeStringList(authorizedFeeders);
     }
 
     @NonNull
@@ -138,13 +132,5 @@ public class Pet implements Parcelable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public List<String> getAuthorizedFeeders() {
-        return authorizedFeeders;
-    }
-
-    public void setAuthorizedFeeders(List<String> authorizedFeeders) {
-        this.authorizedFeeders = authorizedFeeders;
     }
 }

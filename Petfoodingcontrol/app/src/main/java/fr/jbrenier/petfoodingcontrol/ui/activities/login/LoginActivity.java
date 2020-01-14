@@ -16,7 +16,6 @@ import javax.inject.Inject;
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
-import fr.jbrenier.petfoodingcontrol.repository.UserRepositoryDaoImpl;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginFieldsFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
 

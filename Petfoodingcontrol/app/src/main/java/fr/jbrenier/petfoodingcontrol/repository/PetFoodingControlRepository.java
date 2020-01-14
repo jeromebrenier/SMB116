@@ -2,9 +2,12 @@ package fr.jbrenier.petfoodingcontrol.repository;
 
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.List;
+
+import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
-public interface UserRepository {
+public interface PetFoodingControlRepository {
     /**
      * Get the User corresponding to given credentials (email and password). Return null if
      * credentials invalid.
@@ -13,9 +16,12 @@ public interface UserRepository {
      * @param password of the user
      * @return the User
      */
-    public User getByCredentials(String email, String password);
+    public User getUserByCredentials(String email, String password);
     public String getUserPasswd(String email);
-    public boolean verifyPassword(String passwordToCheck, String storedPassword);
+    public boolean verifyUserPassword(String passwordToCheck, String storedPassword);
     public void setUserLogged(User user);
     public MutableLiveData<User> getUserLogged();
+
+    public Pet getPetById(String id);
+    public MutableLiveData<List<Pet>> getUserPets();
 }
