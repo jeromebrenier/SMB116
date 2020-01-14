@@ -16,7 +16,7 @@ import javax.inject.Inject;
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
-import fr.jbrenier.petfoodingcontrol.repository.UserRepository;
+import fr.jbrenier.petfoodingcontrol.repository.UserRepositoryDaoImpl;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginFieldsFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
 
@@ -27,7 +27,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
 public class LoginActivity extends AppCompatActivity {
 
     @Inject
-    UserRepository userRepository;
+    UserRepositoryDaoImpl userRepository;
 
     private SharedPreferences sharedPref;
 
@@ -133,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    public UserRepository getUserRepository() {
+    public UserRepositoryDaoImpl getUserRepository() {
         return userRepository;
     }
 }

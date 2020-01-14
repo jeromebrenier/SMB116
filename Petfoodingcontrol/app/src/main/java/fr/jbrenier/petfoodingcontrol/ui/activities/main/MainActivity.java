@@ -9,8 +9,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import android.util.Base64;
 
-import androidx.annotation.NonNull;
-import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,7 +21,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,8 +34,8 @@ import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
-import fr.jbrenier.petfoodingcontrol.repository.PetRepository;
-import fr.jbrenier.petfoodingcontrol.repository.UserRepository;
+import fr.jbrenier.petfoodingcontrol.repository.PetRepositoryDaoImpl;
+import fr.jbrenier.petfoodingcontrol.repository.UserRepositoryDaoImpl;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
@@ -54,10 +51,10 @@ public class MainActivity extends AppCompatActivity implements
     private static final int ADD_PET_REQUEST = 2;
 
     @Inject
-    UserRepository userRepository;
+    UserRepositoryDaoImpl userRepository;
 
     @Inject
-    PetRepository petRepository;
+    PetRepositoryDaoImpl petRepository;
 
     private NavigationView navigationView;
     private TextView user_name;
@@ -197,11 +194,11 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    public UserRepository getUserRepository() {
+    public UserRepositoryDaoImpl getUserRepository() {
         return userRepository;
     }
 
-    public PetRepository getPetRepository() {
+    public PetRepositoryDaoImpl getPetRepository() {
         return petRepository;
     }
 }

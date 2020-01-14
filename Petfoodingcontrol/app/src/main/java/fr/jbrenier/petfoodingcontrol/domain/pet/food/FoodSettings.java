@@ -3,6 +3,10 @@ package fr.jbrenier.petfoodingcontrol.domain.pet.food;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +15,11 @@ import java.util.List;
  * @author Jérôme Brenier
  */
 public class FoodSettings implements Parcelable {
-    private int dailyQuantity;
+    private Integer dailyQuantity;
     private List<Integer> preSetPortionList;
 
-    public FoodSettings(int dailyQuantity, List<Integer> preSetPortionList) {
-        this.dailyQuantity = dailyQuantity;
+    public FoodSettings(Integer dailyQuantity, List<Integer> preSetPortionList) {
+        this.dailyQuantity = (dailyQuantity == null ? 0 : dailyQuantity);
         this.preSetPortionList = new ArrayList<>(preSetPortionList);
     }
 
@@ -26,7 +30,7 @@ public class FoodSettings implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(dailyQuantity);
+        dest.writeInt(dailyQuantity == null ? 0 : dailyQuantity);
         dest.writeList(preSetPortionList);
     }
 
@@ -46,4 +50,20 @@ public class FoodSettings implements Parcelable {
             return new FoodSettings[size];
         }
     };
+
+    public Integer getDailyQuantity() {
+        return dailyQuantity;
+    }
+
+    public void setDailyQuantity(Integer dailyQuantity) {
+        this.dailyQuantity = dailyQuantity;
+    }
+
+    public List<Integer> getPreSetPortionList() {
+        return preSetPortionList;
+    }
+
+    public void setPreSetPortionList(List<Integer> preSetPortionList) {
+        this.preSetPortionList = preSetPortionList;
+    }
 }

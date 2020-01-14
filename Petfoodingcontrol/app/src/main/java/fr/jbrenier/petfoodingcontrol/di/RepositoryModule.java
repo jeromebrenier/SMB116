@@ -5,19 +5,21 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import fr.jbrenier.petfoodingcontrol.repository.PetRepository;
+import fr.jbrenier.petfoodingcontrol.repository.PetRepositoryDaoImpl;
 import fr.jbrenier.petfoodingcontrol.repository.UserRepository;
+import fr.jbrenier.petfoodingcontrol.repository.UserRepositoryDaoImpl;
 
 @Module
 public class RepositoryModule {
     @Provides
     @Singleton
     public UserRepository getUserRepository() {
-        return new UserRepository();
+        return new UserRepositoryDaoImpl();
     }
 
     @Provides
     @Singleton
     public PetRepository getPetRepository() {
-        return new PetRepository();
+        return new PetRepositoryDaoImpl();
     }
 }

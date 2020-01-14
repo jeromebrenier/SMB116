@@ -3,8 +3,10 @@ package fr.jbrenier.petfoodingcontrol.domain.user;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-import java.util.List;
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
@@ -13,40 +15,37 @@ import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
  * A Pet Fooding Control user.
  * @author Jérôme Brenier
  */
+@Entity(foreignKeys = {
+                @ForeignKey(entity = Photo.class,
+                        parentColumns = "id",
+                        childColumns = "photoId"),
+                @ForeignKey(entity = Pet.class,
+                        parentColumns = "id",
+                        childColumns = "petId")
+})
 public class User implements Parcelable {
-    private String id;
+    @NonNull
+    @PrimaryKey (autoGenerate = true)
+    private Long id;
     private String displayedName;
     private String email;
     private String password;
-    private Photo photo;
-    private List<Pet> petOwned;
-    private List<Pet> petAuthorizedToFed;
+    private Long photoId;
 
-    public User(String id, String displayedName, String email, String password, Photo photo,
-                List<Pet> petOwned, List<Pet> petAuthorizedToFed) {
+    public User(Long id, String displayedName, String email, String password, Long photoId) {
         this.id = id;
         this.displayedName = displayedName;
         this.email = email;
         this.password = password;
-        this.photo = photo;
-        this.petOwned = new ArrayList<>();
-        if (petOwned != null) {
-            this.petOwned.addAll(petOwned);
-        }
-        this.petAuthorizedToFed = new ArrayList<>();
-        if (petAuthorizedToFed != null) {
-            this.petAuthorizedToFed.addAll(petAuthorizedToFed);
-        }
+        this.photoId = photoId;
     }
 
     protected User(Parcel in) {
-        id = in.readString();
+        id = in.readLong();
         displayedName = in.readString();
         email = in.readString();
         password = in.readString();
-        photo = in.readParcelable(Photo.class.getClassLoader());
-        petOwned = in.readArrayList(Pet.class.getClassLoader());
-        petAuthorizedToFed = in.readArrayList(Pet.class.getClassLoader());
+        photoId = in.readLong();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -68,32 +67,50 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
+        dest.writeLong((id == null) ? 0 : id);
         dest.writeString(displayedName);
         dest.writeString(email);
         dest.writeString(password);
-        dest.writeParcelable(photo, flags);
-        dest.writeList(petOwned);
-        dest.writeList(petAuthorizedToFed);
+        dest.writeLong(photoId);
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDisplayedName() {
         return displayedName;
     }
 
+    public void setDisplayedName(String displayedName) {
+        this.displayedName = displayedName;
+    }
+
     public String getEmail() {
         return email;
     }
 
-    public Photo getPhoto() {
-        return photo;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public List<Pet> getPetOwned() {
-        return petOwned;
+    public String getPassword() {
+        return password;
     }
 
-    public List<Pet> getPetAuthorizedToFed() {
-        return petAuthorizedToFed;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Long getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(Long photoId) {
+        this.photoId = photoId;
     }
 }
