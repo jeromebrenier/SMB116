@@ -6,9 +6,12 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
 
 /**
  * The food settings of a Pet.
@@ -16,6 +19,7 @@ import java.util.List;
  */
 public class FoodSettings implements Parcelable {
     private Integer dailyQuantity;
+    @TypeConverters(DataTypeConverter.class)
     private List<Integer> preSetPortionList;
 
     public FoodSettings(Integer dailyQuantity, List<Integer> preSetPortionList) {

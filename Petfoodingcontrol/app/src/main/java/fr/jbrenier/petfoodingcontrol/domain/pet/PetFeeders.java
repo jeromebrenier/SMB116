@@ -3,6 +3,7 @@ package fr.jbrenier.petfoodingcontrol.domain.pet;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
@@ -23,7 +24,9 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
                         childColumns = "feederId",
                         onDelete = ForeignKey.CASCADE)})
 public class PetFeeders implements Parcelable {
+    @NonNull
     private Long petId;
+    @NonNull
     private Long feederId;
 
     public PetFeeders(Long petId, Long feederId) {

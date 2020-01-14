@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginFieldsFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
 
@@ -26,7 +27,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
 public class LoginActivity extends AppCompatActivity {
 
     @Inject
-    UserRepositoryDaoImpl userRepository;
+    PetFoodingControlRepository pfcRepository;
 
     private SharedPreferences sharedPref;
 
@@ -35,9 +36,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
         setContentView(R.layout.activity_login);
-        userRepository.setUserLogged(isKeepLogged());
+        pfcRepository.setUserLogged(isKeepLogged());
         if (savedInstanceState == null) {
-            loadFragment(userRepository.getUserLogged().getValue() == null ?
+            loadFragment(pfcRepository.getUserLogged().getValue() == null ?
                     LoginFieldsFragment.newInstance() : LoginWelcomeFragment.newInstance());
         }
     }
@@ -76,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
      * @return corresponding User
      */
     private User checkCredentials(String email, String password) {
-        return userRepository.getByCredentials(email, password);
+        return pfcRepository.getUserByCredentials(email, password);
     }
 
     /**
@@ -109,8 +110,8 @@ public class LoginActivity extends AppCompatActivity {
      * @param inputPassword password entered
      */
     private void onCredentialsEntered(String inputEmail, String inputPassword) {
-        userRepository.setUserLogged(checkCredentials(inputEmail, inputPassword));
-        if (userRepository.getUserLogged().getValue() != null) {
+        pfcRepository.setUserLogged(checkCredentials(inputEmail, inputPassword));
+        if (pfcRepository.getUserLogged().getValue() != null) {
             loadFragment(new LoginWelcomeFragment());
         }
     }
@@ -132,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
         finish();
     }
 
-    public UserRepositoryDaoImpl getUserRepository() {
-        return userRepository;
+    public PetFoodingControlRepository getPetFoodingControlRepository() {
+        return pfcRepository;
     }
 }

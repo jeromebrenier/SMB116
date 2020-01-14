@@ -3,13 +3,14 @@ package fr.jbrenier.petfoodingcontrol.domain.pet.food;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.TypeConverters;
 
 import java.util.Date;
 
-import fr.jbrenier.petfoodingcontrol.db.converters.DateTypeConverter;
+import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
@@ -28,9 +29,11 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
                 childColumns = "petId",
                 onDelete = ForeignKey.CASCADE)})
 public class Fooding implements Parcelable {
+    @NonNull
     private Long userId;
+    @NonNull
     private Long petId;
-    @TypeConverters({DateTypeConverter.class})
+    @TypeConverters(DataTypeConverter.class)
     private Date date;
     private Integer quantity;
 

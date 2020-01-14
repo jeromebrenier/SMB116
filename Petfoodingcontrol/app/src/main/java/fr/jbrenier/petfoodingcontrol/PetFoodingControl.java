@@ -2,6 +2,8 @@ package fr.jbrenier.petfoodingcontrol;
 
 import android.app.Application;
 
+import androidx.lifecycle.MutableLiveData;
+
 import fr.jbrenier.petfoodingcontrol.di.DaggerRepositoryComponent;
 import fr.jbrenier.petfoodingcontrol.di.RepositoryComponent;
 
@@ -12,6 +14,7 @@ import fr.jbrenier.petfoodingcontrol.di.RepositoryComponent;
 public class PetFoodingControl extends Application {
 
     private RepositoryComponent repositoryComponent;
+    public MutableLiveData<Boolean> isCameraPermissionGranted = new MutableLiveData<>(false);
 
     @Override
     public void onCreate() {

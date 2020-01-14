@@ -8,11 +8,13 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
 import fr.jbrenier.petfoodingcontrol.domain.pet.food.FoodSettings;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
@@ -22,27 +24,33 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
  * Pet Fooding Control.
  * @author Jérôme Brenier
  */
-@Entity (foreignKeys = @ForeignKey(
-        entity = User.class,
-        parentColumns = "id",
-        childColumns = "usrId")
+@Entity (foreignKeys = {
+        @ForeignKey(
+                entity = User.class,
+                parentColumns = "id",
+                childColumns = "userId"),
+        @ForeignKey(
+                entity = Photo.class,
+                parentColumns = "id",
+                childColumns = "photoId")}
 )
 public class Pet implements Parcelable {
     @NonNull
     @PrimaryKey(autoGenerate = true)
     private Long id;
     private String name;
-    private Photo photo;
+    private Long photoId;
+    @TypeConverters(DataTypeConverter.class)
     private Date birthDate;
     @Embedded
     private FoodSettings foodSettings;
     private Long userId;
 
-    public Pet(Long id, String name, Photo photo, Date birthDate, FoodSettings foodSettings,
+    public Pet(Long id, String name, Long photoId, Date birthDate, FoodSettings foodSettings,
                Long userId) {
         this.id = id;
         this.name = name;
-        this.photo = photo;
+        this.photoId = photoId;
         this.birthDate = birthDate;
         this.foodSettings = foodSettings;
         this.userId = userId;
@@ -52,7 +60,7 @@ public class Pet implements Parcelable {
     protected Pet(Parcel in) {
         id = in.readLong();
         name = in.readString();
-        photo = in.readParcelable(Photo.class.getClassLoader());
+        photoId = in.readLong();
         birthDate = (java.util.Date) in.readSerializable();
         foodSettings = in.readParcelable(FoodSettings.class.getClassLoader());
         userId = in.readLong();
@@ -79,7 +87,7 @@ public class Pet implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong((id == null) ? 0 : id);
         dest.writeString(name);
-        dest.writeParcelable(photo, flags);
+        dest.writeLong(photoId);
         dest.writeSerializable(birthDate);
         dest.writeParcelable(foodSettings, flags);
         dest.writeLong(userId);
@@ -102,12 +110,12 @@ public class Pet implements Parcelable {
         this.name = name;
     }
 
-    public Photo getPhoto() {
-        return photo;
+    public Long getPhotoId() {
+        return photoId;
     }
 
-    public void setPhoto(Photo photo) {
-        this.photo = photo;
+    public void setPhotoId(Long photoId) {
+        this.photoId = photoId;
     }
 
     public Date getBirthDate() {

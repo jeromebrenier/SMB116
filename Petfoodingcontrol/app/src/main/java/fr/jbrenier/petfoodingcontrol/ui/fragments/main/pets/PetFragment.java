@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 
 /**
@@ -62,21 +63,26 @@ public class PetFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
             setAdapter(recyclerView);
         }
+        // show the add a pet button if invisible
+        if (getActivity().findViewById(R.id.main_addPet).getVisibility() == View.INVISIBLE) {
+            getActivity().findViewById(R.id.main_addPet).setVisibility(View.VISIBLE);
+        }
         return view;
     }
 
 
     private void setAdapter(RecyclerView recyclerView) {
-        petFragmentViewModel.refresh(mainActivity.getPetRepository().getUserPets().getValue());
+        PetFoodingControlRepository pfcRepository = mainActivity.getPetFoodingControlRepository();
+        petFragmentViewModel.refresh(pfcRepository.getUserPets().getValue());
         adapter = new MyPetRecyclerViewAdapter(petFragmentViewModel.getUserPets(), mListener);
-        adapter.setUserLogged(mainActivity.getUserRepository().getUserLogged().getValue());
+        adapter.setUserLogged(pfcRepository.getUserLogged().getValue());
         recyclerView.setAdapter(adapter);
-        mainActivity.getPetRepository().getUserPets().observe(this, list -> {
-            petFragmentViewModel.refresh(mainActivity.getPetRepository().getUserPets().getValue());
+        pfcRepository.getUserPets().observe(this, list -> {
+            petFragmentViewModel.refresh(pfcRepository.getUserPets().getValue());
             adapter.notifyDataSetChanged();
         });
-        mainActivity.getUserRepository().getUserLogged().observe(this, list -> {
-            adapter.setUserLogged(mainActivity.getUserRepository().getUserLogged().getValue());
+        pfcRepository.getUserLogged().observe(this, list -> {
+            adapter.setUserLogged(pfcRepository.getUserLogged().getValue());
             adapter.notifyDataSetChanged();
         });
     }

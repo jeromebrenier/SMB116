@@ -33,7 +33,9 @@ import javax.inject.Inject;
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
@@ -49,10 +51,7 @@ public class MainActivity extends AppCompatActivity implements
     private static final int ADD_PET_REQUEST = 2;
 
     @Inject
-    UserRepositoryDaoImpl userRepository;
-
-    @Inject
-    PetRepositoryDaoImpl petRepository;
+    PetFoodingControlRepository pfcRepository;
 
     private NavigationView navigationView;
     private TextView user_name;
@@ -84,13 +83,13 @@ public class MainActivity extends AppCompatActivity implements
         headerView = navigationView.getHeaderView(0);
         getUserDataView();
         setupLogoutListener();
-        userRepository.getUserLogged().observe(this, user -> {
+        pfcRepository.getUserLogged().observe(this, user -> {
             if (user != null) {
                 setUserPets(user);
                 setUserDataInNavBar(user);
             }
         });
-        if (userRepository.getUserLogged().getValue() == null) {
+        if (pfcRepository.getUserLogged().getValue() == null) {
             launchLoginActivity();
         }
     }
@@ -126,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void logout() {
-        userRepository.setUserLogged(null);
+        pfcRepository.setUserLogged(null);
         launchLoginActivity();
     }
 
@@ -138,8 +137,9 @@ public class MainActivity extends AppCompatActivity implements
     private void setUserDataInNavBar(User user) {
         user_name.setText(user.getDisplayedName());
         user_email.setText(user.getEmail());
-        if (user.getPhoto() != null && !user.getPhoto().getImage().isEmpty()) {
-            byte[] decodedString = Base64.decode(user.getPhoto().getImage(), Base64.DEFAULT);
+        Photo userPhoto = pfcRepository.getUserPhoto(user);
+        if (userPhoto!= null && userPhoto.getImage().isEmpty()) {
+            byte[] decodedString = Base64.decode(userPhoto.getImage(), Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
                     decodedString.length);
             user_photo.setImageBitmap(decodedByte);
@@ -151,10 +151,7 @@ public class MainActivity extends AppCompatActivity implements
      * @param user : the logged User
      */
     private void setUserPets(User user) {
-        List<Pet> listPets = new ArrayList<>();
-        listPets.addAll(user.getPetOwned());
-        listPets.addAll(user.getPetAuthorizedToFed());
-        petRepository.getUserPets().setValue(listPets);
+        pfcRepository.setUserPets(user);
     }
 
     @Override
@@ -192,11 +189,7 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
-    public UserRepositoryDaoImpl getUserRepository() {
-        return userRepository;
-    }
-
-    public PetRepositoryDaoImpl getPetRepository() {
-        return petRepository;
+    public PetFoodingControlRepository getPetFoodingControlRepository() {
+        return pfcRepository;
     }
 }

@@ -15,14 +15,10 @@ import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
  * A Pet Fooding Control user.
  * @author Jérôme Brenier
  */
-@Entity(foreignKeys = {
-                @ForeignKey(entity = Photo.class,
+@Entity(foreignKeys = @ForeignKey(entity = Photo.class,
                         parentColumns = "id",
-                        childColumns = "photoId"),
-                @ForeignKey(entity = Pet.class,
-                        parentColumns = "id",
-                        childColumns = "petId")
-})
+                        childColumns = "photoId")
+)
 public class User implements Parcelable {
     @NonNull
     @PrimaryKey (autoGenerate = true)

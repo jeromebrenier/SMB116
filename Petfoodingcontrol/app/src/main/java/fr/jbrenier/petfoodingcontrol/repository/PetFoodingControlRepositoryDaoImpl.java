@@ -1,20 +1,28 @@
 package fr.jbrenier.petfoodingcontrol.repository;
 
+import android.app.Application;
+
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
+import fr.jbrenier.petfoodingcontrol.db.PetFoodingControlDatabase;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
 public class PetFoodingControlRepositoryDaoImpl implements PetFoodingControlRepository {
 
+    private static final String DB_NAME = "pfc_db";
+    //private final PetFoodingControlDatabase petFoodingControlDatabase;
     private final MutableLiveData<User> userLogged = new MutableLiveData<>();
+    private final MutableLiveData<Pet> userPets = new MutableLiveData<>();
 
     @Inject
     public PetFoodingControlRepositoryDaoImpl() {
+        //petFoodingControlDatabase = Room.databaseBuilder(context, PetFoodingControlDatabase.class, DB_NAME).build();
     }
 
     @Override
@@ -38,6 +46,12 @@ public class PetFoodingControlRepositoryDaoImpl implements PetFoodingControlRepo
     }
 
     @Override
+    public Photo getUserPhoto(User user) {
+        // TODO implements
+        return new Photo(1000L, "photobase64");
+    }
+
+    @Override
     public String getUserPasswd(String email) {
         return "test";
     }
@@ -54,12 +68,17 @@ public class PetFoodingControlRepositoryDaoImpl implements PetFoodingControlRepo
 
     @Override
     public MutableLiveData<User> getUserLogged() {
-        return return userLogged;
+        return userLogged;
     }
 
     @Override
     public Pet getPetById(String id) {
         return null;
+    }
+
+    @Override
+    public void setUserPets(User user) {
+        userPets.setValue(null);
     }
 
     @Override

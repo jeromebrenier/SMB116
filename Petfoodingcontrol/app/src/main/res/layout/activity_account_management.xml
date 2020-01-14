@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.activities.accountmanagement.AccountManagementActivity">
+    tools:context=".ui.activities.accountcreation.AccountCreationActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/account_management_toolbar"

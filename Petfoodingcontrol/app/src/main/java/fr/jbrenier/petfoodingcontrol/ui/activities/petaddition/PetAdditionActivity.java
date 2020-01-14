@@ -14,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.SectionsPagerAdapter;
 
+/**
+ * The activity for adding a pet with the Pet Fooding Control application.
+ * @author Jérôme Brenier
+ */
 public class PetAdditionActivity extends AppCompatActivity {
 
     private PetAdditionViewModel petAdditionViewModel;

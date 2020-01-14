@@ -17,7 +17,7 @@ android:layout_height="match_parent">
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/main_logo_margin_top"
         android:contentDescription="@string/main_logo"
-        app:srcCompat="@mipmap/main_logo" />
+        app:srcCompat="@drawable/main_logo" />
 
     <FrameLayout
         android:id="@+id/login_frameLayout"

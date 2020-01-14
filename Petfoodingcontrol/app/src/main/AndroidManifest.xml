@@ -4,6 +4,9 @@
     package="fr.jbrenier.petfoodingcontrol">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:name=".PetFoodingControl"
@@ -15,7 +18,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.activities.accountmanagement.AccountManagementActivity"
+            android:name=".ui.activities.accountcreation.AccountCreationActivity"
             android:label="@string/title_activity_account_management"
             android:theme="@style/AppThemeNoAppBar">
         </activity>
