@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
@@ -13,20 +14,24 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
  * Pet feeders.
  * @author Jérôme Brenier
  */
-@Entity(primaryKeys = { "petId", "feederId" },
+@Entity(primaryKeys = { "pet_Id", "feeder_Id" },
         foreignKeys = {
                 @ForeignKey(entity = Pet.class,
-                        parentColumns = "id",
-                        childColumns = "petId",
+                        parentColumns = "pet_Id",
+                        childColumns = "pet_Id",
                         onDelete = ForeignKey.CASCADE),
                 @ForeignKey(entity = User.class,
-                        parentColumns = "id",
-                        childColumns = "feederId",
-                        onDelete = ForeignKey.CASCADE)})
+                        parentColumns = "user_Id",
+                        childColumns = "feeder_Id",
+                        onDelete = ForeignKey.CASCADE)},
+        inheritSuperIndices = true
+)
 public class PetFeeders implements Parcelable {
     @NonNull
+    @ColumnInfo(name = "pet_Id")
     private Long petId;
     @NonNull
+    @ColumnInfo(name = "feeder_Id")
     private Long feederId;
 
     public PetFeeders(Long petId, Long feederId) {

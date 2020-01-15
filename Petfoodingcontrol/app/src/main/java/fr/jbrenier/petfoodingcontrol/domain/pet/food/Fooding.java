@@ -4,8 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.TypeConverters;
 
 import java.util.Date;
@@ -18,20 +20,23 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
  * A fooding action.
  * @author Jérôme Brenier
  */
-@Entity(primaryKeys = { "userId", "petId" },
+@Entity(primaryKeys = { "user_Id", "pet_Id" },
+        indices = {@Index(value = {"user_Id", "pet_Id"}, unique = true)},
         foreignKeys = {
         @ForeignKey(entity = User.class,
-                parentColumns = "id",
-                childColumns = "userId",
+                parentColumns = "user_Id",
+                childColumns = "user_Id",
                 onDelete = ForeignKey.CASCADE),
         @ForeignKey(entity = Pet.class,
-                parentColumns = "id",
-                childColumns = "petId",
+                parentColumns = "pet_Id",
+                childColumns = "pet_Id",
                 onDelete = ForeignKey.CASCADE)})
 public class Fooding implements Parcelable {
     @NonNull
+    @ColumnInfo(name = "user_Id")
     private Long userId;
     @NonNull
+    @ColumnInfo(name = "pet_Id")
     private Long petId;
     @TypeConverters(DataTypeConverter.class)
     private Date date;

@@ -26,5 +26,6 @@ public interface PetFoodingControlRepository {
 
     public Pet getPetById(String id);
     public void setUserPets(User user);
+    public Photo getPetPhoto(Pet pet);
     public MutableLiveData<List<Pet>> getUserPets();
 }

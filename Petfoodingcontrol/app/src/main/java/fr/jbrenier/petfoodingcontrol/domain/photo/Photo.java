@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -15,17 +16,18 @@ import androidx.room.PrimaryKey;
 @Entity
 public class Photo implements Parcelable {
     @NonNull
+    @ColumnInfo(name = "photo_Id")
     @PrimaryKey(autoGenerate = true)
-    private Long id;
+    private Long photoId;
     private String image;
 
-    public Photo(Long id, String image) {
-        this.id = id;
+    public Photo(Long photoId, String image) {
+        this.photoId = photoId;
         this.image = image;
     }
 
     protected Photo(Parcel in) {
-        id = in.readLong();
+        photoId = in.readLong();
         image = in.readString();
     }
 
@@ -48,16 +50,17 @@ public class Photo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong(id == null ? 0 : id);
+        dest.writeLong(photoId == null ? 0 : photoId);
         dest.writeString(image);
     }
 
-    public Long getId() {
-        return id;
+    @NonNull
+    public Long getPhotoId() {
+        return photoId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setPhotoId(@NonNull Long photoIdd) {
+        this.photoId = photoIdd;
     }
 
     public String getImage() {

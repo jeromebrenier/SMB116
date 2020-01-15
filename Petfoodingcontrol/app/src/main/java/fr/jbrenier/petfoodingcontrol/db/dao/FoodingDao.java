@@ -16,7 +16,7 @@ public interface FoodingDao {
     void insert(Fooding fooding);
     @Insert
     void insert(List<Fooding> foodingList);
-    @Query("SELECT * FROM Fooding WHERE petId = :petId")
+    @Query("SELECT * FROM Fooding WHERE pet_Id = :petId")
     List<Fooding> getFoodingsForPet (Long petId);
     @Update
     void update(Fooding fooding);

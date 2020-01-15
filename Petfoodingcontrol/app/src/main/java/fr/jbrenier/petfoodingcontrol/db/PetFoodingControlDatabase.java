@@ -2,9 +2,7 @@ package fr.jbrenier.petfoodingcontrol.db;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
-import androidx.room.TypeConverters;
 
-import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
 import fr.jbrenier.petfoodingcontrol.db.dao.FoodingDao;
 import fr.jbrenier.petfoodingcontrol.db.dao.PetDao;
 import fr.jbrenier.petfoodingcontrol.db.dao.PetFeedersDao;
@@ -26,7 +24,8 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
         Photo.class,
         Fooding.class,
         PetFeeders.class},
-        version = 1
+        version = 1,
+        exportSchema = false
 )
 public abstract class PetFoodingControlDatabase extends RoomDatabase {
     public abstract UserDao getUserDao();

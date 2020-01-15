@@ -16,7 +16,7 @@ public interface PhotoDao {
     void insert(Photo photo);
     @Insert
     void insert(List<Photo> photos);
-    @Query("SELECT * FROM Photo WHERE id = :photoId")
+    @Query("SELECT * FROM Photo WHERE photo_Id = :photoId")
     Photo getPhotoById (Long photoId);
     @Update
     void update(Photo photo);

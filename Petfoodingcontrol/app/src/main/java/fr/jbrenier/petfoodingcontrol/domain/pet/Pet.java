@@ -4,9 +4,11 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -27,28 +29,32 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
 @Entity (foreignKeys = {
         @ForeignKey(
                 entity = User.class,
-                parentColumns = "id",
-                childColumns = "userId"),
+                parentColumns = "user_Id",
+                childColumns = "user_Id"),
         @ForeignKey(
                 entity = Photo.class,
-                parentColumns = "id",
-                childColumns = "photoId")}
+                parentColumns = "photo_Id",
+                childColumns = "photo_Id")},
+        inheritSuperIndices = true
 )
 public class Pet implements Parcelable {
     @NonNull
+    @ColumnInfo(name = "pet_Id")
     @PrimaryKey(autoGenerate = true)
-    private Long id;
+    private Long petId;
     private String name;
+    @ColumnInfo(name = "photo_Id")
     private Long photoId;
     @TypeConverters(DataTypeConverter.class)
     private Date birthDate;
     @Embedded
     private FoodSettings foodSettings;
+    @ColumnInfo(name = "user_Id")
     private Long userId;
 
-    public Pet(Long id, String name, Long photoId, Date birthDate, FoodSettings foodSettings,
+    public Pet(Long petId, String name, Long photoId, Date birthDate, FoodSettings foodSettings,
                Long userId) {
-        this.id = id;
+        this.petId = petId;
         this.name = name;
         this.photoId = photoId;
         this.birthDate = birthDate;
@@ -58,7 +64,7 @@ public class Pet implements Parcelable {
 
 
     protected Pet(Parcel in) {
-        id = in.readLong();
+        petId = in.readLong();
         name = in.readString();
         photoId = in.readLong();
         birthDate = (java.util.Date) in.readSerializable();
@@ -85,7 +91,7 @@ public class Pet implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong((id == null) ? 0 : id);
+        dest.writeLong((petId == null) ? 0 : petId);
         dest.writeString(name);
         dest.writeLong(photoId);
         dest.writeSerializable(birthDate);
@@ -94,12 +100,12 @@ public class Pet implements Parcelable {
     }
 
     @NonNull
-    public Long getId() {
-        return id;
+    public Long getPetId() {
+        return petId;
     }
 
-    public void setId(@NonNull Long id) {
-        this.id = id;
+    public void setPetId(@NonNull Long petId) {
+        this.petId = petId;
     }
 
     public String getName() {

@@ -16,9 +16,9 @@ public interface PetDao {
     void insert(Pet pet);
     @Insert
     void insert(List<Pet> petList);
-    @Query("SELECT * FROM Pet WHERE id = :id")
-    Pet getPetbyId (int id);
-    @Query("SELECT * FROM Pet WHERE userId = :userId")
+    @Query("SELECT * FROM Pet WHERE pet_Id = :petId")
+    Pet getPetbyId (int petId);
+    @Query("SELECT * FROM Pet WHERE user_Id = :userId")
     Pet getPetOwnedbyUserId (int userId);
     @Update
     void updatePet (Pet pet);

@@ -19,10 +19,11 @@ public class PetFoodingControl extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        repositoryComponent = DaggerRepositoryComponent.builder().build();
+        repositoryComponent = DaggerRepositoryComponent.builder().application(this).build();
     }
 
     public RepositoryComponent getRepositoryComponent() {
         return repositoryComponent;
     }
+
 }

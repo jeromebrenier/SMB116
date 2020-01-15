@@ -4,11 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 
 /**
@@ -16,20 +17,23 @@ import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
  * @author Jérôme Brenier
  */
 @Entity(foreignKeys = @ForeignKey(entity = Photo.class,
-                        parentColumns = "id",
-                        childColumns = "photoId")
+                        parentColumns = "photo_Id",
+                        childColumns = "photo_Id"),
+        indices = {@Index("photo_Id")}
 )
 public class User implements Parcelable {
     @NonNull
+    @ColumnInfo(name = "user_Id")
     @PrimaryKey (autoGenerate = true)
-    private Long id;
+    private Long userId;
     private String displayedName;
     private String email;
     private String password;
+    @ColumnInfo(name = "photo_Id")
     private Long photoId;
 
-    public User(Long id, String displayedName, String email, String password, Long photoId) {
-        this.id = id;
+    public User(Long userId, String displayedName, String email, String password, Long photoId) {
+        this.userId = userId;
         this.displayedName = displayedName;
         this.email = email;
         this.password = password;
@@ -37,7 +41,7 @@ public class User implements Parcelable {
     }
 
     protected User(Parcel in) {
-        id = in.readLong();
+        userId = in.readLong();
         displayedName = in.readString();
         email = in.readString();
         password = in.readString();
@@ -63,19 +67,20 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeLong((id == null) ? 0 : id);
+        dest.writeLong((userId == null) ? 0 : userId);
         dest.writeString(displayedName);
         dest.writeString(email);
         dest.writeString(password);
         dest.writeLong(photoId);
     }
 
-    public Long getId() {
-        return id;
+    @NonNull
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUserId(@NonNull Long userId) {
+        this.userId = userId;
     }
 
     public String getDisplayedName() {

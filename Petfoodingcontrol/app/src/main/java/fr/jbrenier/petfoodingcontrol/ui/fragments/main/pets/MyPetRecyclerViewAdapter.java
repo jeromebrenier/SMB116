@@ -13,7 +13,9 @@ import android.widget.TextView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 
 import java.util.List;
 
@@ -23,14 +25,16 @@ import java.util.List;
  */
 public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecyclerViewAdapter.ViewHolder> {
 
+    private final PetFoodingControlRepository petFoodingControlRepository;
     private final List<Pet> mUserPets;
     private User userLogged = null;
 
     private final PetFragment.OnListFragmentInteractionListener mListener;
 
-    public MyPetRecyclerViewAdapter(List<Pet> userPets,
+    public MyPetRecyclerViewAdapter(PetFragment petFragment,
                                     PetFragment.OnListFragmentInteractionListener listener) {
-        mUserPets = userPets;
+        this.petFoodingControlRepository = petFragment.getPfcRepository();
+        mUserPets = petFragment.getPetFragmentViewModel().getUserPets();
         mListener = listener;
     }
 
@@ -44,10 +48,10 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.pet = mUserPets.get(position);
-        if (mUserPets.get(position).getPhoto() != null
-                && !mUserPets.get(position).getPhoto().getImage().isEmpty()) {
+        Photo petPhoto = petFoodingControlRepository.getPetPhoto(holder.pet);
+        if (petPhoto != null && !petPhoto.getImage().isEmpty()) {
             byte[] decodedString =
-                    Base64.decode(mUserPets.get(position).getPhoto().getImage(), Base64.DEFAULT);
+                    Base64.decode(petPhoto.getImage(), Base64.DEFAULT);
             Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
                     decodedString.length);
             holder.mPetImageView.setImageBitmap(decodedByte);
@@ -55,7 +59,7 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
         holder.mPetNameView.setText(mUserPets.get(position).getName());
         holder.mPetStatusView.setText(R.string.pet_status_unknown);
         if (userLogged != null) {
-            setPetOwnedTxtVisibility(holder, mUserPets.get(position).getAuthorizedFeeders());
+           // setPetOwnedTxtVisibility(holder, holder.pet.getAuthorizedFeeders());
         }
 
         holder.mView.setOnClickListener(view -> {
