@@ -1,6 +1,7 @@
 package fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -31,6 +32,7 @@ public class AccountManagementFormFragment extends Fragment {
 
     private Activity activity;
     private PetFoodingControlRepository pfcRepository;
+    private OnSaveButtonClickListener callback;
 
     public static AccountManagementFormFragment newInstance() {
         return new AccountManagementFormFragment();
@@ -64,7 +66,8 @@ public class AccountManagementFormFragment extends Fragment {
         }
         User user = pfcRepository.getUserLogged().getValue();
         // image
-        Bitmap bitmap = GraphicUtils.getBitmapFromBase64String(pfcRepository.getUserPhoto(user).getImage());
+        Bitmap bitmap = GraphicUtils.getBitmapFromBase64String(
+                pfcRepository.getUserPhoto(user).getImage());
         ((ImageView) activity.findViewById(R.id.imv_user_photo)).setImageBitmap(bitmap);
         // text
         ((EditText) activity.findViewById(R.id.txt_account_username))
@@ -113,5 +116,32 @@ public class AccountManagementFormFragment extends Fragment {
                 }
             });
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnSaveButtonClickListener) {
+            callback = (OnSaveButtonClickListener) context;
+        } else {
+            throw new ClassCastException(context.toString()
+                    + " must implement AccountManagementFormFragment.OnSaveButtonClickListener");
+        }
+    }
+
+    public void onSaveButtonClick() {
+        callback.onSaveButtonClick(getUserFromFieldsData());
+    }
+
+    private User getUserFromFieldsData() {
+        String userName = ((EditText) activity.findViewById(R.id.txt_account_username))
+                .getText().toString();
+        String email = ((EditText) activity.findViewById(R.id.txt_account_email))
+                .getText().toString();
+        User userToSave = new User();
+    }
+
+    public interface OnSaveButtonClickListener {
+        public void onSaveButtonClick(User user);
     }
 }

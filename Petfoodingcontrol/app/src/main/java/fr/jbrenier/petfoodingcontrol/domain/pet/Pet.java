@@ -35,6 +35,10 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
                 entity = Photo.class,
                 parentColumns = "photo_Id",
                 childColumns = "photo_Id")},
+        indices = {
+        @Index(value = {"user_Id"}),
+        @Index(value = {"photo_Id"})
+        },
         inheritSuperIndices = true
 )
 public class Pet implements Parcelable {

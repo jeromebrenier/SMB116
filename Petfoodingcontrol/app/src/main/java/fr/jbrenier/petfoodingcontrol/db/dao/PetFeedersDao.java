@@ -19,9 +19,9 @@ public interface PetFeedersDao {
     @Insert
     void insert(List<PetFeeders> petFeedersList);
     @Query("SELECT * FROM PetFeeders INNER JOIN Pet ON PetFeeders.pet_Id = Pet.pet_id " +
-            "WHERE feeder_Id = :userId")
+            "WHERE PetFeeders.user_Id = :userId")
     List<Pet> getPetsforFeeder(Long userId);
-    @Query("SELECT * FROM PetFeeders INNER JOIN User ON PetFeeders.feeder_Id = User.user_Id " +
+    @Query("SELECT * FROM PetFeeders INNER JOIN User ON PetFeeders.user_Id = User.user_Id " +
             "WHERE pet_Id = :petId")
     List<User> getUsersForPet (Long petId);
     @Update

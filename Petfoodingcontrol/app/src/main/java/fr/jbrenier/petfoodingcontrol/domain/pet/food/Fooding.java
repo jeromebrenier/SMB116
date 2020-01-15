@@ -21,7 +21,10 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
  * @author Jérôme Brenier
  */
 @Entity(primaryKeys = { "user_Id", "pet_Id" },
-        indices = {@Index(value = {"user_Id", "pet_Id"}, unique = true)},
+        indices = {
+        @Index(value = {"user_Id"}),
+        @Index(value = {"pet_Id"})
+        },
         foreignKeys = {
         @ForeignKey(entity = User.class,
                 parentColumns = "user_Id",
