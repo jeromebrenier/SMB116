@@ -9,17 +9,19 @@ import androidx.room.Update;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 @Dao
 public interface PhotoDao {
     @Insert
-    void insert(Photo photo);
+    Completable insert(Photo photo);
     @Insert
-    void insert(List<Photo> photos);
+    Completable insert(List<Photo> photos);
     @Query("SELECT * FROM Photo WHERE photo_Id = :photoId")
-    Photo getPhotoById (Long photoId);
+    Single<Photo> getPhotoById (Long photoId);
     @Update
-    void update(Photo photo);
+    Completable update(Photo photo);
     @Delete
-    void delete(Photo photo);
+    Completable delete(Photo photo);
 }

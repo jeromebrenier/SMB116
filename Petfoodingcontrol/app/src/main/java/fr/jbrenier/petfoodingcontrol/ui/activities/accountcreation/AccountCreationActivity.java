@@ -129,7 +129,6 @@ public class AccountCreationActivity extends AppCompatActivity
                 userPhoto == null ? null : userPhoto.getPhotoId()
         );
         pfcRepository.save(newUser);
-        showToast(checkAccountCreation(newUser));
         finish();
     }
 

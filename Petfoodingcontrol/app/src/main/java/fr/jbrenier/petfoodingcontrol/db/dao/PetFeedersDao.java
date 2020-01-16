@@ -11,21 +11,23 @@ import java.util.List;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.pet.PetFeeders;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
 
 @Dao
 public interface PetFeedersDao {
     @Insert
-    void insert(PetFeeders petFeeders);
+    Completable insert(PetFeeders petFeeders);
     @Insert
-    void insert(List<PetFeeders> petFeedersList);
+    Completable insert(List<PetFeeders> petFeedersList);
     @Query("SELECT * FROM PetFeeders INNER JOIN Pet ON PetFeeders.pet_Id = Pet.pet_id " +
             "WHERE PetFeeders.user_Id = :userId")
-    List<Pet> getPetsforFeeder(Long userId);
+    Flowable<List<Pet>> getPetsforFeeder(Long userId);
     @Query("SELECT * FROM PetFeeders INNER JOIN User ON PetFeeders.user_Id = User.user_Id " +
             "WHERE pet_Id = :petId")
-    List<User> getUsersForPet (Long petId);
+    Flowable<List<User>> getUsersForPet (Long petId);
     @Update
-    void update(PetFeeders petFeeders);
+    Completable update(PetFeeders petFeeders);
     @Delete
-    void delete(PetFeeders petFeeders);
+    Completable delete(PetFeeders petFeeders);
 }

@@ -9,17 +9,19 @@ import androidx.room.Update;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.pet.food.Fooding;
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
 
 @Dao
 public interface FoodingDao {
     @Insert
-    void insert(Fooding fooding);
+    Completable insert(Fooding fooding);
     @Insert
-    void insert(List<Fooding> foodingList);
+    Completable insert(List<Fooding> foodingList);
     @Query("SELECT * FROM Fooding WHERE pet_Id = :petId")
-    List<Fooding> getFoodingsForPet (Long petId);
+    Flowable<List<Fooding>> getFoodingsForPet (Long petId);
     @Update
-    void update(Fooding fooding);
+    Completable update(Fooding fooding);
     @Delete
-    void delete(Fooding fooding);
+    Completable delete(Fooding fooding);
 }

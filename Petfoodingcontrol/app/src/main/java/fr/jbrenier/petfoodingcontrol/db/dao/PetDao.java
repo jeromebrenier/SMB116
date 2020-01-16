@@ -9,19 +9,21 @@ import androidx.room.Update;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 @Dao
 public interface PetDao {
     @Insert
-    void insert(Pet pet);
+    Completable insert(Pet pet);
     @Insert
-    void insert(List<Pet> petList);
+    Completable insert(List<Pet> petList);
     @Query("SELECT * FROM Pet WHERE pet_Id = :petId")
-    Pet getPetbyId (int petId);
+    Single<Pet> getPetbyId (int petId);
     @Query("SELECT * FROM Pet WHERE user_Id = :userId")
-    Pet getPetOwnedbyUserId (int userId);
+    Single<Pet> getPetOwnedbyUserId (int userId);
     @Update
-    void updatePet (Pet pet);
+    Completable updatePet (Pet pet);
     @Delete
-    void deletePet (Pet pet);
+    Completable deletePet (Pet pet);
 }

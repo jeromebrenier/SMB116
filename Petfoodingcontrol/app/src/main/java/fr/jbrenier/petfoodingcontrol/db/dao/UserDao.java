@@ -9,17 +9,21 @@ import androidx.room.Update;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import io.reactivex.Completable;
+import io.reactivex.Single;
 
 @Dao
 public interface UserDao {
     @Insert
-    void insert(User user);
+    Completable insert(User user);
     @Insert
-    void insert(List<User> userList);
+    Completable insert(List<User> userList);
     @Query("SELECT * FROM User WHERE user_Id = :userId")
-    User getUserbyId (Long userId);
+    Single<User> getUserbyId (Long userId);
+    @Query("SELECT * FROM User WHERE email = :userEmail")
+    Single<User> getUserbyEmail (String userEmail);
     @Update
-    void updateUser (User user);
+    Completable updateUser (User user);
     @Delete
-    void deleteUser (User user);
+    Completable deleteUser (User user);
 }
