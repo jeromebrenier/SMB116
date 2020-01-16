@@ -18,11 +18,15 @@ public interface PetFoodingControlRepository {
      * @return the User
      */
     public User getUserByCredentials(String email, String password);
+    public boolean checkUserExistance(User user);
     public Photo getUserPhoto(User user);
     public String getUserPasswd(String email);
     public boolean verifyUserPassword(String passwordToCheck, String storedPassword);
     public void setUserLogged(User user);
     public MutableLiveData<User> getUserLogged();
+    public void save(User user);
+
+    public void save(Photo photo);
 
     public Pet getPetById(String id);
     public void setUserPets(User user);

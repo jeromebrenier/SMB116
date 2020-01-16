@@ -11,11 +11,16 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.widget.Toast;
+
+import java.util.Map;
 
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
 
@@ -23,7 +28,8 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManag
  * Activity for creating User accounts.
  * @author Jérôme Brenier
  */
-public class AccountCreationActivity extends AppCompatActivity {
+public class AccountCreationActivity extends AppCompatActivity
+        implements AccountManagementFormFragment.OnSaveButtonClickListener {
 
     private static final String DUMMY_TITLE = " ";
     private static final int REQUEST_CODE_CAMERA_PERMISSION = 1;
@@ -95,7 +101,58 @@ public class AccountCreationActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        if (fragment instanceof AccountManagementFormFragment) {
+            AccountManagementFormFragment accountManagementFormFragment =
+                    (AccountManagementFormFragment) fragment;
+            accountManagementFormFragment.setCallback(this);
+        }
+    }
+
     public PetFoodingControlRepository getPetFoodingControlRepository() {
         return pfcRepository;
+    }
+
+    @Override
+    public void onSaveButtonClick(Map<String, String> userData) {
+        Photo userPhoto = null;
+        String base64photo = userData.get(AccountManagementFormFragment.PHOTO_KEY);
+        if (base64photo != null ) {
+            userPhoto = new Photo(base64photo);
+            pfcRepository.save(userPhoto);
+        }
+        User newUser = new User(
+                userData.get(AccountManagementFormFragment.USERNAME_KEY),
+                userData.get(AccountManagementFormFragment.EMAIL_KEY),
+                userData.get(AccountManagementFormFragment.PASSWORD_KEY),
+                userPhoto == null ? null : userPhoto.getPhotoId()
+        );
+        pfcRepository.save(newUser);
+        showToast(checkAccountCreation(newUser));
+        finish();
+    }
+
+    /**
+     * Show a toast depending of the error type :
+     * 1 : passwords and retype password are different
+     * 2 : some input is empty
+     * @param errorType
+     */
+    private void showToast(boolean result) {
+        Toast toast = Toast.makeText(
+                this,
+                result ? R.string.toast_account_created : R.string.toast_account_not_created,
+                Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    /**
+     * Check the user's existance in the database.
+     * @param user user to check
+     * @return result (true exists, false otherwise)
+     */
+    private boolean checkAccountCreation(User user) {
+        return pfcRepository.checkUserExistance(user);
     }
 }

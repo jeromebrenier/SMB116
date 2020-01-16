@@ -56,6 +56,15 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     }
 
     @Override
+    public boolean checkUserExistance(User user) {
+        final boolean[] result = new boolean[1];
+        Thread getThread = new Thread(() -> result[0] =
+                petFoodingControlDatabase.getUserDao().getUserbyId(user.getUserId()) != null);
+        getThread.start();
+        return result[0];
+    }
+
+    @Override
     public Photo getUserPhoto(User user) {
         // TODO implements
         return new Photo(1000L, "photobase64");
@@ -79,6 +88,20 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     @Override
     public MutableLiveData<User> getUserLogged() {
         return userLogged;
+    }
+
+    @Override
+    public void save(User user) {
+        Thread insertThread =
+                new Thread(() -> petFoodingControlDatabase.getUserDao().insert(user));
+        insertThread.start();
+    }
+
+    @Override
+    public void save(Photo photo) {
+        Thread insertThread =
+                new Thread(() -> petFoodingControlDatabase.getPhotoDao().insert(photo));
+        insertThread.start();
     }
 
     @Override

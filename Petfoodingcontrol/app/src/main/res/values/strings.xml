@@ -43,6 +43,9 @@
     <string name="hint_account_password">Password</string>
     <string name="hint_account_retype_password">Retype Password</string>
     <string name="btn_account_save">Save</string>
+    <string name="toast_passwords_mismatch">Two different passwords have been entered</string>
+    <string name="toast_account_created">Account created !</string>
+    <string name="toast_account_not_created">Account not created !</string>
 
     <!-- Logout -->
     <string name="btn_log_out">Log out</string>

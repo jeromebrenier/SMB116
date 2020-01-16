@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
@@ -32,7 +33,15 @@ public class User implements Parcelable {
     @ColumnInfo(name = "photo_Id")
     private Long photoId;
 
-    public User(Long userId, String displayedName, String email, String password, Long photoId) {
+    public User(String displayedName, String email, String password, Long photoId) {
+        this.displayedName = displayedName;
+        this.email = email;
+        this.password = password;
+        this.photoId = photoId;
+    }
+
+    @Ignore
+    public User(@NonNull Long userId, String displayedName, String email, String password, Long photoId) {
         this.userId = userId;
         this.displayedName = displayedName;
         this.email = email;
