@@ -13,6 +13,7 @@
     <string name="user_logged">user_logged</string>
     <string name="saved_email">email</string>
     <string name="saved_password">password</string>
+    <string name="toast_failed_login">Login failed</string>
 
     <!-- Main Activity -->
     <string name="title_activity_main">Pet Fooding Control</string>

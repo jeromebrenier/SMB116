@@ -82,9 +82,17 @@ public class LoginActivity extends AppCompatActivity {
     private void checkCredentials(String email, String password) {
         Disposable disposable = pfcRepository.getUserByEmail(email).subscribe(
                 user -> CryptographyUtils.checkPassword(password, user.getPassword()).subscribe(
-                        () -> pfcRepository.setUserLogged(user))
+                        () -> pfcRepository.setUserLogged(user)), throwable -> showFailedLoginToast()
                 );
         compositeDisposable.add(disposable);
+    }
+
+    /**
+     * Display a toast alerting that login has failed.
+     */
+    private void showFailedLoginToast() {
+        Toast toast = Toast.makeText(this, R.string.toast_failed_login, Toast.LENGTH_LONG);
+        toast.show();
     }
 
     /**
