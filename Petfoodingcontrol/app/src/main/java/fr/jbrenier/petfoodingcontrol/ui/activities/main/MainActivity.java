@@ -1,5 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -39,6 +40,8 @@ import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Main activity of the Pet Fooding Control application.
@@ -52,6 +55,9 @@ public class MainActivity extends AppCompatActivity implements
 
     @Inject
     PetFoodingControlRepository pfcRepository;
+
+    // Manages disposables
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private NavigationView navigationView;
     private TextView user_name;
@@ -137,13 +143,14 @@ public class MainActivity extends AppCompatActivity implements
     private void setUserDataInNavBar(User user) {
         user_name.setText(user.getDisplayedName());
         user_email.setText(user.getEmail());
-        Photo userPhoto = pfcRepository.getUserPhoto(user);
-        if (userPhoto!= null && userPhoto.getImage().isEmpty()) {
-            byte[] decodedString = Base64.decode(userPhoto.getImage(), Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
-                    decodedString.length);
-            user_photo.setImageBitmap(decodedByte);
-        }
+        Disposable disposable = pfcRepository.getUserPhoto(user).subscribe(
+                photo -> {
+                    byte[] decodedString = Base64.decode(photo.getImage(), Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
+                            decodedString.length);
+                    user_photo.setImageBitmap(decodedByte);
+                });
+        compositeDisposable.add(disposable);
     }
 
     /**
@@ -182,6 +189,12 @@ public class MainActivity extends AppCompatActivity implements
      */
     public void setToolBarTitle(int stringId) {
         toolbar.setTitle(getResources().getString(stringId));
+    }
+
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
     }
 
     @Override

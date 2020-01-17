@@ -2,9 +2,6 @@ package fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,9 +10,11 @@ import android.widget.TextView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
+import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 import java.util.List;
 
@@ -28,6 +27,9 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     private final PetFoodingControlRepository petFoodingControlRepository;
     private final List<Pet> mUserPets;
     private User userLogged = null;
+
+    /** Manages disposables */
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private final PetFragment.OnListFragmentInteractionListener mListener;
 
@@ -48,14 +50,11 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.pet = mUserPets.get(position);
-        Photo petPhoto = petFoodingControlRepository.getPetPhoto(holder.pet);
-        if (petPhoto != null && !petPhoto.getImage().isEmpty()) {
-            byte[] decodedString =
-                    Base64.decode(petPhoto.getImage(), Base64.DEFAULT);
-            Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
-                    decodedString.length);
-            holder.mPetImageView.setImageBitmap(decodedByte);
-        }
+        Disposable disposable = petFoodingControlRepository.getPetPhoto(holder.pet).subscribe(
+                photo -> holder.mPetImageView.setImageBitmap(
+                        ImageUtils.getBitmapFromBase64String(photo.getImage()))
+        );
+        compositeDisposable.add(disposable);
         holder.mPetNameView.setText(mUserPets.get(position).getName());
         holder.mPetStatusView.setText(R.string.pet_status_unknown);
         if (userLogged != null) {
@@ -69,6 +68,12 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
                     mListener.onListFragmentInteraction(holder.pet);
                 }
         });
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        compositeDisposable.dispose();
+        super.onDetachedFromRecyclerView(recyclerView);
     }
 
     /**

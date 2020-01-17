@@ -15,6 +15,8 @@ import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import io.reactivex.Completable;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class PetFoodingControlRepositoryImpl implements PetFoodingControlRepository {
 
@@ -29,37 +31,24 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     }
 
     @Override
-    public User getUserByCredentials(String email, String password) {
-/*        User user = petFoodingControlDatabase.getUserDao().getUserbyEmail(email);
-        if (verifyUserPassword(password, user.getPassword())) {
-            return user;
-        }*/
-        return null;
+    public Single<User> getUserByEmail(String email) {
+        return petFoodingControlDatabase.getUserDao().getUserbyEmail(email)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
-    public boolean checkUserExistance(User user) {
-        final boolean[] result = new boolean[1];
-        Thread getThread = new Thread(() -> result[0] =
-                petFoodingControlDatabase.getUserDao().getUserbyId(user.getUserId()) != null);
-        getThread.start();
-        System.out.println("Result ------> " + result[0]);
-        return result[0];
+    public Single<User> getUserById(Long userId) {
+        return petFoodingControlDatabase.getUserDao().getUserbyId(userId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
     public Single<Photo> getUserPhoto(User user) {
-        return petFoodingControlDatabase.getPhotoDao().getPhotoById(user.getPhotoId());
-    }
-
-    @Override
-    public String getUserPasswd(String email) {
-        return "test";
-    }
-
-    @Override
-    public boolean verifyUserPassword(String passwordToCheck, String storedPassword) {
-        return true;
+        return petFoodingControlDatabase.getPhotoDao().getPhotoById(user.getPhotoId())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
@@ -74,19 +63,23 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
 
     @Override
     public Completable save(User user) {
-        return petFoodingControlDatabase.getUserDao().insert(user);
+        return petFoodingControlDatabase.getUserDao().insert(user)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
-    public void save(Photo photo) {
-        Thread insertThread =
-                new Thread(() -> petFoodingControlDatabase.getPhotoDao().insert(photo));
-        insertThread.start();
+    public Completable save(Photo photo) {
+        return petFoodingControlDatabase.getPhotoDao().insert(photo)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
-    public Pet getPetById(String id) {
-        return null;
+    public Single<Pet> getPetById(Long petId) {
+        return petFoodingControlDatabase.getPetDao().getPetbyId(petId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
@@ -95,15 +88,14 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     }
 
     @Override
-    public Photo getPetPhoto(Pet pet) {
-        return new Photo(1000L, "phooooo");
+    public Single<Photo> getPetPhoto(Pet pet) {
+        return petFoodingControlDatabase.getPhotoDao().getPhotoById(pet.getPhotoId())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
     public MutableLiveData<List<Pet>> getUserPets() {
-        if (userPets.getValue() == null) {
-            //userPets.setValue();
-        }
         return userLogged == null ? null : new MutableLiveData<>();
     }
 }

@@ -1,5 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.db.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -19,7 +20,7 @@ public interface FoodingDao {
     @Insert
     Completable insert(List<Fooding> foodingList);
     @Query("SELECT * FROM Fooding WHERE pet_Id = :petId")
-    Flowable<List<Fooding>> getFoodingsForPet (Long petId);
+    LiveData<List<Fooding>> getFoodingsForPet (Long petId);
     @Update
     Completable update(Fooding fooding);
     @Delete

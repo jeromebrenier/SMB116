@@ -19,7 +19,7 @@ public interface PetDao {
     @Insert
     Completable insert(List<Pet> petList);
     @Query("SELECT * FROM Pet WHERE pet_Id = :petId")
-    Single<Pet> getPetbyId (int petId);
+    Single<Pet> getPetbyId (Long petId);
     @Query("SELECT * FROM Pet WHERE user_Id = :userId")
     Single<Pet> getPetOwnedbyUserId (int userId);
     @Update

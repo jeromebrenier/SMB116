@@ -23,6 +23,8 @@ import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Activity for creating User accounts.
@@ -33,6 +35,9 @@ public class AccountCreationActivity extends AppCompatActivity
 
     private static final String DUMMY_TITLE = " ";
     private static final int REQUEST_CODE_CAMERA_PERMISSION = 1;
+
+    /** Manages disposables */
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Inject
     PetFoodingControlRepository pfcRepository;
@@ -129,7 +134,7 @@ public class AccountCreationActivity extends AppCompatActivity
                 userPhoto == null ? null : userPhoto.getPhotoId()
         );
         pfcRepository.save(newUser);
-        finish();
+        checkAccountCreation(newUser);
     }
 
     /**
@@ -151,7 +156,16 @@ public class AccountCreationActivity extends AppCompatActivity
      * @param user user to check
      * @return result (true exists, false otherwise)
      */
-    private boolean checkAccountCreation(User user) {
-        return pfcRepository.checkUserExistance(user);
+    private void checkAccountCreation(User user) {
+        Disposable disposable = pfcRepository.getUserById(user.getUserId()).subscribe(
+                userFound -> showToast(true), throwable -> showToast(false)
+        );
+        compositeDisposable.add(disposable);
+    }
+
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
     }
 }

@@ -22,6 +22,8 @@ public interface UserDao {
     Single<User> getUserbyId (Long userId);
     @Query("SELECT * FROM User WHERE email = :userEmail")
     Single<User> getUserbyEmail (String userEmail);
+    @Query("SELECT * FROM User WHERE email = :userEmail AND password = :userPassword")
+    Single<User> getUserbyCredentials (String userEmail, String userPassword);
     @Update
     Completable updateUser (User user);
     @Delete

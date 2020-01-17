@@ -15,10 +15,12 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginFieldsFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
+import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 
 /**
  * The Login activity of the Pet Fooding Control application.
@@ -31,12 +33,15 @@ public class LoginActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPref;
 
+    /** Manages disposables */
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
         setContentView(R.layout.activity_login);
-        pfcRepository.setUserLogged(isKeepLogged());
+        isKeepLogged();
         if (savedInstanceState == null) {
             loadFragment(pfcRepository.getUserLogged().getValue() == null ?
                     LoginFieldsFragment.newInstance() : LoginWelcomeFragment.newInstance());
@@ -47,18 +52,17 @@ public class LoginActivity extends AppCompatActivity {
      * Check if the "Keep me logged" feature is active (i.e if an email and a hashed password is
      * stored in the preferences). If true return the User corresponding to the credentials. If
      * false or if the credentials are invalid return null.
-     * @return the User or null if no data or invalid data
      */
-    private User isKeepLogged() {
+    private void isKeepLogged() {
         loadSharedPref();
         String email = sharedPref.getString(this.getResources().getString(R.string.saved_email),
                 "");
         String password = sharedPref.getString(
                 this.getResources().getString(R.string.saved_password),"");
         if (email.equals("") || password.equals("")) {
-            return null;
+            return;
         }
-        return checkCredentials(email, password);
+        checkCredentials(email, password);
     }
 
     /**
@@ -74,10 +78,13 @@ public class LoginActivity extends AppCompatActivity {
      * Check credentials (email and password). Return an User or null if credentials invalid.
      * @param email entered
      * @param password entered
-     * @return corresponding User
      */
-    private User checkCredentials(String email, String password) {
-        return pfcRepository.getUserByCredentials(email, password);
+    private void checkCredentials(String email, String password) {
+        Disposable disposable = pfcRepository.getUserByEmail(email).subscribe(
+                user -> CryptographyUtils.checkPassword(password, user.getPassword()).subscribe(
+                        () -> pfcRepository.setUserLogged(user))
+                );
+        compositeDisposable.add(disposable);
     }
 
     /**
@@ -110,10 +117,12 @@ public class LoginActivity extends AppCompatActivity {
      * @param inputPassword password entered
      */
     private void onCredentialsEntered(String inputEmail, String inputPassword) {
-        pfcRepository.setUserLogged(checkCredentials(inputEmail, inputPassword));
-        if (pfcRepository.getUserLogged().getValue() != null) {
-            loadFragment(new LoginWelcomeFragment());
-        }
+        checkCredentials(inputEmail, inputPassword);
+        pfcRepository.getUserLogged().observe(this, user -> {
+            if (user != null) {
+                loadFragment(new LoginWelcomeFragment());
+            }
+        });
     }
 
     /**
@@ -131,6 +140,12 @@ public class LoginActivity extends AppCompatActivity {
         Intent retIntent = new Intent();
         setResult(resultCode, retIntent);
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
     }
 
     public PetFoodingControlRepository getPetFoodingControlRepository() {
