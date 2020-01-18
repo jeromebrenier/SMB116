@@ -15,9 +15,7 @@ import io.reactivex.Single;
 @Dao
 public interface PhotoDao {
     @Insert
-    Completable insert(Photo photo);
-    @Insert
-    Completable insert(List<Photo> photos);
+    Single<Long> insert(Photo photo);
     @Query("SELECT * FROM Photo WHERE photo_Id = :photoId")
     Single<Photo> getPhotoById (Long photoId);
     @Update

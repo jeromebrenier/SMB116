@@ -15,6 +15,8 @@ public class PetFoodingControl extends Application {
 
     private RepositoryComponent repositoryComponent;
     public MutableLiveData<Boolean> isCameraPermissionGranted = new MutableLiveData<>(false);
+    public MutableLiveData<Boolean> isReadExternalStoragePermissionGranted =
+            new MutableLiveData<>(false);
 
     @Override
     public void onCreate() {

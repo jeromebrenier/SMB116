@@ -1,6 +1,5 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.main;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,12 +21,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -39,7 +39,9 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
+import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -48,10 +50,14 @@ import io.reactivex.disposables.Disposable;
  * @author Jérôme Brenier
  */
 public class MainActivity extends AppCompatActivity implements
-        PetFragment.OnListFragmentInteractionListener {
+        PetFragment.OnListFragmentInteractionListener,
+        AccountManagementFormFragment.OnSaveButtonClickListener{
 
     private static final int LOGIN_REQUEST = 1;
     private static final int ADD_PET_REQUEST = 2;
+
+    /** LOGGING */
+    private static final String TAG = "MainActivity";
 
     @Inject
     PetFoodingControlRepository pfcRepository;
@@ -59,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements
     // Manages disposables
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    private NavigationView navigationView;
     private TextView user_name;
     private TextView user_email;
     private ImageView user_photo;
@@ -76,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
         setupAddButton();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -143,13 +148,16 @@ public class MainActivity extends AppCompatActivity implements
     private void setUserDataInNavBar(User user) {
         user_name.setText(user.getDisplayedName());
         user_email.setText(user.getEmail());
+        Log.i(TAG, "user's photo id : " + user.getPhotoId() + " email " + user.getEmail());
         Disposable disposable = pfcRepository.getUserPhoto(user).subscribe(
                 photo -> {
+                    Log.i(TAG, "loading the photo...");
                     byte[] decodedString = Base64.decode(photo.getImage(), Base64.DEFAULT);
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
                             decodedString.length);
                     user_photo.setImageBitmap(decodedByte);
-                });
+                }, throwable ->
+                    Log.e(TAG, "user photo not loaded", throwable));
         compositeDisposable.add(disposable);
     }
 
@@ -204,5 +212,60 @@ public class MainActivity extends AppCompatActivity implements
 
     public PetFoodingControlRepository getPetFoodingControlRepository() {
         return pfcRepository;
+    }
+
+    @Override
+    public void onSaveButtonClick(Map<String, String> userData) {
+        // USER
+        String hashedUserPassword = CryptographyUtils.hashPassword(
+                userData.get(AccountManagementFormFragment.PASSWORD_KEY));
+        final User newUser = new User(
+                userData.get(AccountManagementFormFragment.USERNAME_KEY),
+                userData.get(AccountManagementFormFragment.EMAIL_KEY),
+                hashedUserPassword,
+                null
+        );
+        // PHOTO
+        String base64photo = userData.get(AccountManagementFormFragment.PHOTO_KEY);
+        if (base64photo != null) {
+            final Photo userPhoto = new Photo(base64photo);
+            Disposable disposable = pfcRepository.save(userPhoto).subscribe(
+                    (photoId) -> {
+                        Log.i(TAG, "User's photo saved with id " + photoId);
+                        newUser.setPhotoId(photoId);
+                        updateUser(newUser);
+                    },
+                    throwable -> {
+                        Log.e(TAG, "photo save failure", throwable);
+                    });
+            compositeDisposable.add(disposable);
+            pfcRepository.save(userPhoto);
+        }
+    }
+
+    /**
+     * Update the user in the data source.
+     * @param user user to save
+     */
+    private void updateUser(User user) {
+        Disposable disposable = pfcRepository.update(user).subscribe(
+                () -> {
+                    Log.i(TAG,"User with id : " + user.getUserId() + " updated");
+                    showToast(getResources().getString(R.string.toast_account_update_success));
+                },
+                throwable -> {
+                    Log.e(TAG, "user update failure", throwable);
+                    showToast(getResources().getString(R.string.toast_account_update_failure));
+                });
+        compositeDisposable.add(disposable);
+    }
+
+    /**
+     * Create and show a toast.
+     * @param message text to show
+     */
+    private void showToast(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        toast.show();
     }
 }

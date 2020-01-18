@@ -2,10 +2,14 @@ package fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,10 +17,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
 
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -34,10 +39,19 @@ import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
+import static android.app.Activity.RESULT_OK;
+
 /**
  *
  */
 public class AccountManagementFormFragment extends Fragment implements View.OnClickListener {
+
+    /** REQUESTS */
+    private static final int PICK_IMAGE_REQUEST = 1;
+    private static final int TAKE_PHOTO_REQUEST = 2;
+
+    /** LOGGING */
+    private static final String TAG = "AccountManagementFormFragment";
 
     /** user data keys */
     public static final String PHOTO_KEY = "photo";
@@ -53,6 +67,7 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     private Activity activity;
+    private PetFoodingControl petFoodingControl;
     private PetFoodingControlRepository pfcRepository;
     private OnSaveButtonClickListener callback;
 
@@ -67,6 +82,7 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
         setRetainInstance(true);
         // set the parent activity
         activity = getActivity();
+        petFoodingControl = (PetFoodingControl) activity.getApplication();
     }
 
     /**
@@ -110,6 +126,15 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
     private void setPhotoInImageView(String b64Image) {
         Bitmap bitmap = ImageUtils.getBitmapFromBase64String(b64Image);
         ((ImageView) activity.findViewById(R.id.imv_user_photo)).setImageBitmap(bitmap);
+        isDummyPhoto = false;
+    }
+
+    /**
+     * Display the photo in the dedicated ImageView.
+     * @param bitmapImage the bitmap image
+     */
+    private void setPhotoInImageView(Bitmap bitmapImage) {
+        ((ImageView) activity.findViewById(R.id.imv_user_photo)).setImageBitmap(bitmapImage);
     }
 
     @Override
@@ -128,7 +153,10 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
             setPhotoInImageView(DUMMY_PHOTO_B64);
         }
         activity.findViewById(R.id.btn_account_save).setOnClickListener(this);
+        activity.findViewById((R.id.btn_pick_user_photo_on_disk)).setOnClickListener(this);
+        activity.findViewById((R.id.btn_take_user_photo)).setOnClickListener(this);
         hideCameraButtonIfNoCameraOrNoPermission();
+        hidePickImageButtonIfNoExtStoragePermission();
     }
 
     /**
@@ -137,7 +165,8 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
      */
     private void hideCameraButtonIfNoCameraOrNoPermission() {
         // check if a camera is present on the device
-        if (getContext().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
+        if (getContext().getPackageManager() != null && getContext()
+                .getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
             setIsCameraPermissionGrantedListener();
         }
     }
@@ -145,12 +174,30 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
     private void setIsCameraPermissionGrantedListener() {
         if (getActivity().getApplication() != null) {
             MutableLiveData<Boolean> isCameraPermissionGranted =
-                    ((PetFoodingControl) getActivity().getApplication()).isCameraPermissionGranted;
+                    petFoodingControl.isCameraPermissionGranted;
             isCameraPermissionGranted.observe(this, view -> {
                 if (isCameraPermissionGranted.getValue()) {
                     activity.findViewById(R.id.btn_take_user_photo).setVisibility(View.VISIBLE);
                 } else {
                     activity.findViewById(R.id.btn_take_user_photo).setVisibility(View.GONE);
+                }
+            });
+        }
+    }
+
+    /**
+     * Hide the camera button if no camera is present on the device, or if the permission to use the
+     * one present has not been granted.
+     */
+    private void hidePickImageButtonIfNoExtStoragePermission() {
+        if (getActivity().getApplication() != null) {
+            MutableLiveData<Boolean> isReadExternalStoragePermissionGranted =
+                    petFoodingControl.isReadExternalStoragePermissionGranted;
+            isReadExternalStoragePermissionGranted.observe(this, view -> {
+                if (isReadExternalStoragePermissionGranted.getValue()) {
+                    activity.findViewById(R.id.btn_pick_user_photo_on_disk).setVisibility(View.VISIBLE);
+                } else {
+                    activity.findViewById(R.id.btn_pick_user_photo_on_disk).setVisibility(View.GONE);
                 }
             });
         }
@@ -195,14 +242,84 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.btn_account_save) {
-            int validationResult = validateDataFromInput();
-            if (validationResult == 0) {
-                callback.onSaveButtonClick(getDataFromInput());
-            } else {
-                showToast(validationResult);
+        switch (v.getId()) {
+            case R.id.btn_account_save :
+                int validationResult = validateDataFromInput();
+                if (validationResult == 0) {
+                    callback.onSaveButtonClick(getDataFromInput());
+                } else {
+                    showToast(validationResult);
+                }
+                break;
+            case R.id.btn_pick_user_photo_on_disk :
+                sendPickImageIntent();
+                break;
+            case R.id.btn_take_user_photo :
+                sendTakePhotoIntent();
+                break;
+            default :
+                break;
+        }
+    }
+
+    /**
+     * Send an intent to pick an image on the disk of the device.
+     */
+    private void sendPickImageIntent() {
+        Intent pickIntent = new Intent(Intent.ACTION_PICK);
+        pickIntent.setDataAndType(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                "image/*");
+        startActivityForResult(pickIntent, PICK_IMAGE_REQUEST);
+    }
+
+    /**
+     * Send an intent to take a photo.
+     */
+    private void sendTakePhotoIntent() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, TAKE_PHOTO_REQUEST);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == PICK_IMAGE_REQUEST || requestCode == TAKE_PHOTO_REQUEST) {
+            final Bundle extras = data.getExtras();
+            final Bitmap imageRetrieved = requestCode == PICK_IMAGE_REQUEST
+                    ? getBitmapFromIntent(data) : (Bitmap) extras.get("data");
+            if (imageRetrieved != null) {
+                setPhotoInImageView(imageRetrieved);
             }
         }
+    }
+
+    /**
+     * recover the image form the return intent.
+     * @param data the return intent
+     * @return the bitmap image, or null if image can't be retrieved
+     */
+    private Bitmap getBitmapFromIntent(Intent data) {
+        Uri selectedImage = data.getData();
+        String[] filePathColumn = { MediaStore.Images.Media.DATA };
+
+        if (getActivity().getContentResolver() != null) {
+            Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                Log.i(TAG, "column index : " + columnIndex);
+                String picturePath = cursor.getString(columnIndex);
+                Log.i(TAG, "picture path : " + picturePath);
+                cursor.close();
+
+                return BitmapFactory.decodeFile(picturePath);
+            }
+        }
+        return null;
     }
 
     /**
@@ -230,7 +347,7 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
      * Show a toast depending of the error type :
      * 1 : passwords and retype password are different
      * 2 : some input is empty
-     * @param errorType
+     * @param errorType 1 : passwords mismatch 2 : incomplete fields filling
      */
     private void showToast(int errorType) {
         Toast toast = Toast.makeText(
@@ -252,6 +369,6 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
 
 
     public interface OnSaveButtonClickListener {
-        public void onSaveButtonClick(Map<String, String> userData);
+        void onSaveButtonClick(Map<String, String> userData);
     }
 }

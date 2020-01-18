@@ -28,6 +28,9 @@ import io.reactivex.disposables.Disposable;
  */
 public class LoginActivity extends AppCompatActivity {
 
+    /** LOGGING */
+    private static final String TAG = "LoginActivity";
+
     @Inject
     PetFoodingControlRepository pfcRepository;
 
@@ -82,8 +85,8 @@ public class LoginActivity extends AppCompatActivity {
     private void checkCredentials(String email, String password) {
         Disposable disposable = pfcRepository.getUserByEmail(email).subscribe(
                 user -> CryptographyUtils.checkPassword(password, user.getPassword()).subscribe(
-                        () -> pfcRepository.setUserLogged(user)), throwable -> showFailedLoginToast()
-                );
+                        () -> pfcRepository.setUserLogged(user)), throwable -> {
+                    showFailedLoginToast();});
         compositeDisposable.add(disposable);
     }
 

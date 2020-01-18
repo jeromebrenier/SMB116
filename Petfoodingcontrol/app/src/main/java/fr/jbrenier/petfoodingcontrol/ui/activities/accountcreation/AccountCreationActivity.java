@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Map;
@@ -23,6 +24,7 @@ import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
+import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
@@ -35,9 +37,15 @@ public class AccountCreationActivity extends AppCompatActivity
 
     private static final String DUMMY_TITLE = " ";
     private static final int REQUEST_CODE_CAMERA_PERMISSION = 1;
+    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSION = 2;
+
+    /** Logging */
+    private static final String TAG = "AccountCreationActivity";
 
     /** Manages disposables */
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+
+    private PetFoodingControl petFoodingControl;
 
     @Inject
     PetFoodingControlRepository pfcRepository;
@@ -45,10 +53,17 @@ public class AccountCreationActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account_management);
+        petFoodingControl = ((PetFoodingControl) getApplication());
+        setContentView(R.layout.activity_account_creation);
         setActivityTitle();
-        ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
-        checkPermission(Manifest.permission.CAMERA, REQUEST_CODE_CAMERA_PERMISSION);
+        petFoodingControl.getRepositoryComponent().inject(this);
+        // Camera permission management
+        petFoodingControl.isCameraPermissionGranted.setValue(
+                checkPermission(Manifest.permission.CAMERA, REQUEST_CODE_CAMERA_PERMISSION));
+        // Storage access permission management
+        petFoodingControl.isReadExternalStoragePermissionGranted.setValue(
+                checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSION));
         if (savedInstanceState == null) {
             loadFragment(AccountManagementFormFragment.newInstance());
         }
@@ -81,28 +96,40 @@ public class AccountCreationActivity extends AppCompatActivity
      * @param permission needed
      * @param requestCode code of the request
      */
-    private void checkPermission(String permission, int requestCode)
+    private boolean checkPermission(String permission, int requestCode)
     {
         if (ContextCompat.checkSelfPermission(this, permission)
                 == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this,
                     new String[] { permission }, requestCode);
         } else {
-            ((PetFoodingControl) getApplication()).isCameraPermissionGranted.setValue(true);
+            return true;
         }
+        return false;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
-        if (requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                ((PetFoodingControl) getApplication()).isCameraPermissionGranted.setValue(true);
-            } else {
-                ((PetFoodingControl) getApplication()).isCameraPermissionGranted.setValue(false);
-            }
-            return;
+        switch (requestCode) {
+            case REQUEST_CODE_CAMERA_PERMISSION :
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    petFoodingControl.isCameraPermissionGranted.setValue(true);
+                } else {
+                    petFoodingControl.isCameraPermissionGranted.setValue(false);
+                }
+                break;
+            case REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSION :
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    petFoodingControl.isReadExternalStoragePermissionGranted.setValue(true);
+                } else {
+                    petFoodingControl.isReadExternalStoragePermissionGranted.setValue(false);
+                }
+                break;
+            default :
+                break;
         }
     }
 
@@ -121,46 +148,58 @@ public class AccountCreationActivity extends AppCompatActivity
 
     @Override
     public void onSaveButtonClick(Map<String, String> userData) {
-        Photo userPhoto = null;
-        String base64photo = userData.get(AccountManagementFormFragment.PHOTO_KEY);
-        if (base64photo != null ) {
-            userPhoto = new Photo(base64photo);
-            pfcRepository.save(userPhoto);
-        }
-        User newUser = new User(
+        // USER
+        String hashedUserPassword = CryptographyUtils.hashPassword(
+                userData.get(AccountManagementFormFragment.PASSWORD_KEY));
+        final User newUser = new User(
                 userData.get(AccountManagementFormFragment.USERNAME_KEY),
                 userData.get(AccountManagementFormFragment.EMAIL_KEY),
-                userData.get(AccountManagementFormFragment.PASSWORD_KEY),
-                userPhoto == null ? null : userPhoto.getPhotoId()
+                hashedUserPassword,
+                null
         );
-        pfcRepository.save(newUser);
-        checkAccountCreation(newUser);
+        // PHOTO
+        String base64photo = userData.get(AccountManagementFormFragment.PHOTO_KEY);
+        if (base64photo != null ) {
+            final Photo userPhoto = new Photo(base64photo);
+            Disposable disposable = pfcRepository.save(userPhoto).subscribe(
+                    (photoId) -> {
+                        Log.i(TAG,"User's photo saved with id " + photoId);
+                        newUser.setPhotoId(photoId);
+                        saveUser(newUser);
+                    },
+                    throwable -> {
+                        Log.e(TAG, "photo save failure", throwable);
+                    });
+            compositeDisposable.add(disposable);
+            pfcRepository.save(userPhoto);
+        }
     }
 
     /**
-     * Show a toast depending of the error type :
-     * 1 : passwords and retype password are different
-     * 2 : some input is empty
-     * @param errorType
+     * Save the user in the data source.
+     * @param user user to save
      */
-    private void showToast(boolean result) {
-        Toast toast = Toast.makeText(
-                this,
-                result ? R.string.toast_account_created : R.string.toast_account_not_created,
-                Toast.LENGTH_LONG);
-        toast.show();
-    }
-
-    /**
-     * Check the user's existance in the database.
-     * @param user user to check
-     * @return result (true exists, false otherwise)
-     */
-    private void checkAccountCreation(User user) {
-        Disposable disposable = pfcRepository.getUserById(user.getUserId()).subscribe(
-                userFound -> showToast(true), throwable -> showToast(false)
-        );
+    private void saveUser(User user) {
+        Disposable disposable = pfcRepository.save(user).subscribe(
+                (userId) -> {
+                    Log.i(TAG,"User saved with id : " + userId);
+                    showToast(getResources().getString(R.string.toast_account_created));
+                    finish();
+                },
+                throwable -> {
+                    Log.e(TAG, "account creation failure", throwable);
+                    showToast(getResources().getString(R.string.toast_account_not_created));
+                });
         compositeDisposable.add(disposable);
+    }
+
+    /**
+     * Create and show a toast.
+     * @param message text to show
+     */
+    private void showToast(String message) {
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        toast.show();
     }
 
     @Override

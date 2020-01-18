@@ -1,5 +1,7 @@
 package fr.jbrenier.petfoodingcontrol.utils;
 
+import android.provider.Settings;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 import io.reactivex.Completable;

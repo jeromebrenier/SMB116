@@ -15,17 +15,13 @@ import io.reactivex.Single;
 @Dao
 public interface UserDao {
     @Insert
-    Completable insert(User user);
-    @Insert
-    Completable insert(List<User> userList);
+    Single<Long> insert(User user);
     @Query("SELECT * FROM User WHERE user_Id = :userId")
-    Single<User> getUserbyId (Long userId);
+    Single<User> getUserById(Long userId);
     @Query("SELECT * FROM User WHERE email = :userEmail")
-    Single<User> getUserbyEmail (String userEmail);
-    @Query("SELECT * FROM User WHERE email = :userEmail AND password = :userPassword")
-    Single<User> getUserbyCredentials (String userEmail, String userPassword);
+    Single<User> getUserByEmail(String userEmail);
     @Update
-    Completable updateUser (User user);
+    Completable update (User user);
     @Delete
-    Completable deleteUser (User user);
+    Completable delete (User user);
 }

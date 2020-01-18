@@ -11,14 +11,14 @@ import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.pet.food.Fooding;
 import io.reactivex.Completable;
-import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 @Dao
 public interface FoodingDao {
     @Insert
-    Completable insert(Fooding fooding);
+    Single<Long> insert(Fooding fooding);
     @Insert
-    Completable insert(List<Fooding> foodingList);
+    Single<List<Long>> insert(List<Fooding> foodingList);
     @Query("SELECT * FROM Fooding WHERE pet_Id = :petId")
     LiveData<List<Fooding>> getFoodingsForPet (Long petId);
     @Update

@@ -19,8 +19,8 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/content_description_btn_pick_user_photo_on_disk"
             android:src="@drawable/ic_file_download_black_24dp"
-            app:layout_constraintStart_toEndOf="@+id/btn_take_user_photo"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toEndOf="@+id/imv_user_photo"
+            app:layout_constraintTop_toBottomOf="@+id/btn_take_user_photo" />
 
         <ImageButton
             android:id="@+id/btn_take_user_photo"
@@ -36,8 +36,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:contentDescription="@string/content_description_user_photo"
-            android:minWidth="@dimen/user_photo_min_width"
-            android:minHeight="@dimen/user_photo_min_height"
+            android:maxWidth="@dimen/user_photo_width"
+            android:maxHeight="@dimen/user_photo_height"
+            android:minWidth="@dimen/user_photo_width"
+            android:minHeight="@dimen/user_photo_height"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

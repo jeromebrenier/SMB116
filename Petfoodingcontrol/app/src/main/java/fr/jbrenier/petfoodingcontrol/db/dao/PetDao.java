@@ -15,9 +15,9 @@ import io.reactivex.Single;
 @Dao
 public interface PetDao {
     @Insert
-    Completable insert(Pet pet);
+    Single<Long> insert(Pet pet);
     @Insert
-    Completable insert(List<Pet> petList);
+    Single<List<Long>> insert(List<Pet> petList);
     @Query("SELECT * FROM Pet WHERE pet_Id = :petId")
     Single<Pet> getPetbyId (Long petId);
     @Query("SELECT * FROM Pet WHERE user_Id = :userId")

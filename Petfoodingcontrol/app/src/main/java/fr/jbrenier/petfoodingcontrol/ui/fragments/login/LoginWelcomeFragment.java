@@ -62,6 +62,8 @@ public class LoginWelcomeFragment extends Fragment {
      * Finishes the Login activity.
      */
     private void finishLoginActivity() {
-        ((LoginActivity) getActivity()).finishLoginActivity(RESULT_OK);
+        if (getActivity() != null) {
+            ((LoginActivity) getActivity()).finishLoginActivity(RESULT_OK);
+        }
     }
 }

@@ -13,13 +13,14 @@ import fr.jbrenier.petfoodingcontrol.domain.pet.PetFeeders;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 @Dao
 public interface PetFeedersDao {
     @Insert
-    Completable insert(PetFeeders petFeeders);
+    Single<Long> insert(PetFeeders petFeeders);
     @Insert
-    Completable insert(List<PetFeeders> petFeedersList);
+    Single<List<Long>> insert(List<PetFeeders> petFeedersList);
     @Query("SELECT * FROM PetFeeders INNER JOIN Pet ON PetFeeders.pet_Id = Pet.pet_id " +
             "WHERE PetFeeders.user_Id = :userId")
     Flowable<List<Pet>> getPetsforFeeder(Long userId);

@@ -47,6 +47,9 @@
     <string name="toast_passwords_mismatch">Two different passwords have been entered</string>
     <string name="toast_account_created">Account created !</string>
     <string name="toast_account_not_created">Account not created !</string>
+    <string name="toast_account_update_success">Account successfully updated !</string>
+    <string name="toast_account_update_failure">Account not updated !</string>
+    <string name="intent_title_select_picture">Select a picture</string>
 
     <!-- Logout -->
     <string name="btn_log_out">Log out</string>

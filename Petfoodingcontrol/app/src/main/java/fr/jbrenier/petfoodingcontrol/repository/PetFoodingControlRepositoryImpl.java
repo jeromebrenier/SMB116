@@ -32,14 +32,14 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
 
     @Override
     public Single<User> getUserByEmail(String email) {
-        return petFoodingControlDatabase.getUserDao().getUserbyEmail(email)
+        return petFoodingControlDatabase.getUserDao().getUserByEmail(email)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
     public Single<User> getUserById(Long userId) {
-        return petFoodingControlDatabase.getUserDao().getUserbyId(userId)
+        return petFoodingControlDatabase.getUserDao().getUserById(userId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
@@ -62,14 +62,21 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     }
 
     @Override
-    public Completable save(User user) {
+    public Single<Long> save(User user) {
         return petFoodingControlDatabase.getUserDao().insert(user)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
 
     @Override
-    public Completable save(Photo photo) {
+    public Completable update(User user) {
+        return petFoodingControlDatabase.getUserDao().update(user)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Single<Long> save(Photo photo) {
         return petFoodingControlDatabase.getPhotoDao().insert(photo)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());

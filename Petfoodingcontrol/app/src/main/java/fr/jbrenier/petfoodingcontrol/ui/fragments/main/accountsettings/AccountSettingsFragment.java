@@ -19,7 +19,6 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManag
 
 public class AccountSettingsFragment extends Fragment {
 
-    private AccountSettingsViewModel accountSettingsViewModel;
     private MainActivity mainActivity;
 
     @Override
@@ -30,11 +29,9 @@ public class AccountSettingsFragment extends Fragment {
     }
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        accountSettingsViewModel =
-                ViewModelProviders.of(this).get(AccountSettingsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_account_settings, container, false);
         mainActivity = (MainActivity)getActivity();
-        // hide the add a pet button if visible
+        // Hide the add a pet button if visible
         if (getActivity().findViewById(R.id.main_addPet).getVisibility() == View.VISIBLE) {
             getActivity().findViewById(R.id.main_addPet).setVisibility(View.INVISIBLE);
         }
