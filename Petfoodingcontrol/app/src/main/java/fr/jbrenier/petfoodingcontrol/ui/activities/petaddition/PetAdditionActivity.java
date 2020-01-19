@@ -13,17 +13,22 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.SectionsPagerAdapter;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders.PetFeedersFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders.dummy.DummyContent;
 
 /**
  * The activity for adding a pet with the Pet Fooding Control application.
  * @author Jérôme Brenier
  */
-public class PetAdditionActivity extends AppCompatActivity {
+public class PetAdditionActivity extends AppCompatActivity
+        implements PetFeedersFragment.OnListFragmentInteractionListener {
 
     private PetAdditionViewModel petAdditionViewModel;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         petAdditionViewModel = ViewModelProviders.of(this).get(PetAdditionViewModel.class);
         setContentView(R.layout.activity_pet_addition);
@@ -37,12 +42,19 @@ public class PetAdditionActivity extends AppCompatActivity {
     }
 
     private void setupToolBar() {
-        Toolbar toolbar = findViewById(R.id.pet_addition_toolbar);
-        setSupportActionBar(toolbar);
+        //toolbar = findViewById(R.id.pet_addition_toolbar);
+ /*       setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
+        }*/
+    }
+
+    /**
+     * Set the correct localized toolbar title.
+     */
+    public void setToolBarTitle(int stringId) {
+        //toolbar.setTitle(getResources().getString(stringId));
     }
 
     /**
@@ -54,5 +66,10 @@ public class PetAdditionActivity extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         );
+    }
+
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+
     }
 }

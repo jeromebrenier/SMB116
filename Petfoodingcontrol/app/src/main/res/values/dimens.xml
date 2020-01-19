@@ -17,7 +17,7 @@
     <dimen name="fieldset_top_margin">32dp</dimen>
     <dimen name="fieldset_bottom_margin">16dp</dimen>
     <dimen name="fieldset_fields_spacing">24dp</dimen>
-    <dimen name="fieldset_width">341dp</dimen>
+    <dimen name="main_content_width">341dp</dimen>
     <dimen name="btn_validation_bottom_margin">16dp</dimen>
     <dimen name="user_photo_width">150dp</dimen>
     <dimen name="user_photo_height">150dp</dimen>

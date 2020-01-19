@@ -2,6 +2,9 @@
     <string name="app_name">Pet Fooding Control</string>
     <string name="main_logo">Main Pet Fooding Control logo</string>
 
+    <!-- Global -->
+    <string name="btn_save">Save</string>
+
     <!-- Login -->
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
@@ -43,7 +46,6 @@
     <string name="hint_account_email">Email</string>
     <string name="hint_account_password">Password</string>
     <string name="hint_account_retype_password">Retype Password</string>
-    <string name="btn_account_save">Save</string>
     <string name="toast_passwords_mismatch">Two different passwords have been entered</string>
     <string name="toast_account_created">Account created !</string>
     <string name="toast_account_not_created">Account not created !</string>
@@ -56,6 +58,16 @@
 
     <!-- Add a pet -->
     <string name="title_add_a_pet_activity">Add a pet</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_pet_general">General</string>
+    <string name="tab_text_pet_food">Food</string>
+    <string name="tab_text_pet_feeders">Feeders</string>
+
+    <!-- Add a pet General-->
+    <string name="txt_pet_birthdate">Date of birth</string>
+    <string name="content_description_pet_photo">pet\'s photo</string>
+    <string name="content_description_btn_pick_pet_photo_on_disk">pick a photo on the disk</string>
+    <string name="content_description_btn_take_pet_photo">take a photo button</string>
+    <string name="content_description_btn_datepicker">pick a pet date of birth button</string>
+    <string name="hint_pet_name">Name</string>
+    <string name="hint_pet_birthdate">Date of birth</string>
 </resources>

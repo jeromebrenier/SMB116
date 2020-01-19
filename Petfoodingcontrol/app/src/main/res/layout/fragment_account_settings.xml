@@ -6,7 +6,7 @@
 
     <FrameLayout
         android:id="@+id/nested_account_management_fragment_frameLayout"
-        android:layout_width="@dimen/fieldset_width"
+        android:layout_width="@dimen/main_content_width"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/fieldset_top_margin"
