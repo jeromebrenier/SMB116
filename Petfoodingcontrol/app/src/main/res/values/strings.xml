@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Pet Fooding Control</string>
     <string name="main_logo">Main Pet Fooding Control logo</string>
+    <string name="application_preferences">pfc-preferences</string>
 
     <!-- Global -->
     <string name="btn_save">Save</string>

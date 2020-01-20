@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -41,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     @Inject
     PetFoodingControlRepository pfcRepository;
 
-    private SharedPreferences sharedPref;
+    private SharedPreferences sharedPreferences;
 
     /** Manages disposables */
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -51,6 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
         setContentView(R.layout.activity_login);
+        sharedPreferences = ((PetFoodingControl)getApplication()).getAppSharedPreferences();
         isKeepLogged();
         if (savedInstanceState == null) {
             loadFragment(pfcRepository.getUserLogged().getValue() == null ?
@@ -64,20 +64,10 @@ public class LoginActivity extends AppCompatActivity {
      * false or if the credentials are invalid return null.
      */
     private void isKeepLogged() {
-        loadSharedPref();
-        String autoLogin = sharedPref.getString(getString(R.string.autologin_token_id),"");
+        String autoLogin = sharedPreferences.getString(getString(R.string.autologin_token_id),"");
         if (!autoLogin.isEmpty()) {
             Log.i(TAG, "Auto login value stored in preferences : " + autoLogin);
             tryAutologin(autoLogin);
-        }
-    }
-
-    /**
-     * Lazy load the sharedPref.
-     */
-    private void loadSharedPref() {
-        if (sharedPref == null) {
-            sharedPref = this.getPreferences(Context.MODE_PRIVATE);
         }
     }
 
@@ -106,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
                 user -> CryptographyUtils.checkPassword(password, user.getPassword()).subscribe(
                         () -> {
                             pfcRepository.setUserLogged(user);
-                            manageAutologinForUser(user);
+                            manageAutoLoginForUser(user);
                         }),
                 throwable -> {
                     showToast(R.string.toast_failed_login);
@@ -115,7 +105,11 @@ public class LoginActivity extends AppCompatActivity {
         compositeDisposable.add(disposable);
     }
 
-    private void manageAutologinForUser(User user) {
+    /**
+     * Manages the auto login according to the user's choice.
+     * @param user the User who is logging
+     */
+    private void manageAutoLoginForUser(User user) {
         if (((CheckBox) findViewById(R.id.chk_keep_logged_in)).isChecked()) {
             AutoLogin autoLogin = new AutoLogin(
                     AutoLoginUtils.getInstance().getUuid().toString(),
@@ -126,7 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                     () -> {
                         Log.i(TAG, "AutoLogin for user " + user.getUserId() +
                                 " successfully inserted");
-                        storeAutologinInPreferences(autoLogin);
+                        storeAutoLoginInPreferences(autoLogin);
                     },
                     throwable -> Log.e(TAG, "AutoLogin failed to be inserted for user " +
                                     user.getUserId()));
@@ -134,14 +128,17 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-
-    private void storeAutologinInPreferences(AutoLogin autoLogin) {
-        loadSharedPref();
-        SharedPreferences.Editor editor = sharedPref.edit();
+    /**
+     * Store the auto logging data into the application preferences.
+     * @param autoLogin the AutoLogin to store in preferences
+     */
+    private void storeAutoLoginInPreferences(AutoLogin autoLogin) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(getString(R.string.autologin_token_id), autoLogin.getTokenId());
-        editor.commit();
+        editor.apply();
         Log.i(TAG,"Auto login successfully stored in the preferences");
     }
+
     /**
      * Display a toast with a message corresponding to the resource given in parameter.
      */
