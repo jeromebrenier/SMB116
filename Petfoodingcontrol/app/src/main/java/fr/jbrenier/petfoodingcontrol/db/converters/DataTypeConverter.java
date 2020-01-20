@@ -1,25 +1,25 @@
 package fr.jbrenier.petfoodingcontrol.db.converters;
 
-import androidx.room.TypeConverter;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Date;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class DataTypeConverter {
 
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
     @androidx.room.TypeConverter
-    public static Date toDate(Long value) {
-        return value == null ? null : new Date(value);
+    public static OffsetDateTime toOffsetDateTime(String value) {
+        return value == null ? null : OffsetDateTime.parse(value,dtf);
     }
 
     @androidx.room.TypeConverter
-    public static Long toLong(Date value) {
-        return value == null ? null : value.getTime();
+    public static String fromOffsetDateTime(OffsetDateTime value) {
+        return value == null ? null : value.format(dtf);
     }
 
     @androidx.room.TypeConverter

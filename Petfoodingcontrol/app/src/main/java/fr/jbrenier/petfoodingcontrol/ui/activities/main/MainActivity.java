@@ -1,6 +1,8 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.main;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -58,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements
 
     /** LOGGING */
     private static final String TAG = "MainActivity";
+
+    private SharedPreferences sharedPref;
 
     @Inject
     PetFoodingControlRepository pfcRepository;
@@ -137,7 +141,23 @@ public class MainActivity extends AppCompatActivity implements
 
     private void logout() {
         pfcRepository.setUserLogged(null);
+        loadSharedPref();
+        Log.i(TAG, " PREFERENCES : " + sharedPref.getAll().keySet());
+        if (sharedPref.contains(getString(R.string.autologin_token_id))) {
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.remove(getString(R.string.autologin_token_id));
+            editor.commit();
+        }
         launchLoginActivity();
+    }
+
+    /**
+     * Lazy load the sharedPref.
+     */
+    private void loadSharedPref() {
+        if (sharedPref == null) {
+            sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        }
     }
 
     /**

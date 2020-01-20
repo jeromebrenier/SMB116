@@ -28,7 +28,6 @@ public class PetAdditionActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         petAdditionViewModel = ViewModelProviders.of(this).get(PetAdditionViewModel.class);
         setContentView(R.layout.activity_pet_addition);
@@ -42,19 +41,14 @@ public class PetAdditionActivity extends AppCompatActivity
     }
 
     private void setupToolBar() {
-        //toolbar = findViewById(R.id.pet_addition_toolbar);
- /*       setSupportActionBar(toolbar);
+        toolbar = findViewById(R.id.pet_addition_toolbar);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }*/
-    }
-
-    /**
-     * Set the correct localized toolbar title.
-     */
-    public void setToolBarTitle(int stringId) {
-        //toolbar.setTitle(getResources().getString(stringId));
+        }
+        // Title
+        toolbar.setTitle(getResources().getString(R.string.title_add_a_pet_activity));
     }
 
     /**

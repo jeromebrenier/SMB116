@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import fr.jbrenier.petfoodingcontrol.db.PetFoodingControlDatabase;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.user.AutoLogin;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import io.reactivex.Completable;
 import io.reactivex.Single;
@@ -71,6 +72,20 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     @Override
     public Completable update(User user) {
         return petFoodingControlDatabase.getUserDao().update(user)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Single<User> getUserByAutoLogin(String autoLoginToken) {
+        return petFoodingControlDatabase.getAutoLoginDao().getUserByAutoLogin(autoLoginToken)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Completable insert(AutoLogin autoLogin) {
+        return petFoodingControlDatabase.getAutoLoginDao().insert(autoLogin)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }

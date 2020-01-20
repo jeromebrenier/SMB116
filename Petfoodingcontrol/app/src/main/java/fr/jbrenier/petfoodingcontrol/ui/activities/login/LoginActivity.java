@@ -9,15 +9,22 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.CheckBox;
 import android.widget.Toast;
+
+import java.time.OffsetDateTime;
 
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.domain.user.AutoLogin;
+import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginFieldsFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
+import fr.jbrenier.petfoodingcontrol.utils.AutoLoginUtils;
 import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -58,14 +65,11 @@ public class LoginActivity extends AppCompatActivity {
      */
     private void isKeepLogged() {
         loadSharedPref();
-        String email = sharedPref.getString(this.getResources().getString(R.string.saved_email),
-                "");
-        String password = sharedPref.getString(
-                this.getResources().getString(R.string.saved_password),"");
-        if (email.equals("") || password.equals("")) {
-            return;
+        String autoLogin = sharedPref.getString(getString(R.string.autologin_token_id),"");
+        if (!autoLogin.isEmpty()) {
+            Log.i(TAG, "Auto login value stored in preferences : " + autoLogin);
+            tryAutologin(autoLogin);
         }
-        checkCredentials(email, password);
     }
 
     /**
@@ -78,6 +82,21 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
+     * Try to log with auto login with the local token given as a parameter.
+     * @param autoLoginLocalToken the local auto login token
+     */
+    private void tryAutologin(String autoLoginLocalToken) {
+        Disposable disposable = pfcRepository.getUserByAutoLogin(autoLoginLocalToken).subscribe(
+                user -> {
+                    Log.i(TAG, "User from AutoLogin successfully retrieved");
+                    setupUserLoggedListener();
+                    pfcRepository.setUserLogged(user);
+                }, throwable ->
+                        Log.e(TAG, "AutoLogin failed", throwable));
+        compositeDisposable.add(disposable);
+    }
+
+    /**
      * Check credentials (email and password). Return an User or null if credentials invalid.
      * @param email entered
      * @param password entered
@@ -85,16 +104,49 @@ public class LoginActivity extends AppCompatActivity {
     private void checkCredentials(String email, String password) {
         Disposable disposable = pfcRepository.getUserByEmail(email).subscribe(
                 user -> CryptographyUtils.checkPassword(password, user.getPassword()).subscribe(
-                        () -> pfcRepository.setUserLogged(user)), throwable -> {
-                    showFailedLoginToast();});
+                        () -> {
+                            pfcRepository.setUserLogged(user);
+                            manageAutologinForUser(user);
+                        }),
+                throwable -> {
+                    showToast(R.string.toast_failed_login);
+                    Log.e(TAG, "checkCredentials failure ", throwable);
+                });
         compositeDisposable.add(disposable);
     }
 
+    private void manageAutologinForUser(User user) {
+        if (((CheckBox) findViewById(R.id.chk_keep_logged_in)).isChecked()) {
+            AutoLogin autoLogin = new AutoLogin(
+                    AutoLoginUtils.getInstance().getUuid().toString(),
+                    OffsetDateTime.now().plusWeeks(1L),
+                    user.getUserId()
+            );
+            Disposable disposable = pfcRepository.insert(autoLogin).subscribe(
+                    () -> {
+                        Log.i(TAG, "AutoLogin for user " + user.getUserId() +
+                                " successfully inserted");
+                        storeAutologinInPreferences(autoLogin);
+                    },
+                    throwable -> Log.e(TAG, "AutoLogin failed to be inserted for user " +
+                                    user.getUserId()));
+            compositeDisposable.add(disposable);
+        }
+    }
+
+
+    private void storeAutologinInPreferences(AutoLogin autoLogin) {
+        loadSharedPref();
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.autologin_token_id), autoLogin.getTokenId());
+        editor.commit();
+        Log.i(TAG,"Auto login successfully stored in the preferences");
+    }
     /**
-     * Display a toast alerting that login has failed.
+     * Display a toast with a message corresponding to the resource given in parameter.
      */
-    private void showFailedLoginToast() {
-        Toast toast = Toast.makeText(this, R.string.toast_failed_login, Toast.LENGTH_LONG);
+    private void showToast(int resId) {
+        Toast toast = Toast.makeText(this, resId, Toast.LENGTH_LONG);
         toast.show();
     }
 
@@ -116,32 +168,22 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void onLoginButtonClick(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
-            sendToastInputEmpty();
+            showToast(R.string.toast_input_empty);
         } else {
-            onCredentialsEntered(email, password);
+            checkCredentials(email, password);
+            setupUserLoggedListener();
         }
     }
 
     /**
-     * Action when credentials have been entered and validated.
-     * @param inputEmail email entered
-     * @param inputPassword password entered
+     * Setup a listener to load the welcome fragment once a user is effectively logged.
      */
-    private void onCredentialsEntered(String inputEmail, String inputPassword) {
-        checkCredentials(inputEmail, inputPassword);
+    private void setupUserLoggedListener() {
         pfcRepository.getUserLogged().observe(this, user -> {
             if (user != null) {
                 loadFragment(new LoginWelcomeFragment());
             }
         });
-    }
-
-    /**
-     * Display a toast alerting that at least one of the fields is empty.
-     */
-    private void sendToastInputEmpty() {
-        Toast toast = Toast.makeText(this, R.string.toast_input_empty, Toast.LENGTH_LONG);
-        toast.show();
     }
 
     /**

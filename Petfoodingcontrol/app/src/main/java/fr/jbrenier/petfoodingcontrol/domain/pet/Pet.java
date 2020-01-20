@@ -12,6 +12,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -50,14 +51,14 @@ public class Pet implements Parcelable {
     @ColumnInfo(name = "photo_Id")
     private Long photoId;
     @TypeConverters(DataTypeConverter.class)
-    private Date birthDate;
+    private OffsetDateTime birthDate;
     @Embedded
     private FoodSettings foodSettings;
     @ColumnInfo(name = "user_Id")
     private Long userId;
 
-    public Pet(Long petId, String name, Long photoId, Date birthDate, FoodSettings foodSettings,
-               Long userId) {
+    public Pet(Long petId, String name, Long photoId, OffsetDateTime birthDate,
+               FoodSettings foodSettings, Long userId) {
         this.petId = petId;
         this.name = name;
         this.photoId = photoId;
@@ -71,7 +72,7 @@ public class Pet implements Parcelable {
         petId = in.readLong();
         name = in.readString();
         photoId = in.readLong();
-        birthDate = (java.util.Date) in.readSerializable();
+        birthDate = (java.time.OffsetDateTime) in.readSerializable();
         foodSettings = in.readParcelable(FoodSettings.class.getClassLoader());
         userId = in.readLong();
     }
@@ -128,11 +129,11 @@ public class Pet implements Parcelable {
         this.photoId = photoId;
     }
 
-    public Date getBirthDate() {
+    public OffsetDateTime getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(OffsetDateTime birthDate) {
         this.birthDate = birthDate;
     }
 

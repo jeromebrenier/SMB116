@@ -31,7 +31,6 @@ public class PetFoodSettingsFragment extends Fragment {
         View root = inflater.inflate(R.layout.pet_food_settings_fragment, container, false);
         activity = getActivity();
         hideAddAFeederButtonIfNecessary();
-        setToolbarTitle();
         return root;
     }
 
@@ -47,14 +46,6 @@ public class PetFoodSettingsFragment extends Fragment {
         }
     }
 
-    /**
-     * Ste the correct toolbar title.
-     */
-    private void setToolbarTitle() {
-        if (activity instanceof PetAdditionActivity) {
-            ((PetAdditionActivity)activity).setToolBarTitle(R.string.menu_account_settings);
-        }
-    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {

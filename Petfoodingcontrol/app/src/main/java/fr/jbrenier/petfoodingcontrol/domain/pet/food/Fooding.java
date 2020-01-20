@@ -10,6 +10,7 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.TypeConverters;
 
+import java.time.OffsetDateTime;
 import java.util.Date;
 
 import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
@@ -42,10 +43,10 @@ public class Fooding implements Parcelable {
     @ColumnInfo(name = "pet_Id")
     private Long petId;
     @TypeConverters(DataTypeConverter.class)
-    private Date date;
+    private OffsetDateTime date;
     private Integer quantity;
 
-    public Fooding(Long userId, Long petId, Date date, Integer quantity) {
+    public Fooding(Long userId, Long petId, OffsetDateTime date, Integer quantity) {
         this.userId = userId;
         this.petId = petId;
         this.date = date;
@@ -55,7 +56,7 @@ public class Fooding implements Parcelable {
     protected Fooding(Parcel in) {
         userId = in.readLong();
         petId = in.readLong();
-        date = (java.util.Date) in.readSerializable();
+        date = (java.time.OffsetDateTime) in.readSerializable();
         quantity = in.readInt();
     }
 
@@ -100,11 +101,11 @@ public class Fooding implements Parcelable {
         this.petId = petId;
     }
 
-    public Date getDate() {
+    public OffsetDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(OffsetDateTime date) {
         this.date = date;
     }
 

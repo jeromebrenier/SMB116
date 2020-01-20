@@ -14,8 +14,7 @@
     <string name="toast_input_empty">Please complete all fields.</string>
     <string name="welcome">Welcome</string>
     <string name="user_logged">user_logged</string>
-    <string name="saved_email">email</string>
-    <string name="saved_password">password</string>
+    <string name="autologin_token_id">autoLoginToken</string>
     <string name="toast_failed_login">Login failed</string>
 
     <!-- Main Activity -->

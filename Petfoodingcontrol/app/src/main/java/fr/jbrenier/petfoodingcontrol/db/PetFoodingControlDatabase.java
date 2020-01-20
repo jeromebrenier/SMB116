@@ -3,6 +3,7 @@ package fr.jbrenier.petfoodingcontrol.db;
 import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
+import fr.jbrenier.petfoodingcontrol.db.dao.AutoLoginDao;
 import fr.jbrenier.petfoodingcontrol.db.dao.FoodingDao;
 import fr.jbrenier.petfoodingcontrol.db.dao.PetDao;
 import fr.jbrenier.petfoodingcontrol.db.dao.PetFeedersDao;
@@ -12,6 +13,7 @@ import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.pet.PetFeeders;
 import fr.jbrenier.petfoodingcontrol.domain.pet.food.Fooding;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.user.AutoLogin;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
 /**
@@ -20,6 +22,7 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
  */
 @Database(entities = {
         User.class,
+        AutoLogin.class,
         Pet.class,
         Photo.class,
         Fooding.class,
@@ -29,6 +32,7 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
 )
 public abstract class PetFoodingControlDatabase extends RoomDatabase {
     public abstract UserDao getUserDao();
+    public abstract AutoLoginDao getAutoLoginDao();
     public abstract PetDao getPetDao();
     public abstract PhotoDao getPhotoDao();
     public abstract FoodingDao getFoodingDao();
