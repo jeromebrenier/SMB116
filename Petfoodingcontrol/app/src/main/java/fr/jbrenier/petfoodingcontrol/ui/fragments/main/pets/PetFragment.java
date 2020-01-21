@@ -51,7 +51,7 @@ public class PetFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pet_list, container, false);
         petFragmentViewModel = ViewModelProviders.of(this).get(PetFragmentViewModel.class);
         mainActivity = (MainActivity)getActivity();
-        pfcRepository = mainActivity.getPetFoodingControlRepository();
+       /* pfcRepository = mainActivity.getPetFoodingControlRepository();*/
         // Toolbar title
         mainActivity.setToolBarTitle(R.string.menu_pets);
         //show the add a pet button

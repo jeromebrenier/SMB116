@@ -147,7 +147,7 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (isAccountModificationMode()) {
-            pfcRepository = ((MainActivity) activity).getPetFoodingControlRepository();
+            //pfcRepository = ((MainActivity) activity).getPetFoodingControlRepository();
             setUserDataInInput();
         } else {
             setPhotoInImageView(DUMMY_PHOTO_B64);

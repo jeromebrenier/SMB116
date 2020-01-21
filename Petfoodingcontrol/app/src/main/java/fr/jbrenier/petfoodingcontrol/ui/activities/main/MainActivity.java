@@ -39,6 +39,7 @@ import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
+import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
@@ -63,8 +64,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private SharedPreferences sharedPreferences;
 
-    @Inject
-    PetFoodingControlRepository pfcRepository;
+/*    @Inject
+    UserService userService;*/
 
     // Manages disposables
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -79,9 +80,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);
+       /* ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);*/
         setContentView(R.layout.activity_main);
+/*
         sharedPreferences = ((PetFoodingControl)getApplication()).getAppSharedPreferences();
+*/
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setupAddButton();
@@ -99,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements
         headerView = navigationView.getHeaderView(0);
         getUserDataView();
         setupLogoutListener();
-        pfcRepository.getUserLogged().observe(this, user -> {
+/*        pfcRepository.getUserLogged().observe(this, user -> {
             if (user != null) {
                 setUserPets(user);
                 setUserDataInNavBar(user);
@@ -107,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements
         });
         if (pfcRepository.getUserLogged().getValue() == null) {
             launchLoginActivity();
-        }
+        }*/
     }
 
     /**
@@ -141,13 +144,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void logout() {
-        pfcRepository.setUserLogged(null);
+/*        pfcRepository.setUserLogged(null);
         if (sharedPreferences.contains(getString(R.string.autologin_token_id))) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(getString(R.string.autologin_token_id));
             editor.apply();
         }
-        launchLoginActivity();
+        launchLoginActivity();*/
     }
 
     /**
@@ -156,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements
      * @param user : the logged User
      */
     private void setUserDataInNavBar(User user) {
-        user_name.setText(user.getDisplayedName());
+/*        user_name.setText(user.getDisplayedName());
         user_email.setText(user.getEmail());
         Log.i(TAG, "user's photo id : " + user.getPhotoId() + " email " + user.getEmail());
         Disposable disposable = pfcRepository.getUserPhoto(user).subscribe(
@@ -168,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements
                     user_photo.setImageBitmap(decodedByte);
                 }, throwable ->
                     Log.e(TAG, "user photo not loaded", throwable));
-        compositeDisposable.add(disposable);
+        compositeDisposable.add(disposable);*/
     }
 
     /**
@@ -176,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements
      * @param user : the logged User
      */
     private void setUserPets(User user) {
-        pfcRepository.setUserPets(user);
+/*        pfcRepository.setUserPets(user);*/
     }
 
     @Override
@@ -212,8 +215,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         compositeDisposable.dispose();
-        pfcRepository.setUserLogged(null);
-        pfcRepository.setUserPets(null);
+/*        pfcRepository.setUserLogged(null);
+        pfcRepository.setUserPets(null);*/
         super.onDestroy();
     }
 
@@ -222,13 +225,15 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+/*
     public PetFoodingControlRepository getPetFoodingControlRepository() {
         return pfcRepository;
     }
+*/
 
     @Override
     public void onSaveButtonClick(Map<String, String> userData) {
-        // USER
+/*        // USER
         String hashedUserPassword = CryptographyUtils.hashPassword(
                 userData.get(AccountManagementFormFragment.PASSWORD_KEY));
         final User newUser = new User(
@@ -252,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements
                     });
             compositeDisposable.add(disposable);
             pfcRepository.save(userPhoto);
-        }
+        }*/
     }
 
     /**
@@ -260,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements
      * @param user user to save
      */
     private void updateUser(User user) {
-        Disposable disposable = pfcRepository.update(user).subscribe(
+/*        Disposable disposable = pfcRepository.update(user).subscribe(
                 () -> {
                     Log.i(TAG,"User with id : " + user.getUserId() + " updated");
                     showToast(getResources().getString(R.string.toast_account_update_success));
@@ -269,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements
                     Log.e(TAG, "user update failure", throwable);
                     showToast(getResources().getString(R.string.toast_account_update_failure));
                 });
-        compositeDisposable.add(disposable);
+        compositeDisposable.add(disposable);*/
     }
 
     /**

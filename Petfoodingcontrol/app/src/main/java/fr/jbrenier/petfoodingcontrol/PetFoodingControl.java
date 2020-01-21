@@ -1,14 +1,14 @@
 package fr.jbrenier.petfoodingcontrol;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import fr.jbrenier.petfoodingcontrol.di.DaggerRepositoryComponent;
-import fr.jbrenier.petfoodingcontrol.di.RepositoryComponent;
+import fr.jbrenier.petfoodingcontrol.di.app.AppComponent;
+import fr.jbrenier.petfoodingcontrol.di.app.DaggerAppComponent;
+import fr.jbrenier.petfoodingcontrol.di.repository.DaggerRepositoryComponent;
+import fr.jbrenier.petfoodingcontrol.di.repository.RepositoryComponent;
+import fr.jbrenier.petfoodingcontrol.di.services.ServicesComponent;
 
 /**
  * The Pet Fooding Control application class.
@@ -19,8 +19,9 @@ public class PetFoodingControl extends Application {
     /** LOGGING */
     private static final String TAG = "PetFoodingControl";
 
+    private AppComponent appComponent;
     private RepositoryComponent repositoryComponent;
-    private SharedPreferences appSharedPreferences;
+    private ServicesComponent servicesComponent;
     public MutableLiveData<Boolean> isCameraPermissionGranted = new MutableLiveData<>(false);
     public MutableLiveData<Boolean> isReadExternalStoragePermissionGranted =
             new MutableLiveData<>(false);
@@ -28,26 +29,15 @@ public class PetFoodingControl extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        appComponent = DaggerAppComponent.builder().application(this).build();
         repositoryComponent = DaggerRepositoryComponent.builder().application(this).build();
-        loadPreferences();
+        servicesComponent = DaggerUserServiceComponent.builder()
+                .appComponent(appComponent)
+                .repositoryComponent(repositoryComponent).build();
     }
 
-    /**
-     * Load application-wide shared preferences.
-     */
-    private void loadPreferences() {
-        if (appSharedPreferences == null) {
-            Log.i(TAG, "Loading preferences.");
-            appSharedPreferences = getSharedPreferences(
-                    getString(R.string.application_preferences), Context.MODE_PRIVATE);
-        }
+    public ServicesComponent getServicesComponent() {
+        return servicesComponent;
     }
 
-    public RepositoryComponent getRepositoryComponent() {
-        return repositoryComponent;
-    }
-
-    public SharedPreferences getAppSharedPreferences() {
-        return appSharedPreferences;
-    }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.db.PetFoodingControlDatabase;
+import fr.jbrenier.petfoodingcontrol.di.repository.RepositoryScope;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.AutoLogin;
@@ -19,6 +20,7 @@ import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+@RepositoryScope
 public class PetFoodingControlRepositoryImpl implements PetFoodingControlRepository {
 
     private static final String DB_NAME = "pfc_db";

@@ -47,8 +47,8 @@ public class AccountCreationActivity extends AppCompatActivity
 
     private PetFoodingControl petFoodingControl;
 
-    @Inject
-    PetFoodingControlRepository pfcRepository;
+/*    @Inject
+    PetFoodingControlRepository pfcRepository;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class AccountCreationActivity extends AppCompatActivity
         petFoodingControl = ((PetFoodingControl) getApplication());
         setContentView(R.layout.activity_account_creation);
         setActivityTitle();
-        petFoodingControl.getRepositoryComponent().inject(this);
+/*        petFoodingControl.getRepositoryComponent().inject(this);*/
         // Camera permission management
         petFoodingControl.isCameraPermissionGranted.setValue(
                 checkPermission(Manifest.permission.CAMERA, REQUEST_CODE_CAMERA_PERMISSION));
@@ -142,9 +142,11 @@ public class AccountCreationActivity extends AppCompatActivity
         }
     }
 
+/*
     public PetFoodingControlRepository getPetFoodingControlRepository() {
         return pfcRepository;
     }
+*/
 
     @Override
     public void onSaveButtonClick(Map<String, String> userData) {
@@ -159,7 +161,7 @@ public class AccountCreationActivity extends AppCompatActivity
         );
         // PHOTO
         String base64photo = userData.get(AccountManagementFormFragment.PHOTO_KEY);
-        if (base64photo != null ) {
+/*        if (base64photo != null ) {
             final Photo userPhoto = new Photo(base64photo);
             Disposable disposable = pfcRepository.save(userPhoto).subscribe(
                     (photoId) -> {
@@ -171,8 +173,8 @@ public class AccountCreationActivity extends AppCompatActivity
                         Log.e(TAG, "photo save failure", throwable);
                     });
             compositeDisposable.add(disposable);
-            pfcRepository.save(userPhoto);
-        }
+            pfcRepository.save(userPhoto);*/
+
     }
 
     /**
@@ -180,7 +182,7 @@ public class AccountCreationActivity extends AppCompatActivity
      * @param user user to save
      */
     private void saveUser(User user) {
-        Disposable disposable = pfcRepository.save(user).subscribe(
+/*        Disposable disposable = pfcRepository.save(user).subscribe(
                 (userId) -> {
                     Log.i(TAG,"User saved with id : " + userId);
                     showToast(getResources().getString(R.string.toast_account_created));
@@ -190,7 +192,7 @@ public class AccountCreationActivity extends AppCompatActivity
                     Log.e(TAG, "account creation failure", throwable);
                     showToast(getResources().getString(R.string.toast_account_not_created));
                 });
-        compositeDisposable.add(disposable);
+        compositeDisposable.add(disposable);*/
     }
 
     /**

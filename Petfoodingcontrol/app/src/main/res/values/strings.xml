@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Pet Fooding Control</string>
     <string name="main_logo">Main Pet Fooding Control logo</string>
-    <string name="application_preferences">pfc-preferences</string>
 
     <!-- Global -->
     <string name="btn_save">Save</string>
@@ -15,8 +14,8 @@
     <string name="toast_input_empty">Please complete all fields.</string>
     <string name="welcome">Welcome</string>
     <string name="user_logged">user_logged</string>
-    <string name="autologin_token_id">autoLoginToken</string>
-    <string name="toast_failed_login">Login failed</string>
+    <string name="toast_failed_login">Login failed !</string>
+    <string name="toast_success_login">Login success !</string>
 
     <!-- Main Activity -->
     <string name="title_activity_main">Pet Fooding Control</string>
