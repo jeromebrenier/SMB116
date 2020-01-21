@@ -34,13 +34,17 @@ import javax.inject.Inject;
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
+import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceImpl;
+import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
+import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -206,18 +210,20 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSaveButtonClick(Map<String, String> userData) {
-/*        // USER
+    public void onSaveButtonClick(Map<UserServiceKeysEnum, String> userData) {
+        userService.update(userData);
+        photoService.update(userData);
+        // USER
         String hashedUserPassword = CryptographyUtils.hashPassword(
-                userData.get(AccountManagementFormFragment.PASSWORD_KEY));
+                userData.get(UserServiceKeysEnum.PASSWORD_KEY));
         final User newUser = new User(
-                userData.get(AccountManagementFormFragment.USERNAME_KEY),
-                userData.get(AccountManagementFormFragment.EMAIL_KEY),
+                userData.get(UserServiceKeysEnum.USERNAME_KEY),
+                userData.get(UserServiceKeysEnum.EMAIL_KEY),
                 hashedUserPassword,
                 null
         );
         // PHOTO
-        String base64photo = userData.get(AccountManagementFormFragment.PHOTO_KEY);
+        String base64photo = userData.get(UserServiceKeysEnum.PHOTO_KEY);
         if (base64photo != null) {
             final Photo userPhoto = new Photo(base64photo);
             Disposable disposable = pfcRepository.save(userPhoto).subscribe(

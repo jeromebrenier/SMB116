@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -25,6 +26,7 @@ public class UserServiceImpl implements UserService {
     /** LOGGING */
     private static final String TAG = "UserService";
 
+    /** PREFERENCES AUTO LOGIN KEY */
     private static final String AUTO_LOGIN_TOKEN = "autoLoginToken";
 
     /** Manages disposables */
@@ -159,10 +161,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public MutableLiveData<Integer> update(User user) {
         MutableLiveData<Integer> updateUserResult = new MutableLiveData<>(9);
-        Disposable disposable = pfcRepository.save(user).subscribe(
-                (userId) -> {
+        Disposable disposable = pfcRepository.update(user).subscribe(
+                () -> {
                     updateUserResult.setValue(0);
-                    Log.i(TAG,"User saved with id : " + userId);
+                    Log.i(TAG,"User updated");
                 },
                 throwable -> {
                     updateUserResult.setValue(1);
@@ -170,6 +172,12 @@ public class UserServiceImpl implements UserService {
                 });
         compositeDisposable.add(disposable);
         return updateUserResult;
+    }
+
+    @Override
+    public MutableLiveData<Integer> update(Map<UserServiceKeysEnum, String> userData) {
+        if ()
+        return null;
     }
 
     /**
