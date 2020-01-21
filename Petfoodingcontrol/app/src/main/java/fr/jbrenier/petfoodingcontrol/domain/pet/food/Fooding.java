@@ -11,11 +11,11 @@ import androidx.room.Index;
 import androidx.room.TypeConverters;
 
 import java.time.OffsetDateTime;
-import java.util.Date;
 
 import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+
 
 /**
  * A fooding action.

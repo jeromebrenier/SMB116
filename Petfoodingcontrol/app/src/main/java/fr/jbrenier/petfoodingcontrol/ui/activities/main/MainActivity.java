@@ -1,8 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.main;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -36,16 +34,13 @@ import javax.inject.Inject;
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
-import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
+import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
-import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -62,13 +57,11 @@ public class MainActivity extends AppCompatActivity implements
     /** LOGGING */
     private static final String TAG = "MainActivity";
 
-    private SharedPreferences sharedPreferences;
+    @Inject
+    UserService userService;
 
-/*    @Inject
-    UserService userService;*/
-
-    // Manages disposables
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    @Inject
+    PhotoService photoService;
 
     private TextView user_name;
     private TextView user_email;
@@ -80,11 +73,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       /* ((PetFoodingControl) getApplicationContext()).getRepositoryComponent().inject(this);*/
+        ((PetFoodingControl) getApplicationContext()).getServicesComponent().inject(this);
         setContentView(R.layout.activity_main);
-/*
-        sharedPreferences = ((PetFoodingControl)getApplication()).getAppSharedPreferences();
-*/
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setupAddButton();
@@ -102,15 +92,15 @@ public class MainActivity extends AppCompatActivity implements
         headerView = navigationView.getHeaderView(0);
         getUserDataView();
         setupLogoutListener();
-/*        pfcRepository.getUserLogged().observe(this, user -> {
+        userService.getPfcRepository().getUserLogged().observe(this, user -> {
             if (user != null) {
                 setUserPets(user);
                 setUserDataInNavBar(user);
             }
         });
-        if (pfcRepository.getUserLogged().getValue() == null) {
+        if (userService.getPfcRepository().getUserLogged().getValue() == null) {
             launchLoginActivity();
-        }*/
+        }
     }
 
     /**
@@ -143,14 +133,12 @@ public class MainActivity extends AppCompatActivity implements
         headerView.findViewById(R.id.btn_log_out).setOnClickListener(view -> logout());
     }
 
+    /**
+     * Log out.
+     */
     private void logout() {
-/*        pfcRepository.setUserLogged(null);
-        if (sharedPreferences.contains(getString(R.string.autologin_token_id))) {
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.remove(getString(R.string.autologin_token_id));
-            editor.apply();
-        }
-        launchLoginActivity();*/
+        userService.logout();
+        launchLoginActivity();
     }
 
     /**
@@ -159,19 +147,13 @@ public class MainActivity extends AppCompatActivity implements
      * @param user : the logged User
      */
     private void setUserDataInNavBar(User user) {
-/*        user_name.setText(user.getDisplayedName());
+        user_name.setText(user.getDisplayedName());
         user_email.setText(user.getEmail());
-        Log.i(TAG, "user's photo id : " + user.getPhotoId() + " email " + user.getEmail());
-        Disposable disposable = pfcRepository.getUserPhoto(user).subscribe(
-                photo -> {
-                    Log.i(TAG, "loading the photo...");
-                    byte[] decodedString = Base64.decode(photo.getImage(), Base64.DEFAULT);
-                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
-                            decodedString.length);
-                    user_photo.setImageBitmap(decodedByte);
-                }, throwable ->
-                    Log.e(TAG, "user photo not loaded", throwable));
-        compositeDisposable.add(disposable);*/
+        photoService.get(user).observe(this, bitmap -> {
+            if (bitmap != null) {
+                user_photo.setImageBitmap(bitmap);
+            }
+        });
     }
 
     /**
@@ -214,9 +196,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        compositeDisposable.dispose();
-/*        pfcRepository.setUserLogged(null);
-        pfcRepository.setUserPets(null);*/
+        userService.leave();
         super.onDestroy();
     }
 
@@ -224,12 +204,6 @@ public class MainActivity extends AppCompatActivity implements
     public void onListFragmentInteraction(Pet pet) {
 
     }
-
-/*
-    public PetFoodingControlRepository getPetFoodingControlRepository() {
-        return pfcRepository;
-    }
-*/
 
     @Override
     public void onSaveButtonClick(Map<String, String> userData) {

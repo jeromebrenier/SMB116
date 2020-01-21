@@ -10,17 +10,22 @@ import java.time.OffsetDateTime;
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.domain.user.AutoLogin;
+import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.utils.AutoLoginUtils;
 import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
+/**
+ * Service to manage Users.
+ * @author Jérôme Brenier
+ */
 public class UserServiceImpl implements UserService {
     /** LOGGING */
     private static final String TAG = "UserService";
 
-    private static final String AUTOLOGIN_TOKEN = "autoLoginToken";
+    private static final String AUTO_LOGIN_TOKEN = "autoLoginToken";
 
     /** Manages disposables */
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -40,7 +45,7 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public void initLogin() {
-        String autoLogin = sharedPreferences.getString(AUTOLOGIN_TOKEN,"");
+        String autoLogin = sharedPreferences.getString(AUTO_LOGIN_TOKEN,"");
         if (!autoLogin.isEmpty()) {
             Log.i(TAG, "Auto login value stored in preferences : " + autoLogin);
             tryToAutologin(autoLogin);
@@ -64,7 +69,7 @@ public class UserServiceImpl implements UserService {
     /**
      * Save in db and if successful, store in preferences the AutoLogin given in parameter.
      */
-    public void setAutoLogin() {
+    private void setAutoLogin() {
         AutoLogin autoLogin = new AutoLogin(
                 AutoLoginUtils.getInstance().getUuid().toString(),
                 OffsetDateTime.now().plusWeeks(1L),
@@ -87,16 +92,20 @@ public class UserServiceImpl implements UserService {
      */
     private void storeAutoLoginInPreferences(AutoLogin autoLogin) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(AUTOLOGIN_TOKEN, autoLogin.getTokenId());
+        editor.putString(AUTO_LOGIN_TOKEN, autoLogin.getTokenId());
         editor.apply();
         Log.i(TAG,"Auto login successfully stored in the preferences");
     }
 
-    @Override
+
     /**
      * Try to log with the data provided, initiate the auto login feature saving and storing
      * in preferences if necessary.
+     * Return a MutableLiveData<Integer> taking the value 0 in case of success and 1 in case
+     * of failure (init at 2).
+     * @return logInResult MutableLiveData<Integer> result of the try
      */
+    @Override
     public MutableLiveData<Integer> tryToLog(String email, String password, boolean isKeepLogged) {
         MutableLiveData<Integer> logInResult = new MutableLiveData<>(9);
         Disposable disposable = pfcRepository.getUserByEmail(email).subscribe(
@@ -117,7 +126,69 @@ public class UserServiceImpl implements UserService {
         return logInResult;
     }
 
+    /**
+     * Save the user in the data source.
+     * Return a MutableLiveData<Integer> taking the value 0 in case of success and 1 in case
+     * of failure (init at 2).
+     * @param user User to save
+     * @return logInResult MutableLiveData<Integer> result of the operation
+     */
+    @Override
+    public MutableLiveData<Integer> save(User user) {
+        MutableLiveData<Integer> saveUserResult = new MutableLiveData<>(9);
+        Disposable disposable = pfcRepository.save(user).subscribe(
+                (userId) -> {
+                    saveUserResult.setValue(0);
+                    Log.i(TAG,"User saved with id : " + userId);
+                },
+                throwable -> {
+                    saveUserResult.setValue(1);
+                    Log.e(TAG, "User "+ user.getUserId() + " saving failure", throwable);
+                });
+        compositeDisposable.add(disposable);
+        return saveUserResult;
+    }
 
+    /**
+     * Update the user in the data source.
+     * Return a MutableLiveData<Integer> taking the value 0 in case of success and 1 in case
+     * of failure (init at 2).
+     * @param user User to save
+     * @return updateUserResult MutableLiveData<Integer> result of the operation
+     */
+    @Override
+    public MutableLiveData<Integer> update(User user) {
+        MutableLiveData<Integer> updateUserResult = new MutableLiveData<>(9);
+        Disposable disposable = pfcRepository.save(user).subscribe(
+                (userId) -> {
+                    updateUserResult.setValue(0);
+                    Log.i(TAG,"User saved with id : " + userId);
+                },
+                throwable -> {
+                    updateUserResult.setValue(1);
+                    Log.e(TAG, "User " + user.getUserId() + " update failure", throwable);
+                });
+        compositeDisposable.add(disposable);
+        return updateUserResult;
+    }
+
+    /**
+     * Logout.
+     */
+    @Override
+    public void logout() {
+        pfcRepository.setUserLogged(null);
+        if (sharedPreferences.contains(AUTO_LOGIN_TOKEN)) {
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.remove(AUTO_LOGIN_TOKEN);
+            editor.apply();
+        }
+    }
+
+    @Override
+    public void leave() {
+        pfcRepository.setUserLogged(null);
+    }
 
     public PetFoodingControlRepository getPfcRepository() {
         return pfcRepository;

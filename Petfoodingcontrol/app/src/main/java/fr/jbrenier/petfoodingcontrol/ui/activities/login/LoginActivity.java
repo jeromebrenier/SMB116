@@ -42,32 +42,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Try to log with the data provided (email, password and keep logged).
-     * @param email the email entered
-     * @param password the password entered
-     * @param isKeepLogged true if "keep logged" checked, false otherwise
-     */
-    private void tryToLog(String email, String password, boolean isKeepLogged) {
-        userService.tryToLog(email, password, isKeepLogged).observe(
-                        this, result -> {
-                            if (result == 1) {
-                                showToast(R.string.toast_failed_login);
-                            } else if (result == 0) {
-                                showToast(R.string.toast_success_login);
-                            }
-                }
-        );
-    }
-
-    /**
-     * Display a toast with a message corresponding to the resource given in parameter.
-     */
-    private void showToast(int resId) {
-        Toast toast = Toast.makeText(this, resId, Toast.LENGTH_LONG);
-        toast.show();
-    }
-
-    /**
      * Charge le fragment passé en paramètre
      * @param fragment à charger
      */
@@ -87,9 +61,32 @@ public class LoginActivity extends AppCompatActivity {
         if (email.isEmpty() || password.isEmpty()) {
             showToast(R.string.toast_input_empty);
         } else {
-            userService.tryToLog(email, password,
+            tryToLog(email, password,
                     ((CheckBox) findViewById(R.id.chk_keep_logged_in)).isChecked());
         }
+    }
+
+    /**
+     * Display a toast with a message corresponding to the resource given in parameter.
+     */
+    private void showToast(int resId) {
+        Toast toast = Toast.makeText(this, resId, Toast.LENGTH_LONG);
+        toast.show();
+    }
+
+    /**
+     * Try to log with the data provided (email, password and keep logged).
+     * @param email the email entered
+     * @param password the password entered
+     * @param isKeepLogged true if "keep logged" checked, false otherwise
+     */
+    private void tryToLog(String email, String password, boolean isKeepLogged) {
+        userService.tryToLog(email, password, isKeepLogged).observe(this, result -> {
+            if (result == 1) {
+                showToast(R.string.toast_failed_login);
+            } else if (result == 0) {
+                showToast(R.string.toast_success_login);
+            }});
     }
 
     /**

@@ -11,7 +11,6 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Map;
@@ -22,11 +21,10 @@ import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
-import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
+import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
+import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
 import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Activity for creating User accounts.
@@ -42,13 +40,13 @@ public class AccountCreationActivity extends AppCompatActivity
     /** Logging */
     private static final String TAG = "AccountCreationActivity";
 
-    /** Manages disposables */
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
-
     private PetFoodingControl petFoodingControl;
 
-/*    @Inject
-    PetFoodingControlRepository pfcRepository;*/
+    @Inject
+    UserService userService;
+
+    @Inject
+    PhotoService photoService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +54,7 @@ public class AccountCreationActivity extends AppCompatActivity
         petFoodingControl = ((PetFoodingControl) getApplication());
         setContentView(R.layout.activity_account_creation);
         setActivityTitle();
-/*        petFoodingControl.getRepositoryComponent().inject(this);*/
+        petFoodingControl.getServicesComponent().inject(this);
         // Camera permission management
         petFoodingControl.isCameraPermissionGranted.setValue(
                 checkPermission(Manifest.permission.CAMERA, REQUEST_CODE_CAMERA_PERMISSION));
@@ -142,12 +140,6 @@ public class AccountCreationActivity extends AppCompatActivity
         }
     }
 
-/*
-    public PetFoodingControlRepository getPetFoodingControlRepository() {
-        return pfcRepository;
-    }
-*/
-
     @Override
     public void onSaveButtonClick(Map<String, String> userData) {
         // USER
@@ -161,38 +153,19 @@ public class AccountCreationActivity extends AppCompatActivity
         );
         // PHOTO
         String base64photo = userData.get(AccountManagementFormFragment.PHOTO_KEY);
-/*        if (base64photo != null ) {
-            final Photo userPhoto = new Photo(base64photo);
-            Disposable disposable = pfcRepository.save(userPhoto).subscribe(
-                    (photoId) -> {
-                        Log.i(TAG,"User's photo saved with id " + photoId);
-                        newUser.setPhotoId(photoId);
-                        saveUser(newUser);
-                    },
-                    throwable -> {
-                        Log.e(TAG, "photo save failure", throwable);
-                    });
-            compositeDisposable.add(disposable);
-            pfcRepository.save(userPhoto);*/
 
-    }
-
-    /**
-     * Save the user in the data source.
-     * @param user user to save
-     */
-    private void saveUser(User user) {
-/*        Disposable disposable = pfcRepository.save(user).subscribe(
-                (userId) -> {
-                    Log.i(TAG,"User saved with id : " + userId);
-                    showToast(getResources().getString(R.string.toast_account_created));
-                    finish();
-                },
-                throwable -> {
-                    Log.e(TAG, "account creation failure", throwable);
-                    showToast(getResources().getString(R.string.toast_account_not_created));
-                });
-        compositeDisposable.add(disposable);*/
+        userService.save(newUser).observe(this, result -> {
+            if (result == 0) {
+                if (base64photo != null ) {
+                    final Photo userPhoto = new Photo(base64photo);
+                    photoService.save(userPhoto, newUser);
+                }
+                showToast(getResources().getString(R.string.toast_account_created));
+                finish();
+            } else if (result == 1) {
+                showToast(getResources().getString(R.string.toast_account_not_created));
+            }
+        });
     }
 
     /**
@@ -206,7 +179,6 @@ public class AccountCreationActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        compositeDisposable.dispose();
         super.onDestroy();
     }
 }

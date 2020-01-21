@@ -9,6 +9,7 @@ import fr.jbrenier.petfoodingcontrol.di.app.DaggerAppComponent;
 import fr.jbrenier.petfoodingcontrol.di.repository.DaggerRepositoryComponent;
 import fr.jbrenier.petfoodingcontrol.di.repository.RepositoryComponent;
 import fr.jbrenier.petfoodingcontrol.di.services.ServicesComponent;
+import fr.jbrenier.petfoodingcontrol.di.services.DaggerServicesComponent;
 
 /**
  * The Pet Fooding Control application class.
@@ -31,7 +32,7 @@ public class PetFoodingControl extends Application {
         super.onCreate();
         appComponent = DaggerAppComponent.builder().application(this).build();
         repositoryComponent = DaggerRepositoryComponent.builder().application(this).build();
-        servicesComponent = DaggerUserServiceComponent.builder()
+        servicesComponent = DaggerServicesComponent.builder()
                 .appComponent(appComponent)
                 .repositoryComponent(repositoryComponent).build();
     }
