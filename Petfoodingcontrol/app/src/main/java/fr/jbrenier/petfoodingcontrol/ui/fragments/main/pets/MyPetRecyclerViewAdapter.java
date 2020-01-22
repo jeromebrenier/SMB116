@@ -35,7 +35,7 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
 
     public MyPetRecyclerViewAdapter(PetFragment petFragment,
                                     PetFragment.OnListFragmentInteractionListener listener) {
-        this.petFoodingControlRepository = petFragment.getPfcRepository();
+        this.petFoodingControlRepository = petFragment.petService.getPfcRepository();
         mUserPets = petFragment.getPetFragmentViewModel().getUserPets();
         mListener = listener;
     }

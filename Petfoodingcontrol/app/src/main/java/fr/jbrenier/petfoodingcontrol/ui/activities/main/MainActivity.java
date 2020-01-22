@@ -1,13 +1,9 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.main;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import android.util.Base64;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -28,24 +24,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
-import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceImpl;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
-import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
-import io.reactivex.disposables.Disposable;
 
 /**
  * Main activity of the Pet Fooding Control application.
@@ -96,15 +90,22 @@ public class MainActivity extends AppCompatActivity implements
         headerView = navigationView.getHeaderView(0);
         getUserDataView();
         setupLogoutListener();
+        setupUserLoggedListener();
+        if (userService.getPfcRepository().getUserLogged().getValue() == null) {
+            launchLoginActivity();
+        }
+    }
+
+    /**
+     * Setup userLoggedListener
+     */
+    private void setupUserLoggedListener() {
         userService.getPfcRepository().getUserLogged().observe(this, user -> {
             if (user != null) {
                 setUserPets(user);
                 setUserDataInNavBar(user);
             }
         });
-        if (userService.getPfcRepository().getUserLogged().getValue() == null) {
-            launchLoginActivity();
-        }
     }
 
     /**
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements
     private void setUserDataInNavBar(User user) {
         user_name.setText(user.getDisplayedName());
         user_email.setText(user.getEmail());
-        photoService.get(user).observe(this, bitmap -> {
+        photoService.get(this, user).observe(this, bitmap -> {
             if (bitmap != null) {
                 user_photo.setImageBitmap(bitmap);
             }
@@ -200,6 +201,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
+        userService.clearDisposables(this);
+        photoService.clearDisposables(this);
         userService.leave();
         super.onDestroy();
     }
@@ -211,50 +214,27 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSaveButtonClick(Map<UserServiceKeysEnum, String> userData) {
-        userService.update(userData);
-        photoService.update(userData);
-        // USER
-        String hashedUserPassword = CryptographyUtils.hashPassword(
-                userData.get(UserServiceKeysEnum.PASSWORD_KEY));
-        final User newUser = new User(
-                userData.get(UserServiceKeysEnum.USERNAME_KEY),
-                userData.get(UserServiceKeysEnum.EMAIL_KEY),
-                hashedUserPassword,
-                null
-        );
-        // PHOTO
-        String base64photo = userData.get(UserServiceKeysEnum.PHOTO_KEY);
-        if (base64photo != null) {
-            final Photo userPhoto = new Photo(base64photo);
-            Disposable disposable = pfcRepository.save(userPhoto).subscribe(
-                    (photoId) -> {
-                        Log.i(TAG, "User's photo saved with id " + photoId);
-                        newUser.setPhotoId(photoId);
-                        updateUser(newUser);
-                    },
-                    throwable -> {
-                        Log.e(TAG, "photo save failure", throwable);
-                    });
-            compositeDisposable.add(disposable);
-            pfcRepository.save(userPhoto);
-        }*/
+        userService.update(this, userData).observe(this, result -> {
+            if (result == 1) {
+                showToast(getResources().getString(R.string.toast_account_update_failure));
+            } else if (result == 0) {
+                updateUserPhoto(userData);
+            }
+        });
     }
 
     /**
-     * Update the user in the data source.
-     * @param user user to save
+     * Update the user's photo.
+     * @param userData the user's data retrieved from the input
      */
-    private void updateUser(User user) {
-/*        Disposable disposable = pfcRepository.update(user).subscribe(
-                () -> {
-                    Log.i(TAG,"User with id : " + user.getUserId() + " updated");
-                    showToast(getResources().getString(R.string.toast_account_update_success));
-                },
-                throwable -> {
-                    Log.e(TAG, "user update failure", throwable);
-                    showToast(getResources().getString(R.string.toast_account_update_failure));
-                });
-        compositeDisposable.add(disposable);*/
+    private void updateUserPhoto(Map<UserServiceKeysEnum, String> userData) {
+        photoService.update(this, userData).observe(this, updateResult -> {
+            if (updateResult == 1) {
+                showToast(getResources().getString(R.string.toast_account_update_failure));
+            } else if (updateResult == 0) {
+                showToast(getResources().getString(R.string.toast_account_update_success));
+            }
+        });
     }
 
     /**

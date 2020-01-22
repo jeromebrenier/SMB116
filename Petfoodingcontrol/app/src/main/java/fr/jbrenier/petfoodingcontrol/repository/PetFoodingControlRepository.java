@@ -27,6 +27,7 @@ public interface PetFoodingControlRepository {
 
     /** Photo */
     Single<Long> save(Photo photo);
+    Completable update(Photo photo);
 
     /** Pet */
     Single<Pet> getPetById(Long petId);

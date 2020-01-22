@@ -12,9 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
+import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 
 /**
@@ -27,9 +31,11 @@ public class PetFragment extends Fragment {
 
     private PetFragmentViewModel petFragmentViewModel;
     private MainActivity mainActivity;
-    private PetFoodingControlRepository pfcRepository;
     private MyPetRecyclerViewAdapter adapter;
     private OnListFragmentInteractionListener mListener;
+
+    @Inject
+    PetService petService;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -49,9 +55,10 @@ public class PetFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pet_list, container, false);
+        ((PetFoodingControl) getActivity().getApplicationContext()).getServicesComponent()
+                .inject(this);
         petFragmentViewModel = ViewModelProviders.of(this).get(PetFragmentViewModel.class);
         mainActivity = (MainActivity)getActivity();
-       /* pfcRepository = mainActivity.getPetFoodingControlRepository();*/
         // Toolbar title
         mainActivity.setToolBarTitle(R.string.menu_pets);
         //show the add a pet button
@@ -74,16 +81,16 @@ public class PetFragment extends Fragment {
 
 
     private void setAdapter(RecyclerView recyclerView) {
-        petFragmentViewModel.refresh(pfcRepository.getUserPets().getValue());
+        petFragmentViewModel.refresh(petService.getPfcRepository().getUserPets().getValue());
         adapter = new MyPetRecyclerViewAdapter(this, mListener);
-        adapter.setUserLogged(pfcRepository.getUserLogged().getValue());
+        adapter.setUserLogged(petService.getPfcRepository().getUserLogged().getValue());
         recyclerView.setAdapter(adapter);
-        pfcRepository.getUserPets().observe(this, list -> {
-            petFragmentViewModel.refresh(pfcRepository.getUserPets().getValue());
+        petService.getPfcRepository().getUserPets().observe(this, list -> {
+            petFragmentViewModel.refresh(petService.getPfcRepository().getUserPets().getValue());
             adapter.notifyDataSetChanged();
         });
-        pfcRepository.getUserLogged().observe(this, list -> {
-            adapter.setUserLogged(pfcRepository.getUserLogged().getValue());
+        petService.getPfcRepository().getUserLogged().observe(this, list -> {
+            adapter.setUserLogged(petService.getPfcRepository().getUserLogged().getValue());
             adapter.notifyDataSetChanged();
         });
     }
@@ -107,10 +114,6 @@ public class PetFragment extends Fragment {
 
     public PetFragmentViewModel getPetFragmentViewModel() {
         return petFragmentViewModel;
-    }
-
-    public PetFoodingControlRepository getPfcRepository() {
-        return pfcRepository;
     }
 
     /**

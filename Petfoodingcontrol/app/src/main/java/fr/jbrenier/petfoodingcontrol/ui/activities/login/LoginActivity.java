@@ -35,10 +35,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ((PetFoodingControl) getApplicationContext()).getServicesComponent().inject(this);
         setContentView(R.layout.activity_login);
-        userService.initLogin();
         if (savedInstanceState == null) {
             setupUserLoggedListener();
         }
+        userService.initLogin(this);
     }
 
     /**
@@ -81,12 +81,14 @@ public class LoginActivity extends AppCompatActivity {
      * @param isKeepLogged true if "keep logged" checked, false otherwise
      */
     private void tryToLog(String email, String password, boolean isKeepLogged) {
-        userService.tryToLog(email, password, isKeepLogged).observe(this, result -> {
-            if (result == 1) {
-                showToast(R.string.toast_failed_login);
-            } else if (result == 0) {
-                showToast(R.string.toast_success_login);
-            }});
+        userService.tryToLog(this, email, password, isKeepLogged).observe(this,
+                result -> {
+                    if (result == 1) {
+                        showToast(R.string.toast_failed_login);
+                    } else if (result == 0) {
+                        showToast(R.string.toast_success_login);
+                    }
+                });
     }
 
     /**
@@ -114,6 +116,11 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        userService.clearDisposables(this);
         super.onDestroy();
+    }
+
+    public UserService getUserService() {
+        return userService;
     }
 }

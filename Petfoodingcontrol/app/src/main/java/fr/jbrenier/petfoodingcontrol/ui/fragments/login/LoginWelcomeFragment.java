@@ -32,8 +32,8 @@ public class LoginWelcomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_login_welcome, container, false);
-/*        ((LoginActivity) getActivity()).getPetFoodingControlRepository().getUserLogged().observe(
-                this, user -> setWelcomeText(fragmentView, user));*/
+        ((LoginActivity) getActivity()).getUserService().getPfcRepository().getUserLogged().observe(
+                this, user -> setWelcomeText(fragmentView, user));
         return fragmentView;
     }
 

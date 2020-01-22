@@ -100,6 +100,13 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     }
 
     @Override
+    public Completable update(Photo photo) {
+        return petFoodingControlDatabase.getPhotoDao().update(photo)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
     public Single<Pet> getPetById(Long petId) {
         return petFoodingControlDatabase.getPetDao().getPetbyId(petId)
                 .subscribeOn(Schedulers.newThread())

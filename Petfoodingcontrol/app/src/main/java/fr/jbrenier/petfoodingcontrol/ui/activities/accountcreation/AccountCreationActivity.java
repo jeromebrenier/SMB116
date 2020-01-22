@@ -23,6 +23,7 @@ import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
+import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
 import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
 
@@ -141,24 +142,24 @@ public class AccountCreationActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveButtonClick(Map<String, String> userData) {
+    public void onSaveButtonClick(Map<UserServiceKeysEnum, String> userData) {
         // USER
         String hashedUserPassword = CryptographyUtils.hashPassword(
-                userData.get(AccountManagementFormFragment.PASSWORD_KEY));
+                userData.get(UserServiceKeysEnum.PASSWORD_KEY));
         final User newUser = new User(
-                userData.get(AccountManagementFormFragment.USERNAME_KEY),
-                userData.get(AccountManagementFormFragment.EMAIL_KEY),
+                userData.get(UserServiceKeysEnum.USERNAME_KEY),
+                userData.get(UserServiceKeysEnum.EMAIL_KEY),
                 hashedUserPassword,
                 null
         );
         // PHOTO
-        String base64photo = userData.get(AccountManagementFormFragment.PHOTO_KEY);
+        String base64photo = userData.get(UserServiceKeysEnum.PHOTO_KEY);
 
-        userService.save(newUser).observe(this, result -> {
+        userService.save(this, newUser).observe(this, result -> {
             if (result == 0) {
                 if (base64photo != null ) {
                     final Photo userPhoto = new Photo(base64photo);
-                    photoService.save(userPhoto, newUser);
+                    photoService.save(this, userPhoto, newUser);
                 }
                 showToast(getResources().getString(R.string.toast_account_created));
                 finish();
@@ -179,6 +180,7 @@ public class AccountCreationActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        userService.clearDisposables(this);
         super.onDestroy();
     }
 }
