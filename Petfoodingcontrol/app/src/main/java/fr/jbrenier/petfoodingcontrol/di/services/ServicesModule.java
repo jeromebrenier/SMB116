@@ -14,7 +14,7 @@ import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceImpl;
 
 @Module
 public class ServicesModule {
-
+    @ServicesScope
     @Provides
     public UserService getUserService(PetFoodingControlRepository pfcRepository,
                                       SharedPreferences sharedPreferences) {

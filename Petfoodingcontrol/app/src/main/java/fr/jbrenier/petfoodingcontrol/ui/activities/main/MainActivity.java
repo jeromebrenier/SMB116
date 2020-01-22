@@ -24,8 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.inject.Inject;
 
@@ -102,8 +100,11 @@ public class MainActivity extends AppCompatActivity implements
     private void setupUserLoggedListener() {
         userService.getPfcRepository().getUserLogged().observe(this, user -> {
             if (user != null) {
+                Log.i(TAG, "plip");
                 setUserPets(user);
                 setUserDataInNavBar(user);
+            } else {
+                Log.i(TAG, "plop");
             }
         });
     }

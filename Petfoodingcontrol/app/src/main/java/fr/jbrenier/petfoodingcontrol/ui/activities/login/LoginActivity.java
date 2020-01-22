@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
@@ -35,6 +36,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ((PetFoodingControl) getApplicationContext()).getServicesComponent().inject(this);
         setContentView(R.layout.activity_login);
+        synchronized(userService.getPfcRepository().getUserLogged()){
+            Log.i(TAG,"toto");
+            userService.getPfcRepository().getUserLogged().setValue(null);
+            userService.getPfcRepository().getUserLogged().setValue(null);
+        }
         if (savedInstanceState == null) {
             setupUserLoggedListener();
         }
