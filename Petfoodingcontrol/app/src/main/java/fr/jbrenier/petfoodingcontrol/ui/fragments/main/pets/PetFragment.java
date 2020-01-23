@@ -55,7 +55,7 @@ public class PetFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pet_list, container, false);
-        ((PetFoodingControl) getActivity().getApplicationContext()).getServicesComponent()
+        ((PetFoodingControl) getActivity().getApplicationContext()).getAppComponent()
                 .inject(this);
         petFragmentViewModel = ViewModelProviders.of(this).get(PetFragmentViewModel.class);
         mainActivity = (MainActivity)getActivity();

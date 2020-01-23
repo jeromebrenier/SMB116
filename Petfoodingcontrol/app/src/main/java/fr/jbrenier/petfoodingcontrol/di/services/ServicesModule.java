@@ -2,6 +2,8 @@ package fr.jbrenier.petfoodingcontrol.di.services;
 
 import android.content.SharedPreferences;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
@@ -14,13 +16,16 @@ import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceImpl;
 
 @Module
 public class ServicesModule {
-    @ServicesScope
+
+    @Singleton
     @Provides
     public UserService getUserService(PetFoodingControlRepository pfcRepository,
                                       SharedPreferences sharedPreferences) {
         return new UserServiceImpl(pfcRepository, sharedPreferences);
     }
 
+
+    @Singleton
     @Provides
     public PhotoService getPhotoService(PetFoodingControlRepository pfcRepository,
                                         SharedPreferences sharedPreferences,
@@ -28,6 +33,8 @@ public class ServicesModule {
         return new PhotoServiceImpl(pfcRepository, sharedPreferences, userService);
     }
 
+
+    @Singleton
     @Provides
     public PetService getPetService(PetFoodingControlRepository pfcRepository,
                                       SharedPreferences sharedPreferences,

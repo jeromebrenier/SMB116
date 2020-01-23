@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((PetFoodingControl) getApplicationContext()).getServicesComponent().inject(this);
+        ((PetFoodingControl) getApplicationContext()).getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);

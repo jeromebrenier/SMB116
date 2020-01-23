@@ -55,7 +55,7 @@ public class AccountCreationActivity extends AppCompatActivity
         petFoodingControl = ((PetFoodingControl) getApplication());
         setContentView(R.layout.activity_account_creation);
         setActivityTitle();
-        petFoodingControl.getServicesComponent().inject(this);
+        petFoodingControl.getAppComponent().inject(this);
         // Camera permission management
         petFoodingControl.isCameraPermissionGranted.setValue(
                 checkPermission(Manifest.permission.CAMERA, REQUEST_CODE_CAMERA_PERMISSION));

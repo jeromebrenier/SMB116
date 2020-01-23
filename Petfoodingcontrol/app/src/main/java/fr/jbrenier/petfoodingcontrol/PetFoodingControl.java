@@ -6,10 +6,6 @@ import androidx.lifecycle.MutableLiveData;
 
 import fr.jbrenier.petfoodingcontrol.di.app.AppComponent;
 import fr.jbrenier.petfoodingcontrol.di.app.DaggerAppComponent;
-import fr.jbrenier.petfoodingcontrol.di.repository.DaggerRepositoryComponent;
-import fr.jbrenier.petfoodingcontrol.di.repository.RepositoryComponent;
-import fr.jbrenier.petfoodingcontrol.di.services.ServicesComponent;
-import fr.jbrenier.petfoodingcontrol.di.services.DaggerServicesComponent;
 
 /**
  * The Pet Fooding Control application class.
@@ -21,8 +17,6 @@ public class PetFoodingControl extends Application {
     private static final String TAG = "PetFoodingControl";
 
     private AppComponent appComponent;
-    private RepositoryComponent repositoryComponent;
-    private ServicesComponent servicesComponent;
     public MutableLiveData<Boolean> isCameraPermissionGranted = new MutableLiveData<>(false);
     public MutableLiveData<Boolean> isReadExternalStoragePermissionGranted =
             new MutableLiveData<>(false);
@@ -30,15 +24,12 @@ public class PetFoodingControl extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //servicesComponent = DaggerServicesComponent.builder().build();
+        //repositoryComponent = DaggerRepositoryComponent.builder().application(this).build();
         appComponent = DaggerAppComponent.builder().application(this).build();
-        repositoryComponent = DaggerRepositoryComponent.builder().application(this).build();
-        servicesComponent = DaggerServicesComponent.builder()
-                .appComponent(appComponent)
-                .repositoryComponent(repositoryComponent).build();
     }
 
-    public ServicesComponent getServicesComponent() {
-        return servicesComponent;
+    public AppComponent getAppComponent() {
+        return appComponent;
     }
-
 }

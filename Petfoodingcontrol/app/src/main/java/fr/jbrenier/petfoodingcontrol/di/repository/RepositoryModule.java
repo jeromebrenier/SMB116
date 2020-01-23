@@ -2,6 +2,8 @@ package fr.jbrenier.petfoodingcontrol.di.repository;
 
 import android.app.Application;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;

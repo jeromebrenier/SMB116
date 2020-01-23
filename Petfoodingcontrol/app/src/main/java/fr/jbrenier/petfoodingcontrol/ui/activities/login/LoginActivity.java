@@ -34,7 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((PetFoodingControl) getApplicationContext()).getServicesComponent().inject(this);
+        ((PetFoodingControl) getApplicationContext()).getAppComponent().inject(this);
         setContentView(R.layout.activity_login);
         synchronized(userService.getPfcRepository().getUserLogged()){
             Log.i(TAG,"toto");
