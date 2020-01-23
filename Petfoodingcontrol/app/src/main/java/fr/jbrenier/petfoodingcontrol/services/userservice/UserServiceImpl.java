@@ -78,8 +78,8 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
     /**
      * Try to log with the data provided, initiate the auto login feature saving and storing
      * in preferences if necessary.
-     * Return a SingleLiveEvent<Integer> taking the value 0 in case of success and 1 in case
-     * of failure.
+     * Return a SingleLiveEvent<Integer> taking the value 0 in case of success, 1 in case
+     * of wrong password and 2 In case of user retrieval problem.
      * @param context the Context of the caller
      * @return logInResult SingleLiveEvent<Integer> result of the try
      */
@@ -101,7 +101,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                             Log.i(TAG, "Log in failure, wrong password.");
                         }),
                 throwable -> {
-                    logInResult.setValue(1);
+                    logInResult.setValue(2);
                     Log.e(TAG, "Log in failure ", throwable);
                 });
         addToCompositeDisposable(context, disposable);

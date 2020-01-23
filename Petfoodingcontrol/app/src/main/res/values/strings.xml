@@ -14,8 +14,8 @@
     <string name="toast_input_empty">Please complete all fields.</string>
     <string name="welcome">Welcome</string>
     <string name="user_logged">user_logged</string>
-    <string name="toast_failed_login">Login failed !</string>
-    <string name="toast_success_login">Login success !</string>
+    <string name="toast_failed_login_wrong_password">Login failed : wrong password !</string>
+    <string name="toast_failed_login_user_unknown">Login failed : unknown user !</string>
 
     <!-- Main Activity -->
     <string name="title_activity_main">Pet Fooding Control</string>

@@ -36,11 +36,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         ((PetFoodingControl) getApplicationContext()).getAppComponent().inject(this);
         setContentView(R.layout.activity_login);
-        synchronized(userService.getPfcRepository().getUserLogged()){
-            Log.i(TAG,"toto");
-            userService.getPfcRepository().getUserLogged().setValue(null);
-            userService.getPfcRepository().getUserLogged().setValue(null);
-        }
         if (savedInstanceState == null) {
             setupUserLoggedListener();
         }
@@ -90,9 +85,9 @@ public class LoginActivity extends AppCompatActivity {
         userService.tryToLog(this, email, password, isKeepLogged).observe(this,
                 result -> {
                     if (result == 1) {
-                        showToast(R.string.toast_failed_login);
-                    } else if (result == 0) {
-                        showToast(R.string.toast_success_login);
+                        showToast(R.string.toast_failed_login_wrong_password);
+                    } else if (result == 2) {
+                        showToast(R.string.toast_failed_login_user_unknown);
                     }
                 });
     }

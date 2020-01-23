@@ -31,6 +31,7 @@ import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
@@ -59,6 +60,9 @@ public class MainActivity extends AppCompatActivity implements
     @Inject
     PhotoService photoService;
 
+    @Inject
+    PetService petService;
+
     private TextView user_name;
     private TextView user_email;
     private ImageView user_photo;
@@ -76,8 +80,6 @@ public class MainActivity extends AppCompatActivity implements
         setupAddButton();
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_pets, R.id.nav_account_settings)
                 .setDrawerLayout(drawer)
@@ -95,18 +97,43 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Setup userLoggedListener
+     * Setup user logged listener to populate userPets accordingly and to display its data in
+     * the header.
      */
     private void setupUserLoggedListener() {
         userService.getPfcRepository().getUserLogged().observe(this, user -> {
-            if (user != null) {
-                Log.i(TAG, "plip");
-                setUserPets(user);
-                setUserDataInNavBar(user);
-            } else {
-                Log.i(TAG, "plop");
+            setUserPets(user);
+            setUserDataInNavBar(user);
+            Log.i(TAG, "User logged changed to "
+                    + (user == null ? "null" : user.getUserId().toString()));
+        });
+    }
+
+    /**
+     * Launch the populate of the User's pet list (owned and authorized to fed).
+     * @param user the logged user
+     */
+    private void setUserPets(User user) {
+        petService.setUserPets(user);
+    }
+
+    /**
+     * Set the User elements (name, email, photo) in the navigation bar dedicated area according to
+     * the User data.
+     * @param user : the logged User
+     */
+    private void setUserDataInNavBar(User user) {
+        user_name.setText(user == null ? "********" : user.getDisplayedName());
+        user_email.setText(user == null ? "********" : user.getEmail());
+        if (user != null) {
+        photoService.get(this, user).observe(this, bitmap -> {
+            if (bitmap != null) {
+                user_photo.setImageBitmap(bitmap);
             }
         });
+        } else {
+
+        }
     }
 
     /**
@@ -115,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements
     private void setupAddButton() {
         FloatingActionButton addPet = findViewById(R.id.main_addPet);
         addPet.setOnClickListener(view -> sendPetAdditionActivityIntent());
-
     }
 
     private void sendPetAdditionActivityIntent() {
@@ -133,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Set the logout button listener
+     * Set the logout button listener to invoke log out on click.
      */
     private void setupLogoutListener() {
         headerView.findViewById(R.id.btn_log_out).setOnClickListener(view -> logout());
@@ -147,28 +173,6 @@ public class MainActivity extends AppCompatActivity implements
         launchLoginActivity();
     }
 
-    /**
-     * Set the User elements (name, email, photo) in the navigation bar dedicated area according to
-     * the User data.
-     * @param user : the logged User
-     */
-    private void setUserDataInNavBar(User user) {
-        user_name.setText(user.getDisplayedName());
-        user_email.setText(user.getEmail());
-        photoService.get(this, user).observe(this, bitmap -> {
-            if (bitmap != null) {
-                user_photo.setImageBitmap(bitmap);
-            }
-        });
-    }
-
-    /**
-     * Set the User pets (owned and authorized to fed) in the viewmodel.
-     * @param user : the logged User
-     */
-    private void setUserPets(User user) {
-/*        pfcRepository.setUserPets(user);*/
-    }
 
     @Override
     public boolean onSupportNavigateUp() {

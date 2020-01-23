@@ -1,10 +1,7 @@
 package fr.jbrenier.petfoodingcontrol.services.petservice;
 
-import android.content.SharedPreferences;
-
-import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
+import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
 public interface PetService {
-    PetFoodingControlRepository getPfcRepository();
-    SharedPreferences getSharedPreferences();
+    void setUserPets(User user);
 }
