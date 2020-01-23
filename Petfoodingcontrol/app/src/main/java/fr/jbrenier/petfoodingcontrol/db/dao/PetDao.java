@@ -9,6 +9,7 @@ import androidx.room.Update;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -23,6 +24,11 @@ public interface PetDao {
     Single<Pet> getPetbyId (Long petId);
     @Query("SELECT * FROM Pet WHERE user_Id = :userId")
     Flowable<List<Pet>> getPetOwnedbyUserId (Long userId);
+    @Query("SELECT Pet.* FROM Pet WHERE user_Id = :userId " +
+            "UNION " +
+            "SELECT Pet.* FROM PetFeeders INNER JOIN Pet ON PetFeeders.pet_Id = Pet.pet_id " +
+            "WHERE PetFeeders.user_Id = :userId")
+    Flowable<List<Pet>> getAllUserPetsByUserId(Long userId);
     @Update
     Completable updatePet (Pet pet);
     @Delete

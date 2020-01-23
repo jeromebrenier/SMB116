@@ -1,6 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.repository;
 
-import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
@@ -32,13 +32,9 @@ public interface PetFoodingControlRepository {
     Completable update(Photo photo);
 
     /** Pet */
-    MediatorLiveData<List<Pet>> getUserPets();
-    void setUserPets(List<Pet> petList);
-    void addUserPet(Pet pet);
-    void refreshUserPet();
-    void removeUserPet(Pet pet);
+    LiveData<List<Pet>> getUserPets();
+    void setUserPets(LiveData<List<Pet>> userPets);
     Single<Pet> getPetById(Long petId);
     Single<Photo> getPetPhoto(Pet pet);
-    Flowable<List<Pet>> getPetOwnedbyUserId (Long userId);
-    Flowable<List<Pet>> getPetsforFeeder(Long userId);
+    Flowable<List<Pet>> getAllUserPetsByUserId(Long userId);
 }

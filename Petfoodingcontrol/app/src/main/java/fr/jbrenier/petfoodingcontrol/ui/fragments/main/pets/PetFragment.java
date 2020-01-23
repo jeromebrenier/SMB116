@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -12,12 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 
@@ -31,6 +33,7 @@ public class PetFragment extends Fragment {
 
     private PetFragmentViewModel petFragmentViewModel;
     private MainActivity mainActivity;
+    private Observer<List<Pet>> userPetObserver;
     private MyPetRecyclerViewAdapter adapter;
     private OnListFragmentInteractionListener mListener;
 
@@ -81,18 +84,34 @@ public class PetFragment extends Fragment {
 
 
     private void setAdapter(RecyclerView recyclerView) {
-        petFragmentViewModel.refresh(petService.getPfcRepository().getUserPets().getValue());
+        if (petService.getPfcRepository().getUserPets() != null) {
+            petFragmentViewModel.refresh(petService.getPfcRepository().getUserPets().getValue());
+        }
         adapter = new MyPetRecyclerViewAdapter(this, mListener);
         adapter.setUserLogged(petService.getPfcRepository().getUserLogged().getValue());
         recyclerView.setAdapter(adapter);
-        petService.getPfcRepository().getUserPets().observe(this, list -> {
-            petFragmentViewModel.refresh(petService.getPfcRepository().getUserPets().getValue());
+        userPetObserver = list -> {
+            petFragmentViewModel.refresh(list);
             adapter.notifyDataSetChanged();
-        });
-        petService.getPfcRepository().getUserLogged().observe(this, list -> {
-            adapter.setUserLogged(petService.getPfcRepository().getUserLogged().getValue());
+        };
+        petService.getPfcRepository().getUserLogged().observe(getViewLifecycleOwner(), user -> {
+            adapter.setUserLogged(user);
             adapter.notifyDataSetChanged();
+            if (user == null) {
+                observeUserPets(true);
+            } else {
+                observeUserPets(false);
+            }
         });
+    }
+
+    private void observeUserPets(boolean status) {
+        if (status) {
+            petService.getPfcRepository().getUserPets().observe(getViewLifecycleOwner(),
+                    userPetObserver);
+        } else {
+            petService.getPfcRepository().getUserPets().removeObserver(userPetObserver);
+        }
     }
 
     @Override

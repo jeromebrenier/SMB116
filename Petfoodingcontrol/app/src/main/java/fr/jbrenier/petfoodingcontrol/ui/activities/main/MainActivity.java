@@ -102,11 +102,14 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void setupUserLoggedListener() {
         userService.getPfcRepository().getUserLogged().observe(this, user -> {
-            setUserPets(user);
-            setUserDataInNavBar(user);
-            Log.i(TAG, "User logged changed to "
-                    + (user == null ? "null" : user.getUserId().toString()));
-        });
+            if (user != null) {
+                setUserPets(user);
+                setUserDataInNavBar(user);
+                Log.i(TAG, "User logged changed to " + user.getUserId().toString());
+            } else {
+                Log.i(TAG, "User logged changed to null");
+            }
+         });
     }
 
     /**

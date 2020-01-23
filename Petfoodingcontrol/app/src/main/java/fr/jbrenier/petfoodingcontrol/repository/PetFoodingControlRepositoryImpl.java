@@ -2,6 +2,7 @@ package fr.jbrenier.petfoodingcontrol.repository;
 
 import android.app.Application;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.room.Room;
@@ -27,9 +28,7 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     private static final String DB_NAME = "pfc_db";
     private final PetFoodingControlDatabase petFoodingControlDatabase;
     private final MutableLiveData<User> userLogged = new MutableLiveData<>();
-    private final MediatorLiveData<List<Pet>> userPets = new MediatorLiveData<>();
-    private final MutableLiveData<List<Pet>> userPetsOwned = new MutableLiveData<>();
-    private final MutableLiveData<List<Pet>> petsUserCanFeed = new MutableLiveData<>();
+    private LiveData<List<Pet>> userPets;
 
     @Inject
     public PetFoodingControlRepositoryImpl(Application application) {
@@ -124,78 +123,19 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     }
 
     @Override
-    public MediatorLiveData<List<Pet>> getUserPets() {
+    public LiveData<List<Pet>> getUserPets() {
         return userPets;
     }
 
-    /**
-     * Add a pet to the userPEts list. For this process a new list with the current Pets is created
-     * and the new Pet is added. Finally, the value of the userPets is set to the new list.
-     * @param pet the Pet to add to the list
-     */
     @Override
-    public void addUserPet(Pet pet) {
-        List<Pet> newList = createNewUserPetList();
-        if (pet != null) {
-            newList.add(pet);
-            userPets.setValue(newList);
-        }
-    }
-
-    /**
-     * Create a new userPets list containing all the elements of the current list.
-     * @return the new userPets list
-     */
-    private List<Pet> createNewUserPetList() {
-        List<Pet> newList = new ArrayList<>();
-        if (userPets.getValue() != null) {
-            newList.addAll(userPets.getValue());
-        }
-        return newList;
-    }
-
-    /**
-     * Refresh the userPEts list. For this process a new list with the current Pets is
-     * created and finally, the value of the userPets is set to the new list.
-     */
-    @Override
-    public void refreshUserPet() {
-        List<Pet> newList = createNewUserPetList();
-        userPets.setValue(newList);
-    }
-
-    /**
-     * Remove a pet from the userPEts list. For this process a new list with the current Pets is
-     * created and the Pet is removed. Finally, the value of the userPets is set to the new list.
-     * @param pet the Pet to remove from the list
-     */
-    @Override
-    public void removeUserPet(Pet pet) {
-        List<Pet> newList = createNewUserPetList();
-        if (pet != null && newList.contains(pet)) {
-            newList.remove(pet);
-            userPets.setValue(newList);
-        }
+    public void setUserPets(LiveData<List<Pet>> userPets) {
+        this.userPets = userPets;
     }
 
     @Override
-    public void setUserPets(List<Pet> petList) {
-        userPets.setValue(petList);
-    }
-
-
-    @Override
-    public Flowable<List<Pet>> getPetOwnedbyUserId(Long userId) {
-        return petFoodingControlDatabase.getPetDao().getPetOwnedbyUserId(userId)
+    public Flowable<List<Pet>> getAllUserPetsByUserId(Long userId) {
+        return petFoodingControlDatabase.getPetDao().getAllUserPetsByUserId(userId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
-
-    @Override
-    public Flowable<List<Pet>> getPetsforFeeder(Long userId) {
-        return petFoodingControlDatabase.getPetFeedersDao().getPetsforFeeder(userId)
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
 }
