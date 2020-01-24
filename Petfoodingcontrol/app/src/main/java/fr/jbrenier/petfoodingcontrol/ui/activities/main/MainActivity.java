@@ -37,6 +37,7 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements
 
     /** PERMISSIONS */
     private static final int PERMISSIONS_REQUEST = 3;
-    private final CountDownLatch permissionLatch = new CountDownLatch(1);
+    private final SingleLiveEvent<Boolean> permissionProcessDone = new SingleLiveEvent<>();
 
     /** LOGGING */
     private static final String TAG = "MainActivity";
@@ -106,12 +107,13 @@ public class MainActivity extends AppCompatActivity implements
         getUserDataView();
         setupLogoutListener();
         setupUserLoggedListener();
+        permissionProcessDone.observe(this, bool -> {
+            if (userService.getPfcRepository().getUserLogged().getValue() == null) {
+                Log.i(TAG, "Launching login activity.");
+                launchLoginActivity();
+            }
+        });
         checkApplicationPermissions();
-        armPermissionLatch();
-        if (userService.getPfcRepository().getUserLogged().getValue() == null) {
-            Log.i(TAG, "Launching login activity.");
-            launchLoginActivity();
-        }
     }
 
     /**
@@ -129,22 +131,24 @@ public class MainActivity extends AppCompatActivity implements
                     getString(R.string.permission_read_external_storage));
 
         if (permissionsList.size() > 0) {
+            Log.i(TAG,"permissionsList.size()");
             if (permissionsNeeded.size() > 0) {
+                Log.i(TAG,"permissionsNeeded.size()");
                 String message = getResources().getString(R.string.permission_grant_access_needed)
-                        + permissionsNeeded.get(0);
+                        + " " + permissionsNeeded.get(0);
                 for (int i = 1; i < permissionsNeeded.size(); i++)
                     message = message + ", " + permissionsNeeded.get(i);
                 showMessageOKCancel(message,
                         (dialog, which) -> requestPermissions(permissionsList.toArray(
                                 new String[permissionsList.size()]), PERMISSIONS_REQUEST),
-                        (dialog, which) -> permissionLatch.countDown());
+                        (dialog, which) -> permissionProcessDone.setValue(true));
                 return;
             }
             requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
                     PERMISSIONS_REQUEST);
             return;
         }
-        permissionLatch.countDown();
+        Log.i(TAG,"endcheckApplicationPermissions");
     }
 
     private boolean addPermission(List<String> permissionsList, String permission) {
@@ -178,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements
                                            int[] grantResults) {
         switch (requestCode) {
             case PERMISSIONS_REQUEST:
+                Log.i(TAG,"RequestPermissionResult");
                 Map<String, Integer> perms = new HashMap<String, Integer>();
 
                 perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
@@ -191,18 +196,10 @@ public class MainActivity extends AppCompatActivity implements
                 } else if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     petFoodingControl.isReadExternalStoragePermissionGranted.setValue(true);
                 }
-                permissionLatch.countDown();
+                permissionProcessDone.setValue(true);
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private void armPermissionLatch() {
-        try {
-            permissionLatch.await();
-        } catch (InterruptedException e) {
-            Log.i(TAG, "PermissionLatch.await() error : " + e.getMessage());
         }
     }
 
@@ -244,10 +241,7 @@ public class MainActivity extends AppCompatActivity implements
                 user_photo.setImageBitmap(bitmap);
             }
         });
-        } else {
-
-        }
-    }
+    }}
 
     /**
      * Setup the add pet button
@@ -307,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == LOGIN_REQUEST && resultCode != RESULT_OK) {
             finishAndRemoveTask();
+            checkApplicationPermissions();
         }
     }
 
