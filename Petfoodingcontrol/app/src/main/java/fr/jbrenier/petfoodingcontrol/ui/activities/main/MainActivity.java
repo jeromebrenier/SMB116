@@ -1,10 +1,14 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.main;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -23,7 +27,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import javax.inject.Inject;
 
@@ -51,6 +59,10 @@ public class MainActivity extends AppCompatActivity implements
     private static final int LOGIN_REQUEST = 1;
     private static final int ADD_PET_REQUEST = 2;
 
+    /** PERMISSIONS */
+    private static final int PERMISSIONS_REQUEST = 3;
+    private final CountDownLatch permissionLatch = new CountDownLatch(1);
+
     /** LOGGING */
     private static final String TAG = "MainActivity";
 
@@ -70,10 +82,13 @@ public class MainActivity extends AppCompatActivity implements
     private AppBarConfiguration mAppBarConfiguration;
     private View headerView;
 
+    private PetFoodingControl petFoodingControl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((PetFoodingControl) getApplicationContext()).getAppComponent().inject(this);
+        petFoodingControl = (PetFoodingControl) getApplication();
+        petFoodingControl.getAppComponent().inject(this);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -91,8 +106,103 @@ public class MainActivity extends AppCompatActivity implements
         getUserDataView();
         setupLogoutListener();
         setupUserLoggedListener();
+        checkApplicationPermissions();
+        armPermissionLatch();
         if (userService.getPfcRepository().getUserLogged().getValue() == null) {
+            Log.i(TAG, "Launching login activity.");
             launchLoginActivity();
+        }
+    }
+
+    /**
+     * Check the application permissions.
+     */
+    private void checkApplicationPermissions() {
+        Log.i(TAG, "Checking permissions.");
+        final List<String> permissionsNeeded = new ArrayList<String>();
+        final List<String> permissionsList = new ArrayList<String>();
+
+        if (!addPermission(permissionsList, Manifest.permission.CAMERA))
+            permissionsNeeded.add(getResources().getString(R.string.permission_camera));
+        if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
+            permissionsNeeded.add(getResources().
+                    getString(R.string.permission_read_external_storage));
+
+        if (permissionsList.size() > 0) {
+            if (permissionsNeeded.size() > 0) {
+                String message = getResources().getString(R.string.permission_grant_access_needed)
+                        + permissionsNeeded.get(0);
+                for (int i = 1; i < permissionsNeeded.size(); i++)
+                    message = message + ", " + permissionsNeeded.get(i);
+                showMessageOKCancel(message,
+                        (dialog, which) -> requestPermissions(permissionsList.toArray(
+                                new String[permissionsList.size()]), PERMISSIONS_REQUEST),
+                        (dialog, which) -> permissionLatch.countDown());
+                return;
+            }
+            requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
+                    PERMISSIONS_REQUEST);
+            return;
+        }
+        permissionLatch.countDown();
+    }
+
+    private boolean addPermission(List<String> permissionsList, String permission) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+            permissionsList.add(permission);
+            if (!shouldShowRequestPermissionRationale(permission)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Show an OK/Cancel dialog message to inform that a permission is needed and ask for a
+     * reaction.
+     * @param message the message to display
+     * @param okListener the listener triggered by the OK button
+     */
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener,
+                                     DialogInterface.OnClickListener cancelListener) {
+        new AlertDialog.Builder(MainActivity.this)
+                .setMessage(message)
+                .setPositiveButton(getResources().getString(R.string.btn_OK), okListener)
+                .setNegativeButton(getResources().getString(R.string.btn_cancel), cancelListener)
+                .create()
+                .show();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST:
+                Map<String, Integer> perms = new HashMap<String, Integer>();
+
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+
+                for (int i = 0; i < permissions.length; i++)
+                    perms.put(permissions[i], grantResults[i]);
+
+                if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    petFoodingControl.isCameraPermissionGranted.setValue(true);
+                } else if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    petFoodingControl.isReadExternalStoragePermissionGranted.setValue(true);
+                }
+                permissionLatch.countDown();
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void armPermissionLatch() {
+        try {
+            permissionLatch.await();
+        } catch (InterruptedException e) {
+            Log.i(TAG, "PermissionLatch.await() error : " + e.getMessage());
         }
     }
 

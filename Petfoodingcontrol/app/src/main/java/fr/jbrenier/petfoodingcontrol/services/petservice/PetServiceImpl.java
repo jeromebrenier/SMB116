@@ -3,18 +3,16 @@ package fr.jbrenier.petfoodingcontrol.services.petservice;
 import android.content.SharedPreferences;
 
 import androidx.lifecycle.LiveDataReactiveStreams;
-import androidx.lifecycle.MutableLiveData;
 
-import java.util.List;
 
 import javax.inject.Inject;
 
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
+import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 
-public class PetServiceImpl implements PetService {
+public class PetServiceImpl extends PetFoodingControlService implements PetService {
     /** LOGGING */
     private static final String TAG = "PetService";
 

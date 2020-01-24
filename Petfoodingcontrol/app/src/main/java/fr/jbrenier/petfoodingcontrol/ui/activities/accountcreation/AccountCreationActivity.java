@@ -2,14 +2,10 @@ package fr.jbrenier.petfoodingcontrol.ui.activities.accountcreation;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -35,8 +31,6 @@ public class AccountCreationActivity extends AppCompatActivity
         implements AccountManagementFormFragment.OnSaveButtonClickListener {
 
     private static final String DUMMY_TITLE = " ";
-    private static final int REQUEST_CODE_CAMERA_PERMISSION = 1;
-    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSION = 2;
 
     /** Logging */
     private static final String TAG = "AccountCreationActivity";
@@ -56,13 +50,6 @@ public class AccountCreationActivity extends AppCompatActivity
         setContentView(R.layout.activity_account_creation);
         setActivityTitle();
         petFoodingControl.getAppComponent().inject(this);
-        // Camera permission management
-        petFoodingControl.isCameraPermissionGranted.setValue(
-                checkPermission(Manifest.permission.CAMERA, REQUEST_CODE_CAMERA_PERMISSION));
-        // Storage access permission management
-        petFoodingControl.isReadExternalStoragePermissionGranted.setValue(
-                checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSION));
         if (savedInstanceState == null) {
             loadFragment(AccountManagementFormFragment.newInstance());
         }
@@ -88,48 +75,6 @@ public class AccountCreationActivity extends AppCompatActivity
         FragmentTransaction fragmentTransaction = fm.beginTransaction();
         fragmentTransaction.replace(R.id.account_management_frame_layout, fragment);
         fragmentTransaction.commit();
-    }
-
-    /**
-     * Check if the permission has been granted, and if negative, request it.
-     * @param permission needed
-     * @param requestCode code of the request
-     */
-    private boolean checkPermission(String permission, int requestCode)
-    {
-        if (ContextCompat.checkSelfPermission(this, permission)
-                == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[] { permission }, requestCode);
-        } else {
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_CODE_CAMERA_PERMISSION :
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    petFoodingControl.isCameraPermissionGranted.setValue(true);
-                } else {
-                    petFoodingControl.isCameraPermissionGranted.setValue(false);
-                }
-                break;
-            case REQUEST_CODE_READ_EXTERNAL_STORAGE_PERMISSION :
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    petFoodingControl.isReadExternalStoragePermissionGranted.setValue(true);
-                } else {
-                    petFoodingControl.isReadExternalStoragePermissionGranted.setValue(false);
-                }
-                break;
-            default :
-                break;
-        }
     }
 
     @Override
