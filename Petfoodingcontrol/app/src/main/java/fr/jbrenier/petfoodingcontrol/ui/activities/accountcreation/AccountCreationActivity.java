@@ -20,7 +20,7 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountCreationFormFragment;
 import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
 
 /**
@@ -28,7 +28,7 @@ import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
  * @author Jérôme Brenier
  */
 public class AccountCreationActivity extends AppCompatActivity
-        implements AccountManagementFormFragment.OnSaveButtonClickListener {
+        implements AccountCreationFormFragment.OnSaveButtonClickListener {
 
     private static final String DUMMY_TITLE = " ";
 
@@ -51,7 +51,7 @@ public class AccountCreationActivity extends AppCompatActivity
         setActivityTitle();
         petFoodingControl.getAppComponent().inject(this);
         if (savedInstanceState == null) {
-            loadFragment(AccountManagementFormFragment.newInstance());
+            loadFragment(AccountCreationFormFragment.newInstance());
         }
     }
 
@@ -79,10 +79,10 @@ public class AccountCreationActivity extends AppCompatActivity
 
     @Override
     public void onAttachFragment(Fragment fragment) {
-        if (fragment instanceof AccountManagementFormFragment) {
-            AccountManagementFormFragment accountManagementFormFragment =
-                    (AccountManagementFormFragment) fragment;
-            accountManagementFormFragment.setCallback(this);
+        if (fragment instanceof AccountCreationFormFragment) {
+            AccountCreationFormFragment accountCreationFormFragment =
+                    (AccountCreationFormFragment) fragment;
+            accountCreationFormFragment.setCallback(this);
         }
     }
 
@@ -100,15 +100,15 @@ public class AccountCreationActivity extends AppCompatActivity
         // PHOTO
         String base64photo = userData.get(UserServiceKeysEnum.PHOTO_KEY);
 
-        userService.save(this, newUser).observe(this, result -> {
-            if (result == 0) {
+        userService.save(this, newUser).observe(this, userCreated -> {
+            if (userCreated != null) {
                 if (base64photo != null ) {
                     final Photo userPhoto = new Photo(base64photo);
-                    photoService.save(this, userPhoto, newUser);
+                    photoService.save(this, userPhoto, userCreated);
                 }
                 showToast(getResources().getString(R.string.toast_account_created));
                 finish();
-            } else if (result == 1) {
+            } else {
                 showToast(getResources().getString(R.string.toast_account_not_created));
             }
         });

@@ -21,7 +21,7 @@ public interface UserDao {
     @Query("SELECT * FROM User WHERE email = :userEmail")
     Single<User> getUserByEmail(String userEmail);
     @Update
-    Completable update (User user);
+    Completable update(User user);
     @Delete
-    Completable delete (User user);
+    Completable delete(User user);
 }

@@ -34,12 +34,12 @@
             android:id="@+id/imv_pet_photo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#03A9F4"
             android:contentDescription="@string/content_description_pet_photo"
             android:maxWidth="@dimen/user_photo_width"
             android:maxHeight="@dimen/user_photo_height"
             android:minWidth="@dimen/user_photo_width"
             android:minHeight="@dimen/user_photo_height"
+            android:adjustViewBounds="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -66,39 +66,23 @@
                 android:hint="@string/hint_pet_name" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_pet_birthdate"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputLayout"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginBottom="@dimen/fieldset_fields_spacing">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/textInputLayout"
+            <EditText
+                android:id="@+id/txt_pet_birthdate"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/fieldset_fields_spacing"
+                android:ems="10"
+                android:hint="@string/hint_pet_birthdate"
+                android:inputType="date" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/txt_pet_birthdate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:ems="10"
-                    android:hint="@string/hint_pet_birthdate" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <ImageButton
-                android:id="@+id/btn_datepicker"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:contentDescription="@string/content_description_btn_datepicker"
-                android:src="@drawable/ic_date_range_black_24dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/textInputLayout"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 

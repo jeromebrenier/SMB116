@@ -24,7 +24,6 @@ public class PetAdditionActivity extends AppCompatActivity
         implements PetFeedersFragment.OnListFragmentInteractionListener {
 
     private PetAdditionViewModel petAdditionViewModel;
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +40,8 @@ public class PetAdditionActivity extends AppCompatActivity
     }
 
     private void setupToolBar() {
-        toolbar = findViewById(R.id.pet_addition_toolbar);
+        Toolbar toolbar = findViewById(R.id.pet_addition_toolbar);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
         // Title
         toolbar.setTitle(getResources().getString(R.string.title_add_a_pet_activity));
     }

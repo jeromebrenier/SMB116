@@ -149,15 +149,16 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      * @return logInResult SingleLiveEvent<Integer> result of the operation
      */
     @Override
-    public SingleLiveEvent<Integer> save(Context context, User user) {
-        SingleLiveEvent<Integer> saveUserResult = new SingleLiveEvent<>();
+    public SingleLiveEvent<User> save(Context context, User user) {
+        SingleLiveEvent<User> saveUserResult = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.save(user).subscribe(
                 (userId) -> {
-                    saveUserResult.setValue(0);
-                    Log.i(TAG,"User saved with id : " + userId);
+                    user.setUserId(userId);
+                    saveUserResult.setValue(user);
+                    Log.i(TAG, "User saved with id : " + userId);
                 },
                 throwable -> {
-                    saveUserResult.setValue(1);
+                    saveUserResult.setValue(null);
                     Log.e(TAG, "User "+ user.getUserId() + " saving failure", throwable);
                 });
         addToCompositeDisposable(context, disposable);
@@ -182,7 +183,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                 },
                 throwable -> {
                     updateUserResult.setValue(1);
-                    Log.e(TAG, "User " + user.getUserId() + " update failure", throwable);
+                    Log.e(TAG, "User " + user.getUserId() + " update failure : ", throwable);
                 });
         addToCompositeDisposable(context, disposable);
         return updateUserResult;
@@ -200,6 +201,8 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
     public SingleLiveEvent<Integer> update(Context context,
                                            Map<UserServiceKeysEnum, String> userData) {
         SingleLiveEvent<Integer> updateUserResult = new SingleLiveEvent<>();
+        userData = managePasswordData(userData);
+        userData = setOrigPwdIfNoPwdUpdate(userData);
         if (!(compareDataToCurrentUserLogged(userData))) {
             User userLogged = pfcRepository.getUserLogged().getValue();
             User userUpdated = new User(
@@ -226,6 +229,38 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
         return updateUserResult;
     }
 
+    private Map<UserServiceKeysEnum, String> managePasswordData(
+            Map<UserServiceKeysEnum, String> userData) {
+        User userLogged = pfcRepository.getUserLogged().getValue();
+        String passwordProvided = userData.get(UserServiceKeysEnum.PASSWORD_KEY);
+        if (passwordProvided.equals("")) {
+            // No update we put the current user password in the map
+            userData.replace(UserServiceKeysEnum.PASSWORD_KEY, passwordProvided,
+                    userLogged.getPassword());
+        } else {
+            // Update required : we encrypt the password value
+            userData.replace(UserServiceKeysEnum.PASSWORD_KEY, passwordProvided,
+                    CryptographyUtils.hashPassword(passwordProvided));
+        }
+        return userData;
+    }
+
+    /**
+     * Replace an empty userData password (no update required) provided with the current
+     * user password.
+     * @param userData the user data provided
+     * @return the user data with password value modified if needed
+     */
+    private Map<UserServiceKeysEnum, String> setOrigPwdIfNoPwdUpdate(
+            Map<UserServiceKeysEnum, String> userData) {
+        User userLogged = pfcRepository.getUserLogged().getValue();
+        if (userData.get(UserServiceKeysEnum.PASSWORD_KEY).equals("")) {
+            userData.replace(UserServiceKeysEnum.PASSWORD_KEY, "",
+                    userLogged.getPassword());
+        }
+        return userData;
+    }
+
     /**
      * Compare the data provided with the data from current user logged.
      * Return true if no updated information, false otherwise.
@@ -234,13 +269,10 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      */
     private boolean compareDataToCurrentUserLogged(Map<UserServiceKeysEnum, String> userData) {
         User userLogged = pfcRepository.getUserLogged().getValue();
-        if (userLogged.getEmail().equals(userData.get(UserServiceKeysEnum.EMAIL_KEY)) &&
+        return (userLogged.getEmail().equals(userData.get(UserServiceKeysEnum.EMAIL_KEY)) &&
                 userLogged.getPassword().equals(userData.get(UserServiceKeysEnum.PASSWORD_KEY)) &&
                 userLogged.getDisplayedName()
-                        .equals(userData.get(UserServiceKeysEnum.USERNAME_KEY))) {
-            return true;
-        }
-        return false;
+                        .equals(userData.get(UserServiceKeysEnum.USERNAME_KEY)));
     }
 
     /**

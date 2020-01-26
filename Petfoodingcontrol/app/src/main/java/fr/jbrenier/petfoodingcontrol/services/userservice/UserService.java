@@ -13,7 +13,7 @@ public interface UserService {
     void initLogin(Context context);
     SingleLiveEvent<Integer> tryToLog(Context context, String email, String password,
                                       boolean isKeepLogged);
-    SingleLiveEvent<Integer> save(Context context, User user);
+    SingleLiveEvent<User> save(Context context, User user);
     SingleLiveEvent<Integer> update(Context context, User user);
     SingleLiveEvent<Integer> update(Context context, Map<UserServiceKeysEnum, String> userData);
     void logout();

@@ -24,8 +24,6 @@ public class PetFoodingControl extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //servicesComponent = DaggerServicesComponent.builder().build();
-        //repositoryComponent = DaggerRepositoryComponent.builder().application(this).build();
         appComponent = DaggerAppComponent.builder().application(this).build();
     }
 

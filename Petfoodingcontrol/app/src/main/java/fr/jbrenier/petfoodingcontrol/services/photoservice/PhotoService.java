@@ -13,7 +13,8 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 
 public interface PhotoService {
-    SingleLiveEvent<Integer> update(Context context, Map<UserServiceKeysEnum, String> userData);
+    SingleLiveEvent<Integer> update(Context context, User currentUser,
+                                    Map<UserServiceKeysEnum, String> userData);
     void save(Context context, Photo photo, User user);
     void clearDisposables(Context context);
     MutableLiveData<Bitmap> get(Context context, User user);

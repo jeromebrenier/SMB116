@@ -21,6 +21,9 @@ android {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
     }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
     dataBinding {
         enabled = true
     }
@@ -53,4 +56,5 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     androidTestImplementation 'android.arch.core:core-testing:1.1.1'
     implementation "org.mindrot:jbcrypt:0.4"
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 }

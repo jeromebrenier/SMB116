@@ -4,19 +4,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountModificationFormFragment;
 
+/**
+ * The fragment dedicated to the User's account settings modifications.
+ * @author Jérôme Brenier
+ */
 public class AccountSettingsFragment extends Fragment {
 
     private MainActivity mainActivity;
@@ -42,9 +42,9 @@ public class AccountSettingsFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Fragment accountManagementFormFragment = AccountManagementFormFragment.newInstance();
+        Fragment accountModificationFormFragment = AccountModificationFormFragment.newInstance();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.nested_account_management_fragment_frameLayout,
-                accountManagementFormFragment).commit();
+                accountModificationFormFragment).commit();
     }
 }

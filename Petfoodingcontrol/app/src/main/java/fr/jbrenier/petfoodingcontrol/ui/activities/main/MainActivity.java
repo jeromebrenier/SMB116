@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -22,6 +23,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,7 +33,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 import javax.inject.Inject;
 
@@ -46,7 +47,7 @@ import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountManagementFormFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountCreationFormFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
 
 /**
@@ -55,7 +56,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
  */
 public class MainActivity extends AppCompatActivity implements
         PetFragment.OnListFragmentInteractionListener,
-        AccountManagementFormFragment.OnSaveButtonClickListener{
+        AccountCreationFormFragment.OnSaveButtonClickListener{
 
     private static final int LOGIN_REQUEST = 1;
     private static final int ADD_PET_REQUEST = 2;
@@ -77,10 +78,11 @@ public class MainActivity extends AppCompatActivity implements
     PetService petService;
 
     private TextView user_name;
-    private TextView user_email;
     private ImageView user_photo;
     private Toolbar toolbar;
     private AppBarConfiguration mAppBarConfiguration;
+    private DrawerLayout mDrawerLayout;
+    private NavigationView navigationView;
     private View headerView;
 
     private PetFoodingControl petFoodingControl;
@@ -94,18 +96,18 @@ public class MainActivity extends AppCompatActivity implements
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
         setupAddButton();
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        mDrawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_pets, R.id.nav_account_settings)
-                .setDrawerLayout(drawer)
+                R.id.nav_pets, R.id.nav_account_settings, R.id.nav_logout)
+                .setDrawerLayout(mDrawerLayout)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         headerView = navigationView.getHeaderView(0);
         getUserDataView();
-        setupLogoutListener();
+        setupLogoutListener(navigationView);
         setupUserLoggedListener();
         permissionProcessDone.observe(this, bool -> {
             if (userService.getPfcRepository().getUserLogged().getValue() == null) {
@@ -148,7 +150,10 @@ public class MainActivity extends AppCompatActivity implements
                     PERMISSIONS_REQUEST);
             return;
         }
-        Log.i(TAG,"endcheckApplicationPermissions");
+        Log.i(TAG,"All required permissions are already granted.");
+        permissionProcessDone.setValue(true);
+        petFoodingControl.isCameraPermissionGranted.setValue(true);
+        petFoodingControl.isReadExternalStoragePermissionGranted.setValue(true);
     }
 
     private boolean addPermission(List<String> permissionsList, String permission) {
@@ -228,13 +233,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Set the User elements (name, email, photo) in the navigation bar dedicated area according to
+     * Set the User elements (name and photo) in the navigation bar dedicated area according to
      * the User data.
      * @param user : the logged User
      */
     private void setUserDataInNavBar(User user) {
         user_name.setText(user == null ? "********" : user.getDisplayedName());
-        user_email.setText(user == null ? "********" : user.getEmail());
         if (user != null) {
         photoService.get(this, user).observe(this, bitmap -> {
             if (bitmap != null) {
@@ -261,22 +265,29 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void getUserDataView() {
         user_name = headerView.findViewById(R.id.txt_user_name);
-        user_email = headerView.findViewById(R.id.txt_user_email);
         user_photo = headerView.findViewById(R.id.imv_user_photo);
     }
 
     /**
      * Set the logout button listener to invoke log out on click.
      */
-    private void setupLogoutListener() {
-        headerView.findViewById(R.id.btn_log_out).setOnClickListener(view -> logout());
+    private void setupLogoutListener(NavigationView navigationView) {
+        navigationView.setOnClickListener(view -> {
+            if (view == findViewById(R.id.nav_logout)) {
+                logout();
+                mDrawerLayout.closeDrawers();
+            }
+        });
+        //headerView.findViewById(R.id.btn_log_out).setOnClickListener(view -> logout());
     }
 
     /**
      * Log out.
      */
-    private void logout() {
+    public void logout() {
         userService.logout();
+        mDrawerLayout.closeDrawers();
+        navigationView.getMenu().getItem(0).setChecked(true);
         launchLoginActivity();
     }
 
@@ -327,11 +338,12 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSaveButtonClick(Map<UserServiceKeysEnum, String> userData) {
+        User userLogged = userService.getPfcRepository().getUserLogged().getValue();
         userService.update(this, userData).observe(this, result -> {
             if (result == 1) {
                 showToast(getResources().getString(R.string.toast_account_update_failure));
             } else if (result == 0) {
-                updateUserPhoto(userData);
+                updateUserPhoto(userLogged, userData);
             }
         });
     }
@@ -340,8 +352,9 @@ public class MainActivity extends AppCompatActivity implements
      * Update the user's photo.
      * @param userData the user's data retrieved from the input
      */
-    private void updateUserPhoto(Map<UserServiceKeysEnum, String> userData) {
-        photoService.update(this, userData).observe(this, updateResult -> {
+    private void updateUserPhoto(User userLogged, Map<UserServiceKeysEnum, String> userData) {
+        photoService.update(this, userLogged, userData).observe(
+                this, updateResult -> {
             if (updateResult == 1) {
                 showToast(getResources().getString(R.string.toast_account_update_failure));
             } else if (updateResult == 0) {

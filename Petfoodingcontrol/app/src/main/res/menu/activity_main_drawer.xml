@@ -12,5 +12,9 @@
             android:id="@+id/nav_account_settings"
             android:icon="@drawable/ic_account_box_black_24dp"
             android:title="@string/menu_account_settings" />
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_power_settings_new_black_24dp"
+            android:title="@string/menu_logout" />
     </group>
 </menu>

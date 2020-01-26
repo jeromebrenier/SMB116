@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -35,22 +38,18 @@ import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
-import fr.jbrenier.petfoodingcontrol.ui.activities.accountcreation.AccountCreationActivity;
 import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
 
 import static android.app.Activity.RESULT_OK;
 
-/**
- *
- */
-public class AccountManagementFormFragment extends Fragment implements View.OnClickListener {
+public class AccountCreationFormFragment extends Fragment implements View.OnClickListener {
 
     /** REQUESTS */
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final int TAKE_PHOTO_REQUEST = 2;
 
     /** LOGGING */
-    private static final String TAG = "AccountManagementFormFragment";
+    private static final String TAG = "AccountCreationFormFragment";
 
     @Inject
     UserService userService;
@@ -58,15 +57,15 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
     @Inject
     PhotoService photoService;
 
-    /** Image */
-    private boolean isDummyPhoto = true;
-
-    private Activity activity;
+    Activity activity;
     private PetFoodingControl petFoodingControl;
     private OnSaveButtonClickListener callback;
 
-    public static AccountManagementFormFragment newInstance() {
-        return new AccountManagementFormFragment();
+    /** INITIAL TEXT COLOR */
+    int initTextColor;
+
+    public static AccountCreationFormFragment newInstance() {
+        return new AccountCreationFormFragment();
     }
 
     @Override
@@ -81,45 +80,10 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
     }
 
     /**
-     * Check if the fragment have been attached to a MainActivity (modification mode).
-     * If not we are in creation mode.
-     *
-     * @return true if we are in an account modification mode
-     */
-    private boolean isAccountModificationMode() {
-        return getActivity() != null && !(getActivity() instanceof AccountCreationActivity);
-    }
-
-    /**
-     * Set the User's data in the inputs of the form. We are here in modification mode.
-     */
-    private void setUserDataInInput() {
-        userService.getPfcRepository().getUserLogged().observe(getViewLifecycleOwner(), user -> {
-            if (user != null) {
-                ((EditText) activity.findViewById(R.id.txt_account_username))
-                        .setText(user.getDisplayedName());
-                ((EditText) activity.findViewById(R.id.txt_account_email))
-                        .setText(user.getEmail());
-                Log.i(TAG, "User logged changed to " + user.getUserId().toString());
-                // Image
-                photoService.get(this.getContext(), user).observe(getViewLifecycleOwner(), bitmap -> {
-                    if (bitmap != null) {
-                        setPhotoInImageView(bitmap);
-                        isDummyPhoto = false;
-                        Log.i(TAG, "User image loaded.");
-                    }
-                });
-            } else {
-                Log.i(TAG, "User logged changed to null");
-            }
-        });
-    }
-
-    /**
      * Display the photo in the dedicated ImageView.
      * @param bitmapImage the bitmap image
      */
-    private void setPhotoInImageView(Bitmap bitmapImage) {
+    void setPhotoInImageView(Bitmap bitmapImage) {
         ((ImageView) activity.findViewById(R.id.imv_user_photo)).setImageBitmap(bitmapImage);
     }
 
@@ -133,14 +97,48 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setPhotoInImageView(BitmapFactory.decodeResource(getResources(),R.drawable.user_avatar));
-        if (isAccountModificationMode()) {
-            setUserDataInInput();
-        }
         activity.findViewById(R.id.btn_account_save).setOnClickListener(this);
         activity.findViewById((R.id.btn_pick_user_photo_on_disk)).setOnClickListener(this);
         activity.findViewById((R.id.btn_take_user_photo)).setOnClickListener(this);
+        setupEmailVisualValidation();
         hideCameraButtonIfNoCameraOrNoPermission();
         hidePickImageButtonIfNoExtStoragePermission();
+    }
+
+    /**
+     * Check that the text entered in the email EditText is a valid email. Set a listener on key
+     * pressed to color the text accordingly to alert the user.
+     */
+    private void setupEmailVisualValidation() {
+        initTextColor = ((EditText) activity.findViewById(R.id.txt_account_email))
+                .getCurrentTextColor();
+        setEmailValidationListener();
+    }
+
+    /**
+     * Listen for key pressed in the EditText and color the text in red if invalid.
+     */
+    private void setEmailValidationListener() {
+        (activity.findViewById(R.id.txt_account_email)).setOnKeyListener((view, keyCode, event) -> {
+            EditText emailEditText = (EditText) view;
+            if (!isEmailValid(emailEditText.getText().toString())) {
+                emailEditText.setTextColor(ContextCompat.getColorStateList(
+                        this.getContext(), R.color.colorAccent));
+            } else {
+                emailEditText.setTextColor(initTextColor);
+            }
+            return false;
+        });
+    }
+
+    /**
+     * Check if the string given is a valid email.
+     * @param email the email as a string
+     * @return true if valid, false otherwise
+     */
+    boolean isEmailValid(String email) {
+        Pattern pattern = Pattern.compile(getResources().getString(R.string.regex_email));
+        return pattern.matcher(email).matches();
     }
 
     /**
@@ -206,7 +204,7 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
             callback = (OnSaveButtonClickListener) context;
         } else {
             throw new ClassCastException(context.toString()
-                    + " must implement AccountManagementFormFragment.OnSaveButtonClickListener");
+                    + " must implement AccountCreationFormFragment.OnSaveButtonClickListener");
         }
     }
 
@@ -217,15 +215,11 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
     private Map<UserServiceKeysEnum, String> getDataFromInput() {
         Map<UserServiceKeysEnum, String> data = new HashMap<>();
 
-        if (!isDummyPhoto) {
-            Drawable userPhotoDrawable =
-                    ((ImageView) activity.findViewById(R.id.imv_user_photo)).getDrawable();
-            Bitmap userPhotoBitmap = ((BitmapDrawable) userPhotoDrawable).getBitmap();
-            data.put(UserServiceKeysEnum.PHOTO_KEY,
-                    ImageUtils.getBase64StringFromBitmap(userPhotoBitmap));
-        } else {
-            data.put(UserServiceKeysEnum.PHOTO_KEY, null);
-        }
+        Drawable userPhotoDrawable =
+                ((ImageView) activity.findViewById(R.id.imv_user_photo)).getDrawable();
+        Bitmap userPhotoBitmap = ((BitmapDrawable) userPhotoDrawable).getBitmap();
+        data.put(UserServiceKeysEnum.PHOTO_KEY,
+                ImageUtils.getBase64StringFromBitmap(userPhotoBitmap));
 
         data.put(UserServiceKeysEnum.USERNAME_KEY,
                 ((EditText) activity.findViewById(R.id.txt_account_username)).getText().toString());
@@ -320,9 +314,9 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
 
     /**
      * Validate the inputs.
-     * @return 0 if valid, 1 if passwords mismatch, 2 if empty input
+     * @return 0 if valid, 1 if passwords mismatch, 2 if email invalid, 3 if empty input
      */
-    private int validateDataFromInput() {
+    int validateDataFromInput() {
         EditText username = activity.findViewById(R.id.txt_account_username);
         EditText email = activity.findViewById(R.id.txt_account_email);
         EditText password = activity.findViewById(R.id.txt_account_password);
@@ -332,6 +326,8 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
                 email.getText() == null || email.getText().toString().isEmpty() ||
                 password.getText() == null || password.getText().toString().isEmpty() ||
                 rpassword.getText() == null || rpassword.getText().toString().isEmpty()) {
+            return 3;
+        } else if (!isEmailValid(email.getText().toString())) {
             return 2;
         } else if (!password.getText().toString().equals(rpassword.getText().toString())) {
             return 1;
@@ -342,14 +338,26 @@ public class AccountManagementFormFragment extends Fragment implements View.OnCl
     /**
      * Show a toast depending of the error type :
      * 1 : passwords and retype password are different
-     * 2 : some input is empty
-     * @param errorType 1 : passwords mismatch 2 : incomplete fields filling
+     * 2 : email invalid
+     * 3 : some input is empty
+     * @param errorType 1 : passwords mismatch 2: email invalid 3 : incomplete fields filling
      */
     private void showToast(int errorType) {
-        Toast toast = Toast.makeText(
-                getActivity(),
-                errorType == 1 ? R.string.toast_passwords_mismatch : R.string.toast_input_empty,
-                Toast.LENGTH_LONG);
+        int messageId;
+        switch (errorType) {
+            case 1 :
+                messageId = R.string.toast_passwords_mismatch;
+                break;
+            case 2 :
+                messageId = R.string.toast_email_invalid;
+                break;
+            case 3 :
+                messageId = R.string.toast_input_empty;
+                break;
+            default :
+                return;
+        }
+        Toast toast = Toast.makeText(getActivity(), messageId, Toast.LENGTH_LONG);
         toast.show();
     }
 

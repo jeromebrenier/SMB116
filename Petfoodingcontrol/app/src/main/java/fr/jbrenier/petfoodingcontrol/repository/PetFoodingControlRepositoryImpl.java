@@ -1,13 +1,12 @@
 package fr.jbrenier.petfoodingcontrol.repository;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.room.Room;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -58,6 +57,8 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
 
     @Override
     public Single<Long> save(User user) {
+        Log.i("RESPOSITORY SAVE:", "USER ID : "+ user.getUserId());
+        Log.i("RESPOSITORY SAVE:", "USER PHOTO : "+ user.getPhotoId());
         return petFoodingControlDatabase.getUserDao().insert(user)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
@@ -65,6 +66,8 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
 
     @Override
     public Completable update(User user) {
+        Log.i("RESPOSITORY UPDATE:", "USER ID : "+ user.getUserId());
+        Log.i("RESPOSITORY UPDATE:", "USER PHOTO : "+ user.getPhotoId());
         return petFoodingControlDatabase.getUserDao().update(user)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());

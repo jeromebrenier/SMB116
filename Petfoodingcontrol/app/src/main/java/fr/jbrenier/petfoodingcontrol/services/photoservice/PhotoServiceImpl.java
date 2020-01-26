@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
+import androidx.annotation.MainThread;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.HashMap;
@@ -52,22 +53,24 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
      * @return
      */
     @Override
-    public SingleLiveEvent<Integer> update(Context context, Map<UserServiceKeysEnum,
-            String> userData) {
+    public SingleLiveEvent<Integer> update(Context context, User currentUser,
+                                           Map<UserServiceKeysEnum, String> userData) {
         SingleLiveEvent<Integer> updateUserResult = new SingleLiveEvent<>();
-        Disposable disposableGet = pfcRepository.getUserPhoto(
-                pfcRepository.getUserLogged().getValue()).subscribe(
+        Disposable disposableGet = pfcRepository.getUserPhoto(currentUser).subscribe(
                 photo -> {
                     Log.i(TAG, "User's photo loaded.");
-                    if (photo.getImage().equals(userData.get(UserServiceKeysEnum.PHOTO_KEY))) {
-                        Disposable disposableUpdate = updateUserPhoto(userData.get(UserServiceKeysEnum.PHOTO_KEY)).subscribe(
+                    if (!photo.getImage().equals(userData.get(UserServiceKeysEnum.PHOTO_KEY))) {
+                        Disposable disposableUpdate = updateUserPhoto(currentUser,
+                                userData.get(UserServiceKeysEnum.PHOTO_KEY)).subscribe(
                                 () -> {
                                     updateUserResult.setValue(0);
-                                    Log.i(TAG, "User's photo updated.");
+                                    Log.i(TAG, "User (id " + currentUser.getUserId()
+                                            + ") 's photo updated.");
                                 },
                                 throwable -> {
                                     updateUserResult.setValue(1);
-                                    Log.e(TAG, "User's photo update error.", throwable);
+                                    Log.e(TAG, "User(id " + currentUser.getUserId()
+                                            + ") 's photo update error.", throwable);
                                 }
                         );
                         addToCompositeDisposable(context, disposableUpdate);
@@ -76,15 +79,13 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                         Log.i(TAG, "User's photo update not necessary.");
                     }
                 }, throwable ->
-                        Log.e(TAG, "User's photo not loaded.", throwable));
+                        Log.e(TAG, "User's photo not loaded."));
         addToCompositeDisposable(context, disposableGet);
         return updateUserResult;
     }
 
-    private Completable updateUserPhoto(String newPhotoBase64) {
-        Photo newPhoto = new Photo(
-                pfcRepository.getUserLogged().getValue().getPhotoId(),
-                newPhotoBase64);
+    private Completable updateUserPhoto(User currentUser, String newPhotoBase64) {
+        Photo newPhoto = new Photo(currentUser.getPhotoId(), newPhotoBase64);
         return pfcRepository.update(newPhoto);
     }
 
@@ -127,7 +128,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                             decodedString.length);
                     bitmapRetrieved.setValue(decodedByte);
                 }, throwable ->
-                        Log.e(TAG, "User's photo not loaded.", throwable));
+                        Log.e(TAG, "User's photo not loaded."));
         addToCompositeDisposable(context, disposable);
         return bitmapRetrieved;
     }

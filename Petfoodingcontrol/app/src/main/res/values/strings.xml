@@ -23,10 +23,10 @@
     <string name="title_activity_main">Pet Fooding Control</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Pet Fooding Control</string>
-    <string name="nav_header_subtitle"> ********* </string>
+    <string name="nav_header_title">Pet Fooding Control User</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="menu_logout">Logout</string>
     <!-- Main activity permissions-->
     <string name="permission_grant_access_needed">You need to grant access to </string>
     <string name="permission_camera">camera</string>
@@ -44,6 +44,8 @@
     <string name="menu_account_settings">Manage account</string>
     <string name="title_account_creation">Create a new account</string>
     <string name="title_account_modification">Modify the account</string>
+    <string name="modify_password_switch">modify the password</string>
+    <string name="regex_email">^(.+)@(.+)$</string>
     <string name="content_description_user_photo">Users\'s photo</string>
     <string name="content_description_btn_take_user_photo">take a photo button</string>
     <string name="content_description_btn_pick_user_photo_on_disk">Pick a photo on the disk</string>
@@ -52,14 +54,12 @@
     <string name="hint_account_password">Password</string>
     <string name="hint_account_retype_password">Retype Password</string>
     <string name="toast_passwords_mismatch">Two different passwords have been entered</string>
+    <string name="toast_email_invalid">The email entered is not valid</string>
     <string name="toast_account_created">Account created !</string>
     <string name="toast_account_not_created">Account not created !</string>
     <string name="toast_account_update_success">Account successfully updated !</string>
     <string name="toast_account_update_failure">Account not updated !</string>
     <string name="intent_title_select_picture">Select a picture</string>
-
-    <!-- Logout -->
-    <string name="btn_log_out">Log out</string>
 
     <!-- Add a pet -->
     <string name="title_add_a_pet_activity">Add a pet</string>
@@ -75,4 +75,7 @@
     <string name="content_description_btn_datepicker">pick a pet date of birth button</string>
     <string name="hint_pet_name">Name</string>
     <string name="hint_pet_birthdate">Date of birth</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
