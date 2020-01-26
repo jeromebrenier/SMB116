@@ -76,6 +76,15 @@
     <string name="hint_pet_name">Name</string>
     <string name="hint_pet_birthdate">Date of birth</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Add a pet Food -->
+    <string name="title_daily_food">Set the total daily weight of food</string>
+    <string name="title_standard_portions">Set the weight of standard portions</string>
+    <string name="hint_daily_food">Total weight (g)</string>
+    <string name="hint_food_portion1">Portion 1 (g)</string>
+    <string name="hint_food_portion2">Portion 2 (g)</string>
+    <string name="hint_food_portion3">Portion 3 (g)</string>
+    <string name="hint_food_portion4">Portion 4 (g)</string>
+    <string name="hint_food_portion5">Portion 5 (g)</string>
+    <string name="hint_food_portion6">Portion 6 (g)</string>
+
 </resources>

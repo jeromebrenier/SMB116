@@ -1,7 +1,5 @@
 package fr.jbrenier.petfoodingcontrol.ui.fragments.petfoodsettings;
 
-import androidx.lifecycle.ViewModelProviders;
-
 import android.app.Activity;
 import android.os.Bundle;
 
@@ -18,7 +16,6 @@ import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivi
 
 public class PetFoodSettingsFragment extends Fragment {
 
-    private PetFoodSettingsViewModel mViewModel;
     private Activity activity;
 
     public static PetFoodSettingsFragment newInstance() {
@@ -50,8 +47,6 @@ public class PetFoodSettingsFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = ViewModelProviders.of(this).get(PetFoodSettingsViewModel.class);
-        // TODO: Use the ViewModel
     }
 
 }
