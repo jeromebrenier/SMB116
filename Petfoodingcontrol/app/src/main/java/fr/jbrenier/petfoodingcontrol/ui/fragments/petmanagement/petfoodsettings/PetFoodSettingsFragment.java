@@ -81,9 +81,9 @@ public class PetFoodSettingsFragment extends PetManagementFragment {
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
         saveFoodSettingsFromInputInViewModel();
-        super.onStop();
+        super.onPause();
     }
 
     /**

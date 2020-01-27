@@ -26,6 +26,7 @@ import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
+import fr.jbrenier.petfoodingcontrol.utils.DateTimeUtils;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
 public class PetGeneralFragment extends PetManagementFragment {
@@ -136,12 +137,12 @@ public class PetGeneralFragment extends PetManagementFragment {
             pet = petManagementViewModel.getPetToAdd();
         }
         String name = pet.getName();
-        if (!name.equals("")) {
+        if (name != null && !name.equals("")) {
             ((EditText) petManagementActivity.findViewById(R.id.txt_pet_name)).setText(name);
         }
         if (pet.getBirthDate() != null) {
             ((EditText) petManagementActivity.findViewById(R.id.txt_pet_birthdate))
-                    .setText(DataTypeConverter.fromOffsetDateTime(pet.getBirthDate()));
+                    .setText(DateTimeUtils.getStringBirthDateFromOffsetDateTime(pet.getBirthDate()));
         }
     }
 
@@ -175,15 +176,16 @@ public class PetGeneralFragment extends PetManagementFragment {
     }
 
     @Override
-    public void onStop() {
+    public void onPause() {
         savePetInfoFromInputInViewModel();
-        super.onStop();
+        super.onPause();
     }
+
     /**
      * Save food settings from inputs in the ViewModel.
      */
     private void savePetInfoFromInputInViewModel() {
-        Log.i(TAG, "saveFoodSettingsFromInputInViewModel");
+        Log.i(TAG, "savePetInfoFromInputInViewModel");
         Pet pet;
         if (petManagementViewModel.getPetToAdd() != null) {
             pet = petManagementViewModel.getPetToAdd();
@@ -206,7 +208,7 @@ public class PetGeneralFragment extends PetManagementFragment {
         String birthDate = ((EditText) petManagementActivity.findViewById(R.id.txt_pet_birthdate))
                 .getText().toString();
         if (!birthDate.equals("")) {
-            OffsetDateTime date = DataTypeConverter.toOffsetDateTime(birthDate);
+            OffsetDateTime date = DateTimeUtils.getOffsetDateTimeFromBirthDate(birthDate);
             pet.setBirthDate(date);
         }
         petManagementViewModel.setPetToAdd(pet);

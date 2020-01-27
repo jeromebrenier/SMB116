@@ -17,16 +17,7 @@ import static java.time.temporal.ChronoField.YEAR;
 
 public class DataTypeConverter {
 
-    //private static final DateTimeFormatter dtf = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
-
-    private static final DateTimeFormatter dtf = new DateTimeFormatterBuilder()
-            .parseCaseInsensitive()
-            .appendValue(DAY_OF_MONTH, 2)
-            .appendValue(MONTH_OF_YEAR, 2)
-            .appendValue(YEAR, 2)
-            .optionalStart()
-            .appendOffset("+HHMMss", "Z")
-            .toFormatter(ResolverStyle.STRICT, IsoChronology.INSTANCE);
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
     @androidx.room.TypeConverter
     public static OffsetDateTime toOffsetDateTime(String value) {
