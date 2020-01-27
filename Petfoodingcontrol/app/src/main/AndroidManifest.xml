@@ -4,9 +4,11 @@
     package="fr.jbrenier.petfoodingcontrol">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-feature android:name="android.hardware.camera"
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="false" />
 
     <application
@@ -21,11 +23,9 @@
         <activity
             android:name=".ui.activities.accountcreation.AccountCreationActivity"
             android:label="@string/title_activity_account_management"
-            android:theme="@style/AppThemeNoAppBar">
-        </activity>
+            android:theme="@style/AppThemeNoAppBar"/>
         <activity
-            android:name=".ui.activities.petaddition.PetAdditionActivity"
-            android:label="@string/title_add_a_pet_activity"
+            android:name=".ui.activities.petmanagement.PetManagementActivity"
             android:parentActivityName=".ui.activities.main.MainActivity"
             android:theme="@style/AppThemeNoAppBar">
             <meta-data

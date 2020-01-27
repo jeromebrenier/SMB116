@@ -45,7 +45,6 @@
     <string name="title_account_creation">Create a new account</string>
     <string name="title_account_modification">Modify the account</string>
     <string name="modify_password_switch">modify the password</string>
-    <string name="regex_email">^(.+)@(.+)$</string>
     <string name="content_description_user_photo">Users\'s photo</string>
     <string name="content_description_btn_take_user_photo">take a photo button</string>
     <string name="content_description_btn_pick_user_photo_on_disk">Pick a photo on the disk</string>
@@ -61,13 +60,18 @@
     <string name="toast_account_update_failure">Account not updated !</string>
     <string name="intent_title_select_picture">Select a picture</string>
 
-    <!-- Add a pet -->
-    <string name="title_add_a_pet_activity">Add a pet</string>
+    <!-- Pet management -->
     <string name="tab_text_pet_general">General</string>
     <string name="tab_text_pet_food">Food</string>
     <string name="tab_text_pet_feeders">Feeders</string>
 
-    <!-- Add a pet General-->
+    <!-- Add a pet -->
+    <string name="title_add_a_pet_activity">Add a pet</string>
+
+    <!-- Modify a pet -->
+    <string name="title_pet_modifcation_activity">Modify a pet</string>
+
+    <!-- Pet management General-->
     <string name="txt_pet_birthdate">Date of birth</string>
     <string name="content_description_pet_photo">pet\'s photo</string>
     <string name="content_description_btn_pick_pet_photo_on_disk">pick a photo on the disk</string>
@@ -76,7 +80,7 @@
     <string name="hint_pet_name">Name</string>
     <string name="hint_pet_birthdate">Date of birth</string>
 
-    <!-- Add a pet Food -->
+    <!-- Pet management Food -->
     <string name="title_daily_food">Set the total daily weight of food</string>
     <string name="title_standard_portions">Set the weight of standard portions</string>
     <string name="hint_daily_food">Total weight (g)</string>

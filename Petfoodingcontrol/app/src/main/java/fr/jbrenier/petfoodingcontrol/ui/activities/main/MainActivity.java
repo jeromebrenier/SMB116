@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -23,7 +22,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -46,7 +44,7 @@ import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
-import fr.jbrenier.petfoodingcontrol.ui.activities.petaddition.PetAdditionActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountCreationFormFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
 
@@ -256,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void sendPetAdditionActivityIntent() {
-        Intent petAdditionActivityIntent = new Intent(this, PetAdditionActivity.class);
+        Intent petAdditionActivityIntent = new Intent(this, PetManagementActivity.class);
         startActivityForResult(petAdditionActivityIntent, ADD_PET_REQUEST);
     }
 

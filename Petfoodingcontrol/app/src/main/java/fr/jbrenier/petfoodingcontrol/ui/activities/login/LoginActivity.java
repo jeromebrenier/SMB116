@@ -99,9 +99,9 @@ public class LoginActivity extends AppCompatActivity {
     private void setupUserLoggedListener() {
         userService.getPfcRepository().getUserLogged().observe(this, user -> {
             if (user == null) {
-                loadFragment(LoginFieldsFragment.newInstance());
+                loadFragment(new LoginFieldsFragment());
             } else {
-                loadFragment(LoginWelcomeFragment.newInstance());
+                loadFragment(new LoginWelcomeFragment());
             }
         });
     }

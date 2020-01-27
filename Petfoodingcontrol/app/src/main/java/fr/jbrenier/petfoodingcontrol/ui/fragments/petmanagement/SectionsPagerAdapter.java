@@ -1,9 +1,7 @@
-package fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition;
+package fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement;
 
 import android.content.Context;
-import android.widget.Switch;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
@@ -11,9 +9,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders.PetFeedersFragment;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.general.PetGeneralFragment;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petfoodsettings.PetFoodSettingsFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.general.PetGeneralFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.petfoodsettings.PetFoodSettingsFragment;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -38,10 +36,10 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         Fragment itemToShow = null;
         switch (position) {
             case 0 :
-                itemToShow = PetGeneralFragment.newInstance();
+                itemToShow = new PetGeneralFragment();
                 break;
             case 1 :
-                itemToShow = PetFoodSettingsFragment.newInstance();
+                itemToShow = new PetFoodSettingsFragment();
                 break;
             case 2 :
                 itemToShow = new PetFeedersFragment();

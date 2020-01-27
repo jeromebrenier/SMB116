@@ -5,12 +5,28 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.time.OffsetDateTime;
+import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.ResolverStyle;
 import java.util.List;
+
+import static java.time.temporal.ChronoField.DAY_OF_MONTH;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoField.YEAR;
 
 public class DataTypeConverter {
 
-    private static final DateTimeFormatter dtf = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    //private static final DateTimeFormatter dtf = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+
+    private static final DateTimeFormatter dtf = new DateTimeFormatterBuilder()
+            .parseCaseInsensitive()
+            .appendValue(DAY_OF_MONTH, 2)
+            .appendValue(MONTH_OF_YEAR, 2)
+            .appendValue(YEAR, 2)
+            .optionalStart()
+            .appendOffset("+HHMMss", "Z")
+            .toFormatter(ResolverStyle.STRICT, IsoChronology.INSTANCE);
 
     @androidx.room.TypeConverter
     public static OffsetDateTime toOffsetDateTime(String value) {

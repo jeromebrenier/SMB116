@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders;
+package fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders.PetFeedersFragment.OnListFragmentInteractionListener;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders.dummy.DummyContent.DummyItem;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment.OnListFragmentInteractionListener;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent.DummyItem;
 
 import java.util.List;
 

@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
 public class AccountModificationFormFragment extends AccountCreationFormFragment {
 
@@ -95,7 +96,7 @@ public class AccountModificationFormFragment extends AccountCreationFormFragment
                 (password.getText() == null || password.getText().toString().isEmpty() ||
                 rpassword.getText() == null || rpassword.getText().toString().isEmpty())) {
             return 3;
-        } else if (!isEmailValid(email.getText().toString())) {
+        } else if (!InputValidationUtils.isEmailValid(email.getText().toString())) {
             return 2;
         } else if (checkPassword &&
                 !password.getText().toString().equals(rpassword.getText().toString())) {

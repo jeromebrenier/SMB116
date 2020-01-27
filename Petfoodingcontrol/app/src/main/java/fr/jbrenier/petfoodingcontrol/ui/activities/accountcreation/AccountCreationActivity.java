@@ -51,7 +51,7 @@ public class AccountCreationActivity extends AppCompatActivity
         setActivityTitle();
         petFoodingControl.getAppComponent().inject(this);
         if (savedInstanceState == null) {
-            loadFragment(AccountCreationFormFragment.newInstance());
+            loadFragment(new AccountCreationFormFragment());
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
@@ -57,6 +58,16 @@ public class Pet implements Parcelable {
     @ColumnInfo(name = "user_Id")
     private Long userId;
 
+    public Pet(String name, Long photoId, OffsetDateTime birthDate,
+               FoodSettings foodSettings, Long userId) {
+        this.name = name;
+        this.photoId = photoId;
+        this.birthDate = birthDate;
+        this.foodSettings = foodSettings;
+        this.userId = userId;
+    }
+
+    @Ignore
     public Pet(Long petId, String name, Long photoId, OffsetDateTime birthDate,
                FoodSettings foodSettings, Long userId) {
         this.petId = petId;
@@ -65,7 +76,7 @@ public class Pet implements Parcelable {
         this.birthDate = birthDate;
         this.foodSettings = foodSettings;
         this.userId = userId;
-     }
+    }
 
 
     protected Pet(Parcel in) {

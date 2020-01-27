@@ -1,9 +1,8 @@
-package fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders;
+package fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders;
 
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,8 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders.dummy.DummyContent;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders.dummy.DummyContent.DummyItem;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.
@@ -22,7 +22,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders.dummy.Dumm
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class PetFeedersFragment extends Fragment {
+public class PetFeedersFragment extends PetManagementFragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";

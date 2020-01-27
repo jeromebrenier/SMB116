@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -19,6 +18,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,6 @@ import android.widget.Toast;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
@@ -39,6 +39,7 @@ import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
+import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -63,10 +64,7 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
 
     /** INITIAL TEXT COLOR */
     int initTextColor;
-
-    public static AccountCreationFormFragment newInstance() {
-        return new AccountCreationFormFragment();
-    }
+    int alertTextColor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,35 +108,36 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
      * pressed to color the text accordingly to alert the user.
      */
     private void setupEmailVisualValidation() {
-        initTextColor = ((EditText) activity.findViewById(R.id.txt_account_email))
-                .getCurrentTextColor();
-        setEmailValidationListener();
-    }
+        EditText emailEntered = activity.findViewById(R.id.txt_account_email);
+        initTextColor = emailEntered.getCurrentTextColor();
+        alertTextColor = ContextCompat.getColorStateList(this.getContext(),
+                R.color.colorAccent).getDefaultColor();
+        TextWatcher emailWatcher = new TextWatcher() {
+            boolean ignore = false;
 
-    /**
-     * Listen for key pressed in the EditText and color the text in red if invalid.
-     */
-    private void setEmailValidationListener() {
-        (activity.findViewById(R.id.txt_account_email)).setOnKeyListener((view, keyCode, event) -> {
-            EditText emailEditText = (EditText) view;
-            if (!isEmailValid(emailEditText.getText().toString())) {
-                emailEditText.setTextColor(ContextCompat.getColorStateList(
-                        this.getContext(), R.color.colorAccent));
-            } else {
-                emailEditText.setTextColor(initTextColor);
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
-            return false;
-        });
-    }
 
-    /**
-     * Check if the string given is a valid email.
-     * @param email the email as a string
-     * @return true if valid, false otherwise
-     */
-    boolean isEmailValid(String email) {
-        Pattern pattern = Pattern.compile(getResources().getString(R.string.regex_email));
-        return pattern.matcher(email).matches();
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (ignore) {return;}
+                ignore = true;
+                if (!InputValidationUtils.isEmailValid(s.toString())) {
+                    emailEntered.setTextColor(alertTextColor);
+                } else {
+                    emailEntered.setTextColor(initTextColor);
+                }
+                ignore = false;
+            }
+        };
+        emailEntered.addTextChangedListener(emailWatcher);
     }
 
     /**
@@ -327,7 +326,7 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
                 password.getText() == null || password.getText().toString().isEmpty() ||
                 rpassword.getText() == null || rpassword.getText().toString().isEmpty()) {
             return 3;
-        } else if (!isEmailValid(email.getText().toString())) {
+        } else if (!InputValidationUtils.isEmailValid(email.getText().toString())) {
             return 2;
         } else if (!password.getText().toString().equals(rpassword.getText().toString())) {
             return 1;

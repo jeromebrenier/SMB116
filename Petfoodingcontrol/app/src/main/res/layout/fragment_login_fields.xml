@@ -20,7 +20,7 @@
             android:layout_height="match_parent">
 
             <EditText
-                android:id="@+id/txt_email"
+                android:id="@+id/txt_login_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/fieldset_fields_spacing"
@@ -34,7 +34,7 @@
             android:layout_height="match_parent">
 
             <EditText
-                android:id="@+id/txt_password"
+                android:id="@+id/txt_login_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/fieldset_fields_spacing"

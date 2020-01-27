@@ -5,7 +5,7 @@ import java.util.UUID;
 /**
  * Utils for AutoLogin.
  */
-public class AutoLoginUtils {
+public final class AutoLoginUtils {
     private static AutoLoginUtils INSTANCE;
     private UUID uuid;
 

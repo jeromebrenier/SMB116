@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.ui.fragments.petaddition.feeders.dummy;
+package fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy;
 
 import java.util.ArrayList;
 import java.util.HashMap;

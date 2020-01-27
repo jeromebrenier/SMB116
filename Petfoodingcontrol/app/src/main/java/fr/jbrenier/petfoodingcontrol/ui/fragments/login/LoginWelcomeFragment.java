@@ -24,10 +24,6 @@ import static android.app.Activity.RESULT_OK;
  */
 public class LoginWelcomeFragment extends Fragment {
 
-    public static LoginWelcomeFragment newInstance() {
-        return new LoginWelcomeFragment();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
