@@ -159,7 +159,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                 },
                 throwable -> {
                     saveUserResult.setValue(null);
-                    Log.e(TAG, "User "+ user.getUserId() + " saving failure", throwable);
+                    Log.e(TAG, "User saving failure", throwable);
                 });
         addToCompositeDisposable(context, disposable);
         return saveUserResult;

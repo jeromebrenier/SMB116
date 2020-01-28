@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
@@ -24,6 +25,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFra
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.SectionsPagerAdapter;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.general.PetGeneralFragment;
 
 /**
  * The activity for adding a pet with the Pet Fooding Control application.
@@ -31,7 +33,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.Du
  */
 public class PetManagementActivity extends AppCompatActivity
         implements PetFeedersFragment.OnListFragmentInteractionListener,
-        PetManagementFragment.OnSaveButtonClickListener {
+        PetGeneralFragment.OnSaveButtonClickListener {
 
     /** LOGGING */
     private static final String TAG = "PetManagementActivity";
@@ -64,7 +66,8 @@ public class PetManagementActivity extends AppCompatActivity
         }
         setContentView(R.layout.activity_pet_management);
         setupToolBar();
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
+                this, this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         loadAndSavePetDataOnPageChange(viewPager, sectionsPagerAdapter);
@@ -131,31 +134,51 @@ public class PetManagementActivity extends AppCompatActivity
     @Override
     public void onSaveButtonClick() {
         if (isCreationMode) {
-            saveNewPet();
-            if (petManagementViewModel.getPetToAdd().getPetId() != null) {
-                saveFoodSettings();
-            }
-
+            Log.i(TAG, "Saving pet in DB...");
+            saveNewPet().observe(this, result -> {
+                if (result) {
+                    savePetFeeders();
+                }
+            });
         }
     }
 
     /**
      * Save in the DB a new pet present in the viewModel.
      */
-    private void saveNewPet() {
+    private SingleLiveEvent<Boolean> saveNewPet() {
+        SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
         if (petManagementViewModel.getPetToAdd() != null) {
+            addFoodSettingsToPet();
             petService.save(this, petManagementViewModel.getPetToAdd()).observe(
                     this, pet -> {
                         if (pet == null) {
+                            result.setValue(false);
                             Log.i(TAG, "saveNewPet failure.");
                         } else {
                             petManagementViewModel.getPetToAdd().setPetId(pet.getPetId());
+                            result.setValue(true);
                             Log.i(TAG, "saveNewPet " + pet.getPetId() + " sucess.");
                         }
                     });
         } else {
+            result.setValue(false);
             Log.d(TAG, "No pet to add to the DB");
         }
+        return result;
+    }
+
+    /**
+     * Add the food settings to the Pet present in the viewModel
+     */
+    private void addFoodSettingsToPet() {
+        if (petManagementViewModel.getFoodSettings() != null) {
+            petManagementViewModel.getPetToAdd().setFoodSettings(
+                    petManagementViewModel.getFoodSettings());
+        }
+    }
+
+    private void savePetFeeders() {
     }
 
     public PetManagementViewModel getPetManagementViewModel() {

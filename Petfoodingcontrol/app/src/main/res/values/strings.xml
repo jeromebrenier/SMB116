@@ -81,6 +81,8 @@
     <string name="content_description_btn_datepicker">pick a pet date of birth button</string>
     <string name="hint_pet_name">Name</string>
     <string name="hint_pet_birthdate">Date of birth</string>
+    <string name="error_empty_pet_name">Please provide a pet name</string>
+    <string name="error_date_invalid_or_empty">Please provide a correct birth date</string>
 
     <!-- Pet management Food -->
     <string name="title_daily_food">Set the total daily weight of food</string>

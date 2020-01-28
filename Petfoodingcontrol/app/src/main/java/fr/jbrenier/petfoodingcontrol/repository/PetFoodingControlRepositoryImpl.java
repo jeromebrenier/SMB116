@@ -115,6 +115,14 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     }
 
     @Override
+    public Single<Long> save(Pet pet) {
+        Log.d(TAG, "save(" + pet + ")");
+        return petFoodingControlDatabase.getPetDao().insert(pet)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
     public Single<Pet> getPetById(Long petId) {
         Log.d(TAG, "getPetById(" + petId + ")");
         return petFoodingControlDatabase.getPetDao().getPetbyId(petId)

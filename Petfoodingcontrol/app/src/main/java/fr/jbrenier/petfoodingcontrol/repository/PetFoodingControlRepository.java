@@ -32,6 +32,7 @@ public interface PetFoodingControlRepository {
     Completable update(Photo photo);
 
     /** Pet */
+    Single<Long> save(Pet pet);
     LiveData<List<Pet>> getUserPets();
     void setUserPets(LiveData<List<Pet>> userPets);
     Single<Pet> getPetById(Long petId);

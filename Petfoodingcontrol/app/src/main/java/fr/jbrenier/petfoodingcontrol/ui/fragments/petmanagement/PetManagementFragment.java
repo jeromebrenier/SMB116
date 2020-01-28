@@ -6,9 +6,6 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import java.util.Map;
-
-import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementViewModel;
 
@@ -19,8 +16,6 @@ public class PetManagementFragment extends Fragment {
 
     protected PetManagementViewModel petManagementViewModel;
     protected PetManagementActivity petManagementActivity;
-
-    private OnSaveButtonClickListener callback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,15 +33,5 @@ public class PetManagementFragment extends Fragment {
         } else {
             Log.e(TAG, "Parent activity not available, viewModel not referenced.");
         }
-    }
-
-
-    public void setCallback(OnSaveButtonClickListener callback) {
-        this.callback = callback;
-    }
-
-
-    public interface OnSaveButtonClickListener {
-        void onSaveButtonClick();
     }
 }

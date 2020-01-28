@@ -2,6 +2,7 @@ package fr.jbrenier.petfoodingcontrol.services.petservice;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import androidx.lifecycle.LiveDataReactiveStreams;
 
@@ -14,6 +15,7 @@ import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
+import io.reactivex.disposables.Disposable;
 
 public class PetServiceImpl extends PetFoodingControlService implements PetService {
     /** LOGGING */
@@ -33,7 +35,19 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
 
     @Override
     public SingleLiveEvent<Pet> save(Context context, Pet pet) {
-        return null;
+        SingleLiveEvent<Pet> savePetResult = new SingleLiveEvent<>();
+        Disposable disposable = pfcRepository.save(pet).subscribe(
+                (petId) -> {
+                    pet.setUserId(petId);
+                    savePetResult.setValue(pet);
+                    Log.i(TAG, "Pet saved with id : " + petId);
+                },
+                throwable -> {
+                    savePetResult.setValue(null);
+                    Log.e(TAG, "Pet saving failure", throwable);
+                });
+        addToCompositeDisposable(context, disposable);
+        return savePetResult;
     }
 
     @Override
