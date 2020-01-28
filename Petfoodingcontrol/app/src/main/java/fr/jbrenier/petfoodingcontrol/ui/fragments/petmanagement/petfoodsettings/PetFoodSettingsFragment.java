@@ -16,9 +16,14 @@ import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.food.FoodSettings;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
 
-public class PetFoodSettingsFragment extends PetManagementFragment {
+/**
+ * Fragment to manage food settings for a pet.
+ * @author Jérôme Brenier
+ */
+public class PetFoodSettingsFragment extends PetManagementFragment implements PetData {
 
     /** LOGGING */
     private static final String TAG = "PetGeneralFragment";
@@ -30,13 +35,35 @@ public class PetFoodSettingsFragment extends PetManagementFragment {
         return root;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        hideAddAFeederButtonIfVisible();
+    }
+
+    /**
+     * Hide the add a feeder floating button if visible.
+     */
+    private void hideAddAFeederButtonIfVisible() {
+        // Hide the add a feeder button if visible
+        if (petManagementActivity.findViewById(R.id.add_a_feeder).getVisibility() == View.VISIBLE) {
+            petManagementActivity.findViewById(R.id.add_a_feeder).setVisibility(View.INVISIBLE);
+        }
+    }
+
+
+    @Override
+    public void loadPetData() {
+        loadFoodSettingsInInputFromViewModel();
+    }
+
     /**
      * Load food settings from the ViewModel in the corresponding inputs.
      */
     private void loadFoodSettingsInInputFromViewModel() {
         Log.i(TAG,"loadFoodSettingsInInputFromViewModel");
         FoodSettings foodSettings;
-        if (petManagementViewModel.getFoodSettings() == null) {
+        if (petManagementViewModel == null || petManagementViewModel.getFoodSettings() == null) {
             return;
         } else {
             foodSettings = petManagementViewModel.getFoodSettings();
@@ -64,26 +91,8 @@ public class PetFoodSettingsFragment extends PetManagementFragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        loadFoodSettingsInInputFromViewModel();
-        hideAddAFeederButtonIfVisible();
-    }
-
-    /**
-     * Hide the add a feeder floating button if visible.
-     */
-    private void hideAddAFeederButtonIfVisible() {
-        // Hide the add a feeder button if visible
-        if (petManagementActivity.findViewById(R.id.add_a_feeder).getVisibility() == View.VISIBLE) {
-            petManagementActivity.findViewById(R.id.add_a_feeder).setVisibility(View.INVISIBLE);
-        }
-    }
-
-    @Override
-    public void onPause() {
+    public void savePetData() {
         saveFoodSettingsFromInputInViewModel();
-        super.onPause();
     }
 
     /**
@@ -92,7 +101,9 @@ public class PetFoodSettingsFragment extends PetManagementFragment {
     private void saveFoodSettingsFromInputInViewModel() {
         Log.i(TAG, "saveFoodSettingsFromInputInViewModel");
         FoodSettings foodSettings;
-        if (petManagementViewModel.getFoodSettings() != null) {
+        if (petManagementViewModel == null) {
+            return;
+        } else if (petManagementViewModel.getFoodSettings() != null) {
             foodSettings = petManagementViewModel.getFoodSettings();
         } else {
             foodSettings = new FoodSettings(null, new ArrayList<>());

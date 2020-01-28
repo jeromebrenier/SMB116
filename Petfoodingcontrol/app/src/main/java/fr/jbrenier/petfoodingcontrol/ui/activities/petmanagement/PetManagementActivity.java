@@ -42,22 +42,21 @@ public class PetManagementActivity extends AppCompatActivity
     @Inject
     PetService petService;
 
-    private PetFoodingControl petFoodingControl;
     private PetManagementViewModel petManagementViewModel;
     private boolean isCreationMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        petFoodingControl = (PetFoodingControl) getApplication();
+        PetFoodingControl petFoodingControl = (PetFoodingControl) getApplication();
         petFoodingControl.getAppComponent().inject(this);
         petManagementViewModel = new PetManagementViewModel();
         if (getCallingActivity() != null &&
                 !getCallingActivity().getClassName().equals(MainActivity.class.getName())) {
             // Here we are in modification mode
-            isCreationMode = true;
             Log.i(TAG, "Modification mode.");
         } else {
+            isCreationMode = true;
             Log.i(TAG, "Creation mode.");
         }
         setContentView(R.layout.activity_pet_management);
@@ -65,9 +64,39 @@ public class PetManagementActivity extends AppCompatActivity
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
+        loadAndSavePetDataOnPageChange(viewPager, sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
         setupAddFeederButton();
+    }
+
+
+    private void loadAndSavePetDataOnPageChange(ViewPager viewPager,
+                                                SectionsPagerAdapter sectionsPagerAdapter) {
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            int nbItems = sectionsPagerAdapter.getCount();
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset,
+                                       int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                ((PetData) sectionsPagerAdapter.getItem(position)).loadPetData();
+                for (int i = nbItems - 1; i >= 0 ; i--) {
+                    if (i != position) {
+                        ((PetData) sectionsPagerAdapter.getItem(i)).savePetData();
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private void setupToolBar() {

@@ -18,6 +18,7 @@ import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginFieldsFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.login.LoginWelcomeFragment;
+import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
 /**
  * The Login activity of the Pet Fooding Control application.
@@ -61,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
     public void onLoginButtonClick(String email, String password) {
         if (email.isEmpty() || password.isEmpty()) {
             showToast(R.string.toast_input_empty);
+        } else if (!InputValidationUtils.isEmailValid(email)) {
+            showToast(R.string.toast_email_invalid);
         } else {
             tryToLog(email, password,
                     ((CheckBox) findViewById(R.id.chk_keep_logged_in)).isChecked());

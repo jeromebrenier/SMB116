@@ -32,7 +32,7 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/view_pager"
         android:layout_width="@dimen/main_content_width"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="clip_horizontal"
         android:layout_marginTop="@dimen/fieldset_top_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"

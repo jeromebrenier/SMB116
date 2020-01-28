@@ -12,6 +12,10 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
+/**
+ * The fragment for modifying user accounts.
+ * @author Jérôme Brenier
+ */
 public class AccountModificationFormFragment extends AccountCreationFormFragment {
 
     /** LOGGING */

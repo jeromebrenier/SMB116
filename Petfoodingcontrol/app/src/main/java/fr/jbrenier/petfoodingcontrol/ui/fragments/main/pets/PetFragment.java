@@ -5,7 +5,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -21,6 +20,7 @@ import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
+import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 
 /**
@@ -40,18 +40,14 @@ public class PetFragment extends Fragment {
     @Inject
     PetService petService;
 
+    @Inject
+    PhotoService photoService;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public PetFragment() {
-    }
-
-    @SuppressWarnings("unused")
-    public static PetFragment newInstance() {
-        PetFragment fragment = new PetFragment();
-        Bundle args = new Bundle();
-        return fragment;
     }
 
     @Override
@@ -60,7 +56,7 @@ public class PetFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pet_list, container, false);
         ((PetFoodingControl) getActivity().getApplicationContext()).getAppComponent()
                 .inject(this);
-        petFragmentViewModel = ViewModelProviders.of(this).get(PetFragmentViewModel.class);
+        petFragmentViewModel = new PetFragmentViewModel();
         mainActivity = (MainActivity)getActivity();
         // Toolbar title
         mainActivity.setToolBarTitle(R.string.menu_pets);

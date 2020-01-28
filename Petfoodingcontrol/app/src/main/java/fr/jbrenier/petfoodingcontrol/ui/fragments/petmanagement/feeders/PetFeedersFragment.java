@@ -7,11 +7,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent.DummyItem;
@@ -22,7 +24,10 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.Du
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class PetFeedersFragment extends PetManagementFragment {
+public class PetFeedersFragment extends PetManagementFragment implements PetData {
+
+    /** LOGGING */
+    private static final String TAG = "PetFeedersFragment";
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -75,7 +80,6 @@ public class PetFeedersFragment extends PetManagementFragment {
         return view;
     }
 
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -104,7 +108,16 @@ public class PetFeedersFragment extends PetManagementFragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(DummyItem item);
+    }
+
+    @Override
+    public void loadPetData() {
+        Log.i(TAG, "loadPetData");
+    }
+
+    @Override
+    public void savePetData() {
+        Log.i(TAG, "savePetData");
     }
 }

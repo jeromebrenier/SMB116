@@ -32,10 +32,6 @@ public class LoginFieldsFragment extends Fragment {
     private View loginFieldsView;
     private LoginActivity loginActivity;
 
-    /** INITIAL TEXT COLOR */
-    private int initTextColor;
-    private int alertTextColor;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,9 +87,6 @@ public class LoginFieldsFragment extends Fragment {
      */
     private void setupEmailVisualValidation() {
         EditText emailEntered = loginActivity.findViewById(R.id.txt_login_email);
-        initTextColor = emailEntered.getCurrentTextColor();
-        alertTextColor = ContextCompat.getColorStateList(this.getContext(),
-                R.color.colorAccent).getDefaultColor();
         TextWatcher emailWatcher = new TextWatcher() {
             boolean ignore = false;
 
@@ -109,12 +102,10 @@ public class LoginFieldsFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (ignore) {return;}
+                if (ignore || s.length() == 0) {return;}
                 ignore = true;
                 if (!InputValidationUtils.isEmailValid(s.toString())) {
-                    emailEntered.setTextColor(alertTextColor);
-                } else {
-                    emailEntered.setTextColor(initTextColor);
+                    emailEntered.setError(getResources().getString(R.string.error_email));
                 }
                 ignore = false;
             }

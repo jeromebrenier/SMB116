@@ -16,6 +16,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
+import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
@@ -129,6 +130,27 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                     bitmapRetrieved.setValue(decodedByte);
                 }, throwable ->
                         Log.e(TAG, "User's photo not loaded."));
+        addToCompositeDisposable(context, disposable);
+        return bitmapRetrieved;
+    }
+
+    /**
+     * Get the pet's photo, returns it as a bitmap.
+     * @param pet the pet whose photo is to be retrieved
+     * @return the bitmap corresponding to the pet's photo
+     */
+    @Override
+    public MutableLiveData<Bitmap> get(Context context, Pet pet) {
+        MutableLiveData<Bitmap> bitmapRetrieved = new MutableLiveData<>(null);
+        Disposable disposable = pfcRepository.getPetPhoto(pet).subscribe(
+                photo -> {
+                    Log.i(TAG, "Pet's photo loaded.");
+                    byte[] decodedString = Base64.decode(photo.getImage(), Base64.DEFAULT);
+                    Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
+                            decodedString.length);
+                    bitmapRetrieved.setValue(decodedByte);
+                }, throwable ->
+                        Log.e(TAG, "Pet's photo not loaded."));
         addToCompositeDisposable(context, disposable);
         return bitmapRetrieved;
     }

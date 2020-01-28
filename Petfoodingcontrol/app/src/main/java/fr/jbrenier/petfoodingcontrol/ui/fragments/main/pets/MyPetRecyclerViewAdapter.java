@@ -24,18 +24,15 @@ import java.util.List;
  */
 public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecyclerViewAdapter.ViewHolder> {
 
-    private final PetFoodingControlRepository petFoodingControlRepository;
     private final List<Pet> mUserPets;
     private User userLogged = null;
-
-    /** Manages disposables */
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private PetFragment petFragment;
 
     private final PetFragment.OnListFragmentInteractionListener mListener;
 
     public MyPetRecyclerViewAdapter(PetFragment petFragment,
                                     PetFragment.OnListFragmentInteractionListener listener) {
-        this.petFoodingControlRepository = petFragment.petService.getPfcRepository();
+        this.petFragment = petFragment;
         mUserPets = petFragment.getPetFragmentViewModel().getUserPets();
         mListener = listener;
     }
@@ -50,16 +47,14 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.pet = mUserPets.get(position);
-        Disposable disposable = petFoodingControlRepository.getPetPhoto(holder.pet).subscribe(
-                photo -> holder.mPetImageView.setImageBitmap(
-                        ImageUtils.getBitmapFromBase64String(photo.getImage()))
-        );
-        compositeDisposable.add(disposable);
+        petFragment.photoService.get(petFragment.getContext(), holder.pet).observe(
+                petFragment.getViewLifecycleOwner(), holder.mPetImageView::setImageBitmap);
         holder.mPetNameView.setText(mUserPets.get(position).getName());
         holder.mPetStatusView.setText(R.string.pet_status_unknown);
         if (userLogged != null) {
            // setPetOwnedTxtVisibility(holder, holder.pet.getAuthorizedFeeders());
         }
+
 
         holder.mView.setOnClickListener(view -> {
                 if (null != mListener) {
@@ -72,7 +67,6 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
 
     @Override
     public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
-        compositeDisposable.dispose();
         super.onDetachedFromRecyclerView(recyclerView);
     }
 

@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.pet.PetFeeders;
 import fr.jbrenier.petfoodingcontrol.domain.pet.food.FoodSettings;
+import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
 public class PetManagementViewModel extends ViewModel {
     private Pet petToAdd;
-    private List<PetFeeders> petFeedersList;
+    private List<User> petFeedersList;
     private FoodSettings foodSettings;
 
     public Pet getPetToAdd() {
@@ -21,11 +21,11 @@ public class PetManagementViewModel extends ViewModel {
         this.petToAdd = petToAdd;
     }
 
-    public List<PetFeeders> getPetFeedersList() {
+    public List<User> getPetFeedersList() {
         return petFeedersList;
     }
 
-    public void setPetFeedersList(List<PetFeeders> petFeedersList) {
+    public void setPetFeedersList(List<User> petFeedersList) {
         this.petFeedersList = petFeedersList;
     }
 

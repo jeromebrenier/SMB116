@@ -6,6 +6,8 @@
     <string name="btn_save">Save</string>
     <string name="btn_OK">OK</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="error_email">Invalid email, it does not match the ****@**** format</string>
+    <string name="error_date">Invalid date, it does not match the dd/MM/yy format</string>
 
     <!-- Login -->
     <string name="hint_email">Email</string>

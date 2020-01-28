@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import java.util.Map;
 
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
+import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
@@ -18,4 +19,5 @@ public interface PhotoService {
     void save(Context context, Photo photo, User user);
     void clearDisposables(Context context);
     MutableLiveData<Bitmap> get(Context context, User user);
+    MutableLiveData<Bitmap> get(Context context, Pet pet);
 }

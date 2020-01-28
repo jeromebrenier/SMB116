@@ -43,6 +43,10 @@ import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
 import static android.app.Activity.RESULT_OK;
 
+/**
+ * The fragment for creating accounts.
+ * @author Jérôme Brenier
+ */
 public class AccountCreationFormFragment extends Fragment implements View.OnClickListener {
 
     /** REQUESTS */
@@ -109,9 +113,6 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
      */
     private void setupEmailVisualValidation() {
         EditText emailEntered = activity.findViewById(R.id.txt_account_email);
-        initTextColor = emailEntered.getCurrentTextColor();
-        alertTextColor = ContextCompat.getColorStateList(this.getContext(),
-                R.color.colorAccent).getDefaultColor();
         TextWatcher emailWatcher = new TextWatcher() {
             boolean ignore = false;
 
@@ -127,12 +128,10 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (ignore) {return;}
+                if (ignore || s.length() == 0) {return;}
                 ignore = true;
                 if (!InputValidationUtils.isEmailValid(s.toString())) {
-                    emailEntered.setTextColor(alertTextColor);
-                } else {
-                    emailEntered.setTextColor(initTextColor);
+                    emailEntered.setError(getResources().getString(R.string.error_email));
                 }
                 ignore = false;
             }
