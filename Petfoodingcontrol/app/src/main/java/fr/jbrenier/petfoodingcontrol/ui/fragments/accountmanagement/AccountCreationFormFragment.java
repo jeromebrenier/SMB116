@@ -66,10 +66,6 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
     private PetFoodingControl petFoodingControl;
     private OnSaveButtonClickListener callback;
 
-    /** INITIAL TEXT COLOR */
-    int initTextColor;
-    int alertTextColor;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

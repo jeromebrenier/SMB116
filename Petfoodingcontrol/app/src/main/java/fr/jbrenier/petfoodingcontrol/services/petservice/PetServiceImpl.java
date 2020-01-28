@@ -1,5 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.services.petservice;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 
 import androidx.lifecycle.LiveDataReactiveStreams;
@@ -7,6 +8,8 @@ import androidx.lifecycle.LiveDataReactiveStreams;
 
 import javax.inject.Inject;
 
+import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
+import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
@@ -26,6 +29,16 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
         this.pfcRepository = pfcRepository;
         this.sharedPreferences = sharedPreferences;
         this.userService = userService;
+    }
+
+    @Override
+    public SingleLiveEvent<Pet> save(Context context, Pet pet) {
+        return null;
+    }
+
+    @Override
+    public SingleLiveEvent<Integer> update(Context context, Pet pet) {
+        return null;
     }
 
     /**

@@ -15,10 +15,12 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.SectionsPagerAdapter;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent;
@@ -28,7 +30,8 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.Du
  * @author Jérôme Brenier
  */
 public class PetManagementActivity extends AppCompatActivity
-        implements PetFeedersFragment.OnListFragmentInteractionListener {
+        implements PetFeedersFragment.OnListFragmentInteractionListener,
+        PetManagementFragment.OnSaveButtonClickListener {
 
     /** LOGGING */
     private static final String TAG = "PetManagementActivity";
@@ -125,6 +128,36 @@ public class PetManagementActivity extends AppCompatActivity
 
     }
 
+    @Override
+    public void onSaveButtonClick() {
+        if (isCreationMode) {
+            saveNewPet();
+            if (petManagementViewModel.getPetToAdd().getPetId() != null) {
+                saveFoodSettings();
+            }
+
+        }
+    }
+
+    /**
+     * Save in the DB a new pet present in the viewModel.
+     */
+    private void saveNewPet() {
+        if (petManagementViewModel.getPetToAdd() != null) {
+            petService.save(this, petManagementViewModel.getPetToAdd()).observe(
+                    this, pet -> {
+                        if (pet == null) {
+                            Log.i(TAG, "saveNewPet failure.");
+                        } else {
+                            petManagementViewModel.getPetToAdd().setPetId(pet.getPetId());
+                            Log.i(TAG, "saveNewPet " + pet.getPetId() + " sucess.");
+                        }
+                    });
+        } else {
+            Log.d(TAG, "No pet to add to the DB");
+        }
+    }
+
     public PetManagementViewModel getPetManagementViewModel() {
         return petManagementViewModel;
     }
@@ -144,4 +177,6 @@ public class PetManagementActivity extends AppCompatActivity
     public PetService getPetService() {
         return petService;
     }
+
+
 }
