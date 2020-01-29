@@ -24,21 +24,20 @@ public class ServicesModule {
         return new UserServiceImpl(pfcRepository, sharedPreferences);
     }
 
-
-    @Singleton
-    @Provides
-    public PhotoService getPhotoService(PetFoodingControlRepository pfcRepository,
-                                        SharedPreferences sharedPreferences,
-                                        UserService userService) {
-        return new PhotoServiceImpl(pfcRepository, sharedPreferences, userService);
-    }
-
-
     @Singleton
     @Provides
     public PetService getPetService(PetFoodingControlRepository pfcRepository,
                                       SharedPreferences sharedPreferences,
                                       UserService userService) {
         return new PetServiceImpl(pfcRepository, sharedPreferences, userService);
+    }
+
+    @Singleton
+    @Provides
+    public PhotoService getPhotoService(PetFoodingControlRepository pfcRepository,
+                                        SharedPreferences sharedPreferences,
+                                        UserService userService,
+                                        PetService petService) {
+        return new PhotoServiceImpl(pfcRepository, sharedPreferences, userService, petService);
     }
 }

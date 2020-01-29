@@ -137,70 +137,45 @@ public class PetManagementActivity extends AppCompatActivity
     public void onSaveButtonClick() {
         if (isCreationMode) {
             Log.i(TAG, "Saving pet in DB...");
-            Photo photoToSave = petManagementViewModel.getPetPhoto();
-            if (photoToSave.getPhotoId() == null) {
-                photoService.save(this, photoToSave, pet);
-            }
-            saveNewPet().observe(this, result -> {
-                if (result) {
-                    savePetFeeders();
-                    finishPetManagementActivity(RESULT_OK);
-                } else {
-                    finishPetManagementActivity(RESULT_CANCELED);
-                }
-            });
+            savePetData();
         }
+    }
+
+    /**
+     * Save the pet data in the DB.
+     */
+    private void savePetData() {
+        saveNewPet().observe(this, pet -> {
+            if (pet != null) {
+                savePetPhoto(pet).observe(this, result -> {
+                    if (result) {
+                        Log.i(TAG, "Pet photo saved.");
+                    } else {
+                        Log.i(TAG, "Pet photo updated.");
+                    }
+                });
+                savePetFeeders(pet);
+                finishPetManagementActivity(RESULT_OK);
+            } else {
+                finishPetManagementActivity(RESULT_CANCELED);
+            }
+        });
     }
 
     /**
      * Save in the DB a new pet present in the viewModel.
      */
-    private SingleLiveEvent<Long> savePhoto() {
-        SingleLiveEvent<Long> photoId = new SingleLiveEvent<>();
-        Photo photoToSave = petManagementViewModel.getPetPhoto();
-        if (photoToSave != null) {
-            if (photoToSave.getPhotoId() == null) {
-                photoService.save(this, photoToSave, pet);
-            }
-            petService.save(this, petManagementViewModel.getPetToAdd()).observe(
-                    this, pet -> {
-                        if (pet == null) {
-                            result.setValue(false);
-                            Log.i(TAG, "saveNewPet failure.");
-                        } else {
-                            petManagementViewModel.getPetToAdd().setPetId(pet.getPetId());
-                            result.setValue(true);
-                            Log.i(TAG, "saveNewPet " + pet.getPetId() + " sucess.");
-                        }
-                    });
-        } else {
-            result.setValue(false);
-            Log.d(TAG, "No pet to add to the DB");
-        }
-        return result;
-    }
-
-    /**
-     * Save in the DB a new pet present in the viewModel.
-     */
-    private SingleLiveEvent<Boolean> saveNewPet() {
-        SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
+    private SingleLiveEvent<Pet> saveNewPet() {
+        SingleLiveEvent<Pet> result = new SingleLiveEvent<>();
         if (petManagementViewModel.getPetToAdd() != null) {
             addFoodSettingsToPet();
             petService.save(this, petManagementViewModel.getPetToAdd()).observe(
                     this, pet -> {
-                        if (pet == null) {
-                            result.setValue(false);
-                            Log.i(TAG, "saveNewPet failure.");
-                        } else {
-                            petManagementViewModel.getPetToAdd().setPetId(pet.getPetId());
-                            result.setValue(true);
-                            Log.i(TAG, "saveNewPet " + pet.getPetId() + " sucess.");
-                        }
+                        Log.i(TAG, "PET ID : " + pet.getPetId());
+                        result.setValue(pet);
                     });
         } else {
-            result.setValue(false);
-            Log.d(TAG, "No pet to add to the DB");
+            result.setValue(null);
         }
         return result;
     }
@@ -215,7 +190,31 @@ public class PetManagementActivity extends AppCompatActivity
         }
     }
 
-    private void savePetFeeders() {
+    /**
+     * Save in the DB a new pet present in the viewModel.
+     * @param pet Pet the photo belongs to
+     */
+    private SingleLiveEvent<Boolean> savePetPhoto(Pet pet) {
+        SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
+        Photo photoToSave = petManagementViewModel.getPetPhoto();
+        if (photoToSave != null) {
+            if (photoToSave.getPhotoId() == null) {
+                photoService.save(this, photoToSave, pet);
+            } else {
+                photoService.update(this, photoToSave);
+            }
+            result.setValue(true);
+        } else {
+            result.setValue(false);
+            Log.d(TAG, "No pet photo to save to the DB.");
+        }
+        return result;
+    }
+
+    private SingleLiveEvent<Boolean> savePetFeeders(Pet pet) {
+        SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
+        result.setValue(true);
+        return result;
     }
 
     /**

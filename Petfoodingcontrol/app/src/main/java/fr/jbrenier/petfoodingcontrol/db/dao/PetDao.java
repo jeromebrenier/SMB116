@@ -30,7 +30,7 @@ public interface PetDao {
             "WHERE PetFeeders.user_Id = :userId")
     Flowable<List<Pet>> getAllUserPetsByUserId(Long userId);
     @Update
-    Completable updatePet (Pet pet);
+    Completable update(Pet pet);
     @Delete
-    Completable deletePet (Pet pet);
+    Completable delete(Pet pet);
 }

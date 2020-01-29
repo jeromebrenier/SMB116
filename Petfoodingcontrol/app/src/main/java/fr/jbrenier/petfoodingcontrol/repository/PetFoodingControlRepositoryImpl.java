@@ -4,7 +4,6 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.room.Room;
 
@@ -119,6 +118,14 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     public Single<Long> save(Pet pet) {
         Log.d(TAG, "save(" + pet + ")");
         return petFoodingControlDatabase.getPetDao().insert(pet)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Completable update(Pet pet) {
+        Log.d(TAG, "update(" + pet + ")");
+        return petFoodingControlDatabase.getPetDao().update(pet)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }

@@ -123,11 +123,20 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                 (photoId) -> {
                     Log.i(TAG,"Pet's photo saved with id " + photoId);
                     pet.setPhotoId(photoId);
+                    Log.i(TAG,"Pet's photo id attribute " + pet.getPhotoId());
                     petService.update(context, pet);
                 },
                 throwable -> {
                     Log.e(TAG, "Pet's photo saving failure.", throwable);
                 });
+        addToCompositeDisposable(context, disposable);
+    }
+
+    @Override
+    public void update(Context context, Photo photo) {
+        Disposable disposable = pfcRepository.update(photo).subscribe(
+                () -> Log.i(TAG, "Photo " + photo.getPhotoId() + " updated."),
+                throwable -> Log.e(TAG, "Photo " + photo.getPhotoId() + " update failure."));
         addToCompositeDisposable(context, disposable);
     }
 

@@ -40,7 +40,7 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
         SingleLiveEvent<Pet> savePetResult = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.save(pet).subscribe(
                 (petId) -> {
-                    pet.setUserId(petId);
+                    pet.setPetId(petId);
                     savePetResult.setValue(pet);
                     Log.i(TAG, "Pet saved with id : " + petId);
                 },
@@ -54,7 +54,18 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
 
     @Override
     public SingleLiveEvent<Integer> update(Context context, Pet pet) {
-        return null;
+        SingleLiveEvent<Integer> updatePetResult = new SingleLiveEvent<>();
+        Disposable disposable = pfcRepository.update(pet).subscribe(
+                () -> {
+                    updatePetResult.setValue(0);
+                    Log.i(TAG,"Pet updated");
+                },
+                throwable -> {
+                    updatePetResult.setValue(1);
+                    Log.e(TAG, "Pet " + pet.getPetId() + " update failure : ", throwable);
+                });
+        addToCompositeDisposable(context, disposable);
+        return updatePetResult;
     }
 
     /**
