@@ -274,7 +274,7 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
             final Bitmap imageRetrieved = requestCode == PICK_IMAGE_REQUEST
                     ? getBitmapFromIntent(data) : (Bitmap) extras.get("data");
             if (imageRetrieved != null) {
-                setPhotoInImageView(imageRetrieved);
+                setPhotoInImageView(ImageUtils.resizePhoto(ImageUtils.cropPhoto(imageRetrieved)));
             }
         }
     }

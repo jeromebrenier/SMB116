@@ -40,4 +40,34 @@ public final class ImageUtils {
         }
         return null;
     }
+
+    /**
+     * Crop the bitmap image to obtain a squared image.
+     * @param source the source bitmap
+     * @return the cropped image
+     */
+    public static Bitmap cropPhoto(Bitmap source) {
+        int sourceHeight = source.getHeight();
+        int sourceWidth = source.getWidth();
+        Bitmap croppedPhoto = null;
+        if (sourceHeight == sourceWidth) {
+            croppedPhoto = source;
+        } else if (sourceHeight > sourceWidth) {
+            int newYStart = (sourceHeight - sourceWidth)/2;
+            croppedPhoto = Bitmap.createBitmap(source, 0, newYStart, sourceWidth, sourceWidth);
+        } else {
+            int newXStart = (sourceWidth - sourceHeight)/2;
+            croppedPhoto = Bitmap.createBitmap(source, newXStart, 0, sourceHeight, sourceHeight);
+        }
+        return croppedPhoto;
+    }
+
+    /**
+     * Resize the photo to 450x450.
+     * @param source the source photo
+     * @return the resized photo
+     */
+    public static Bitmap resizePhoto(Bitmap source) {
+        return Bitmap.createScaledBitmap(source, 450, 450, true);
+    }
 }

@@ -17,6 +17,7 @@ public interface PhotoService {
     SingleLiveEvent<Integer> update(Context context, User currentUser,
                                     Map<UserServiceKeysEnum, String> userData);
     void save(Context context, Photo photo, User user);
+    void save(Context context, Photo photo, Pet pet);
     void clearDisposables(Context context);
     MutableLiveData<Bitmap> get(Context context, User user);
     MutableLiveData<Bitmap> get(Context context, Pet pet);

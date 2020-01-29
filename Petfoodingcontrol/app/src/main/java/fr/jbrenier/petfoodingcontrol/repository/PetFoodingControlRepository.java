@@ -1,6 +1,7 @@
 package fr.jbrenier.petfoodingcontrol.repository;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;

@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,9 @@ import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
  * interface.
  */
 public class PetFragment extends Fragment {
+
+    /** LOGGING */
+    private static final String TAG = "PetFragment";
 
     private PetFragmentViewModel petFragmentViewModel;
     private MainActivity mainActivity;
@@ -87,6 +91,7 @@ public class PetFragment extends Fragment {
         adapter.setUserLogged(petService.getPfcRepository().getUserLogged().getValue());
         recyclerView.setAdapter(adapter);
         userPetObserver = list -> {
+            Log.i(TAG, "Pet list has changed.");
             petFragmentViewModel.refresh(list);
             adapter.notifyDataSetChanged();
         };
@@ -94,14 +99,18 @@ public class PetFragment extends Fragment {
             adapter.setUserLogged(user);
             adapter.notifyDataSetChanged();
             if (user == null) {
-                observeUserPets(true);
-            } else {
                 observeUserPets(false);
+            } else {
+                petFragmentViewModel.refresh(
+                        petService.getPfcRepository().getUserPets().getValue());
+                adapter.notifyDataSetChanged();
+                observeUserPets(true);
             }
         });
     }
 
     private void observeUserPets(boolean status) {
+        Log.i(TAG, "observeUserPets(" + status + ")");
         if (status) {
             petService.getPfcRepository().getUserPets().observe(getViewLifecycleOwner(),
                     userPetObserver);

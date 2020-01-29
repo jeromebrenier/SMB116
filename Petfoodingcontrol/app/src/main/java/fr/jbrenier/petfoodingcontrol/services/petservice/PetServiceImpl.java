@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
 
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -64,8 +66,8 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
      */
     @Override
     public void setUserPets(User user) {
-        pfcRepository.setUserPets(LiveDataReactiveStreams
-                .fromPublisher(pfcRepository.getAllUserPetsByUserId(user.getUserId())));
+        pfcRepository.setUserPets(LiveDataReactiveStreams.fromPublisher(
+                pfcRepository.getAllUserPetsByUserId(user.getUserId())));
     }
 
     @Override

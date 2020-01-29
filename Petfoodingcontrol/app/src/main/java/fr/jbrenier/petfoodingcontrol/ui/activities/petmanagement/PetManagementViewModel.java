@@ -6,10 +6,12 @@ import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.pet.food.FoodSettings;
+import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 
 public class PetManagementViewModel extends ViewModel {
     private Pet petToAdd;
+    private Photo petPhoto;
     private List<User> petFeedersList;
     private FoodSettings foodSettings;
 
@@ -19,6 +21,14 @@ public class PetManagementViewModel extends ViewModel {
 
     public void setPetToAdd(Pet petToAdd) {
         this.petToAdd = petToAdd;
+    }
+
+    public Photo getPetPhoto() {
+        return petPhoto;
+    }
+
+    public void setPetPhoto(Photo petPhoto) {
+        this.petPhoto = petPhoto;
     }
 
     public List<User> getPetFeedersList() {

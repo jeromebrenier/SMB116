@@ -105,10 +105,10 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mPetImageView = (CircleImageView) view.findViewById(R.id.civ_pet_image);
-            mPetNameView = (TextView) view.findViewById(R.id.txt_pet_name);
-            mPetStatusView = (TextView) view.findViewById(R.id.txt_pet_fooding_status);
-            mPetOwnedView = (TextView) view.findViewById(R.id.txt_pet_is_owner);
+            mPetImageView = view.findViewById(R.id.civ_pet_image);
+            mPetNameView = view.findViewById(R.id.txt_pet_name);
+            mPetStatusView = view.findViewById(R.id.txt_pet_fooding_status);
+            mPetOwnedView = view.findViewById(R.id.txt_pet_is_owner);
         }
 
         @Override

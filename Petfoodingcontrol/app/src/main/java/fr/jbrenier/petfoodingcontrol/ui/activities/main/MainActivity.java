@@ -214,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements
         userService.getPfcRepository().getUserLogged().observe(this, user -> {
             if (user != null) {
                 setUserPets(user);
+                petService.getPfcRepository().getUserPets().observe(this, list -> Log.i(TAG, "LIST " + list.size()));
                 setUserDataInNavBar(user);
                 Log.i(TAG, "User logged changed to " + user.getUserId().toString());
             } else {
@@ -276,7 +277,6 @@ public class MainActivity extends AppCompatActivity implements
                 mDrawerLayout.closeDrawers();
             }
         });
-        //headerView.findViewById(R.id.btn_log_out).setOnClickListener(view -> logout());
     }
 
     /**
@@ -308,9 +308,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == LOGIN_REQUEST && resultCode != RESULT_OK) {
-            finishAndRemoveTask();
-            checkApplicationPermissions();
+        switch (requestCode) {
+            case LOGIN_REQUEST:
+                if (resultCode != RESULT_OK) {
+                    finishAndRemoveTask();
+                    checkApplicationPermissions();
+                }
+                break;
+            case ADD_PET_REQUEST:
+                if (resultCode == RESULT_OK) {
+                    return;
+                }
+            default:
+                break;
         }
     }
 

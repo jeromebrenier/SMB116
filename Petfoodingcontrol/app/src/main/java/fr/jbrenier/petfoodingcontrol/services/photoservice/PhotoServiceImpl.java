@@ -21,6 +21,7 @@ import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
+import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import io.reactivex.Completable;
@@ -38,13 +39,15 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
     private PetFoodingControlRepository pfcRepository;
     private SharedPreferences sharedPreferences;
     private UserService userService;
+    private PetService petService;
 
     @Inject
     public PhotoServiceImpl(PetFoodingControlRepository pfcRepository, SharedPreferences
-            sharedPreferences, UserService userService) {
+            sharedPreferences, UserService userService, PetService petService) {
         this.pfcRepository = pfcRepository;
         this.sharedPreferences = sharedPreferences;
         this.userService = userService;
+        this.petService = petService;
     }
 
     /**
@@ -95,6 +98,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
      * @param photo the photo to save
      * @param user the user to update with the photo id
      */
+    @Override
     public void save(Context context, Photo photo, User user) {
         Disposable disposable = pfcRepository.save(photo).subscribe(
                 (photoId) -> {
@@ -104,6 +108,25 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                 },
                 throwable -> {
                     Log.e(TAG, "User's photo saving failure.", throwable);
+                });
+        addToCompositeDisposable(context, disposable);
+    }
+
+    /**
+     * Save the pet's photo, and if successful update the pet with the photo id.
+     * @param photo the photo to save
+     * @param pet the pet to update with the photo id
+     */
+    @Override
+    public void save(Context context, Photo photo, Pet pet) {
+        Disposable disposable = pfcRepository.save(photo).subscribe(
+                (photoId) -> {
+                    Log.i(TAG,"Pet's photo saved with id " + photoId);
+                    pet.setPhotoId(photoId);
+                    petService.update(context, pet);
+                },
+                throwable -> {
+                    Log.e(TAG, "Pet's photo saving failure.", throwable);
                 });
         addToCompositeDisposable(context, disposable);
     }
