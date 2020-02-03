@@ -66,15 +66,6 @@ public class MainActivity extends AppCompatActivity implements
     /** LOGGING */
     private static final String TAG = "MainActivity";
 
-    @Inject
-    UserService userService;
-
-    @Inject
-    PhotoService photoService;
-
-    @Inject
-    PetService petService;
-
     private TextView user_name;
     private ImageView user_photo;
     private Toolbar toolbar;
@@ -83,13 +74,14 @@ public class MainActivity extends AppCompatActivity implements
     private NavigationView navigationView;
     private View headerView;
 
+    private MainActivityViewModel mainActivityViewModel;
     private PetFoodingControl petFoodingControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         petFoodingControl = (PetFoodingControl) getApplication();
-        petFoodingControl.getAppComponent().inject(this);
+        mainActivityViewModel = new MainActivityViewModel(petFoodingControl.getAppComponent())
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -108,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements
         setupLogoutListener(navigationView);
         setupUserLoggedListener();
         permissionProcessDone.observe(this, bool -> {
-            if (userService.getPfcRepository().getUserLogged().getValue() == null) {
+            if (mainActivityViewModel.getUserLogged().getValue() == null) {
                 Log.i(TAG, "Launching login activity.");
                 launchLoginActivity();
             }
@@ -207,28 +199,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Setup user logged listener to populate userPets accordingly and to display its data in
-     * the header.
+     * Setup user logged listener to display its data in the header.
      */
     private void setupUserLoggedListener() {
-        userService.getPfcRepository().getUserLogged().observe(this, user -> {
-            if (user != null) {
-                setUserPets(user);
-                petService.getPfcRepository().getUserPets().observe(this, list -> Log.i(TAG, "LIST " + list.size()));
-                setUserDataInNavBar(user);
-                Log.i(TAG, "User logged changed to " + user.getUserId().toString());
-            } else {
-                Log.i(TAG, "User logged changed to null");
-            }
-         });
-    }
-
-    /**
-     * Launch the populate of the User's pet list (owned and authorized to fed).
-     * @param user the logged user
-     */
-    private void setUserPets(User user) {
-        petService.setUserPets(user);
+        mainActivityViewModel.getUserLogged().observe(this, user -> {
+            mainActivityViewModel.updateUserPetsAndPhoto(user);
+            setUserDataInNavBar(user);
+        });
     }
 
     /**
@@ -238,13 +215,12 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void setUserDataInNavBar(User user) {
         user_name.setText(user == null ? "********" : user.getDisplayedName());
-        if (user != null) {
-        photoService.get(this, user).observe(this, bitmap -> {
+        mainActivityViewModel.getUserPhoto().observe(this, bitmap -> {
             if (bitmap != null) {
                 user_photo.setImageBitmap(bitmap);
             }
         });
-    }}
+    }
 
     /**
      * Setup the add pet button
@@ -283,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements
      * Log out.
      */
     public void logout() {
-        userService.logout();
+        mainActivityViewModel.logout();
         mDrawerLayout.closeDrawers();
         navigationView.getMenu().getItem(0).setChecked(true);
         launchLoginActivity();
@@ -333,9 +309,8 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        userService.clearDisposables(this);
-        photoService.clearDisposables(this);
-        userService.leave();
+        mainActivityViewModel.clear();
+        mainActivityViewModel.leave();
         super.onDestroy();
     }
 
@@ -347,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onSaveButtonClick(Map<UserServiceKeysEnum, String> userData) {
         User userLogged = userService.getPfcRepository().getUserLogged().getValue();
-        userService.update(this, userData).observe(this, result -> {
+        mainActivityViewModel.updateUser(userData).observe(this, result -> {
             if (result == 1) {
                 showToast(getResources().getString(R.string.toast_account_update_failure));
             } else if (result == 0) {

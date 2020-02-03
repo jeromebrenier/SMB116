@@ -14,9 +14,6 @@ import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
 import fr.jbrenier.petfoodingcontrol.domain.pet.food.FoodSettings;

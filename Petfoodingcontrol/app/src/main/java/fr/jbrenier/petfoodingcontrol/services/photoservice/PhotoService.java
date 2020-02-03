@@ -19,7 +19,7 @@ public interface PhotoService {
     void save(Context context, Photo photo, User user);
     void save(Context context, Photo photo, Pet pet);
     void update(Context context, Photo photo);
-    void clearDisposables(Context context);
-    MutableLiveData<Bitmap> get(Context context, User user);
+    void clearDisposables(Object object);
+    MutableLiveData<Bitmap> get(Object object, User user);
     MutableLiveData<Bitmap> get(Context context, Pet pet);
 }

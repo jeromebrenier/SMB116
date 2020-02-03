@@ -7,10 +7,8 @@ import android.graphics.BitmapFactory;
 import android.util.Base64;
 import android.util.Log;
 
-import androidx.annotation.MainThread;
 import androidx.lifecycle.MutableLiveData;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -25,7 +23,6 @@ import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import io.reactivex.Completable;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -141,17 +138,18 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
     }
 
     @Override
-    public void clearDisposables(Context context) {
-        compositeDisposableClear(context);
+    public void clearDisposables(Object object) {
+        compositeDisposableClear(object);
     }
 
     /**
      * Get the user's photo, returns it as a bitmap.
+     * @param object the calling object
      * @param user the user whose photo is to be retrieved
      * @return the bitmap corresponding to the user's photo
      */
     @Override
-    public MutableLiveData<Bitmap> get(Context context, User user) {
+    public MutableLiveData<Bitmap> get(Object object, User user) {
         MutableLiveData<Bitmap> bitmapRetrieved = new MutableLiveData<>(null);
         Disposable disposable = pfcRepository.getUserPhoto(user).subscribe(
                 photo -> {
@@ -162,7 +160,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                     bitmapRetrieved.setValue(decodedByte);
                 }, throwable ->
                         Log.e(TAG, "User's photo not loaded."));
-        addToCompositeDisposable(context, disposable);
+        addToCompositeDisposable(object, disposable);
         return bitmapRetrieved;
     }
 

@@ -25,7 +25,6 @@ import java.util.List;
 public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecyclerViewAdapter.ViewHolder> {
 
     private final List<Pet> mUserPets;
-    private User userLogged = null;
     private PetFragment petFragment;
 
     private final PetFragment.OnListFragmentInteractionListener mListener;
@@ -47,11 +46,12 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.pet = mUserPets.get(position);
-        petFragment.photoService.get(petFragment.getContext(), holder.pet).observe(
+        petFragment.getPetFragmentViewModel().photoService.get(
+                petFragment.getContext(), holder.pet).observe(
                 petFragment.getViewLifecycleOwner(), holder.mPetImageView::setImageBitmap);
         holder.mPetNameView.setText(mUserPets.get(position).getName());
         holder.mPetStatusView.setText(R.string.pet_status_unknown);
-        if (userLogged != null) {
+        if (petFragment.getPetFragmentViewModel().getUserLogged() != null) {
            // setPetOwnedTxtVisibility(holder, holder.pet.getAuthorizedFeeders());
         }
 
@@ -78,7 +78,8 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
      */
     private void setPetOwnedTxtVisibility(ViewHolder holder, List<String> authorizedFeeders) {
         boolean isAuthorizedFeeder = authorizedFeeders.stream().anyMatch(
-                authorizedFeeder -> authorizedFeeder.equals(userLogged.getEmail()));
+                authorizedFeeder -> authorizedFeeder.equals(
+                        petFragment.getPetFragmentViewModel().getUserLogged().getEmail()));
         if (!isAuthorizedFeeder) {
             holder.mPetOwnedView.setVisibility(View.VISIBLE);
         }
@@ -87,10 +88,6 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     @Override
     public int getItemCount() {
         return mUserPets == null ? 0 : mUserPets.size();
-    }
-
-    public void setUserLogged(User userLogged) {
-        this.userLogged = userLogged;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

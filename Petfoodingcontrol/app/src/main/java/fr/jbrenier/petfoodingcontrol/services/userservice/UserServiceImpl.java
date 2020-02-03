@@ -198,7 +198,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      * @return updateUserResult SingleLiveEvent<Integer> result of the operation
      */
     @Override
-    public SingleLiveEvent<Integer> update(Context context,
+    public SingleLiveEvent<Integer> update(Object object,
                                            Map<UserServiceKeysEnum, String> userData) {
         SingleLiveEvent<Integer> updateUserResult = new SingleLiveEvent<>();
         userData = managePasswordData(userData);
@@ -222,7 +222,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                         updateUserResult.setValue(1);
                         Log.e(TAG, "User update failure", throwable);
                     });
-            addToCompositeDisposable(context, disposable);
+            addToCompositeDisposable(object, disposable);
         } else {
             updateUserResult.setValue(1);
         }
@@ -294,8 +294,8 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
     }
 
     @Override
-    public void clearDisposables(Context context) {
-        compositeDisposableClear(context);
+    public void clearDisposables(Object object) {
+        compositeDisposableClear(object);
     }
 
     public PetFoodingControlRepository getPfcRepository() {

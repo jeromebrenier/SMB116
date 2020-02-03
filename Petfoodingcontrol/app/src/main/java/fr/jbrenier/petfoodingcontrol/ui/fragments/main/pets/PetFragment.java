@@ -41,12 +41,6 @@ public class PetFragment extends Fragment {
     private MyPetRecyclerViewAdapter adapter;
     private OnListFragmentInteractionListener mListener;
 
-    @Inject
-    PetService petService;
-
-    @Inject
-    PhotoService photoService;
-
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -54,13 +48,20 @@ public class PetFragment extends Fragment {
     public PetFragment() {
     }
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate");
+        super.onCreate(savedInstanceState);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.i(TAG, "PLOP");
         View view = inflater.inflate(R.layout.fragment_pet_list, container, false);
-        ((PetFoodingControl) getActivity().getApplicationContext()).getAppComponent()
-                .inject(this);
-        petFragmentViewModel = new PetFragmentViewModel();
+        petFragmentViewModel = new PetFragmentViewModel(
+                ((PetFoodingControl) getActivity().getApplicationContext()).getAppComponent());
         mainActivity = (MainActivity)getActivity();
         // Toolbar title
         mainActivity.setToolBarTitle(R.string.menu_pets);
@@ -82,40 +83,29 @@ public class PetFragment extends Fragment {
         return view;
     }
 
-
     private void setAdapter(RecyclerView recyclerView) {
         if (petService.getPfcRepository().getUserPets() != null) {
             petFragmentViewModel.refresh(petService.getPfcRepository().getUserPets().getValue());
         }
         adapter = new MyPetRecyclerViewAdapter(this, mListener);
-        adapter.setUserLogged(petService.getPfcRepository().getUserLogged().getValue());
         recyclerView.setAdapter(adapter);
-        userPetObserver = list -> {
+    }
+
+    private void manageUserAndPets() {
+        if (petService.getPfcRepository().getUserLogged().getValue() != null) {
+            adapter.setUserLogged(petService.getPfcRepository().getUserLogged().getValue());
+        }
+        if (petService.getPfcRepository().getUserPets() != null &&
+                petService.getPfcRepository().getUserPets().getValue() != null ) {
+            petFragmentViewModel.refresh(petService.getPfcRepository().getUserPets().getValue());
+            adapter.notifyDataSetChanged();
+            userPetObserver = list -> {
             Log.i(TAG, "Pet list has changed.");
             petFragmentViewModel.refresh(list);
             adapter.notifyDataSetChanged();
-        };
-        petService.getPfcRepository().getUserLogged().observe(getViewLifecycleOwner(), user -> {
-            adapter.setUserLogged(user);
-            adapter.notifyDataSetChanged();
-            if (user == null) {
-                observeUserPets(false);
-            } else {
-                petFragmentViewModel.refresh(
-                        petService.getPfcRepository().getUserPets().getValue());
-                adapter.notifyDataSetChanged();
-                observeUserPets(true);
-            }
-        });
-    }
-
-    private void observeUserPets(boolean status) {
-        Log.i(TAG, "observeUserPets(" + status + ")");
-        if (status) {
+            };
             petService.getPfcRepository().getUserPets().observe(getViewLifecycleOwner(),
                     userPetObserver);
-        } else {
-            petService.getPfcRepository().getUserPets().removeObserver(userPetObserver);
         }
     }
 
@@ -131,7 +121,35 @@ public class PetFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        Log.i(TAG, "onPause");
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Log.i(TAG, "onStop");
+        petService.getPfcRepository().getUserPets().removeObserver(userPetObserver);
+        super.onStop();
+    }
+
+    @Override
+    public void onStart() {
+        Log.i(TAG, "onStart");
+        manageUserAndPets();
+        super.onStart();
+    }
+
+
+    @Override
+    public void onDestroyView() {
+        Log.i(TAG, "onDestroyView");
+        super.onDestroyView();
+    }
+
+    @Override
     public void onDetach() {
+        Log.i(TAG, "onDetach");
         super.onDetach();
         mListener = null;
     }

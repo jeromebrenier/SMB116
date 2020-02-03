@@ -15,18 +15,18 @@ import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.ui.activities.accountcreation.AccountCreationActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
-import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivityViewModel;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountCreationFormFragment;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragmentViewModel;
 
 @Singleton
 @Component(modules = {AppModule.class, RepositoryModule.class, ServicesModule.class})
 public interface AppComponent {
     void inject(LoginActivity loginActivity);
     void inject(AccountCreationActivity accountCreationActivity);
-    void inject(MainActivity mainActivity);
-    void inject(PetFragment petFragment);
+    void inject(MainActivityViewModel mainActivityViewModel);
+    void inject(PetFragmentViewModel petFragmentViewModel);
     void inject(AccountCreationFormFragment accountCreationFormFragment);
     void inject(PetManagementActivity petManagementActivity);
 

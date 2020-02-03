@@ -15,10 +15,10 @@ public interface UserService {
                                       boolean isKeepLogged);
     SingleLiveEvent<User> save(Context context, User user);
     SingleLiveEvent<Integer> update(Context context, User user);
-    SingleLiveEvent<Integer> update(Context context, Map<UserServiceKeysEnum, String> userData);
+    SingleLiveEvent<Integer> update(Object object, Map<UserServiceKeysEnum, String> userData);
     void logout();
     void leave();
-    void clearDisposables(Context context);
+    void clearDisposables(Object object);
     PetFoodingControlRepository getPfcRepository();
     SharedPreferences getSharedPreferences();
 }
