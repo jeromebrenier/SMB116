@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
@@ -21,6 +22,7 @@ public class AccountModificationFormFragment extends AccountCreationFormFragment
     /** LOGGING */
     private static final String TAG = "AccountModificationFormFragment";
 
+    private PetFoodingControl petFoodingControl;
     private SwitchMaterial switchPwdMod;
 
     public static AccountModificationFormFragment newInstance() {
@@ -30,6 +32,7 @@ public class AccountModificationFormFragment extends AccountCreationFormFragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        petFoodingControl = (PetFoodingControl) getActivity().getApplication();
         setUserDataInInput();
         switchPwdMod = activity.findViewById(R.id.switch_mod_pwd);
         setupPasswordModification();
@@ -39,7 +42,7 @@ public class AccountModificationFormFragment extends AccountCreationFormFragment
      * Set the User's data in the inputs of the form.
      */
     private void setUserDataInInput() {
-        userService.getPfcRepository().getUserLogged().observe(getViewLifecycleOwner(), user -> {
+        petFoodingControl.getUserLogged().observe(getViewLifecycleOwner(), user -> {
             if (user != null) {
                 ((EditText) activity.findViewById(R.id.txt_account_username))
                         .setText(user.getDisplayedName());

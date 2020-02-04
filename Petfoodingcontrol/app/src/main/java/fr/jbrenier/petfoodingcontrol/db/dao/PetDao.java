@@ -8,8 +8,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;

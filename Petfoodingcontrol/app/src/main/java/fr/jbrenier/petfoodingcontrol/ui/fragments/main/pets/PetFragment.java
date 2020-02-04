@@ -15,13 +15,8 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
-import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
-import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 
 /**
@@ -35,7 +30,6 @@ public class PetFragment extends Fragment {
     /** LOGGING */
     private static final String TAG = "PetFragment";
 
-    private PetFragmentViewModel petFragmentViewModel;
     private MainActivity mainActivity;
     private Observer<List<Pet>> userPetObserver;
     private MyPetRecyclerViewAdapter adapter;
@@ -48,20 +42,10 @@ public class PetFragment extends Fragment {
     public PetFragment() {
     }
 
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate");
-        super.onCreate(savedInstanceState);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.i(TAG, "PLOP");
         View view = inflater.inflate(R.layout.fragment_pet_list, container, false);
-        petFragmentViewModel = new PetFragmentViewModel(
-                ((PetFoodingControl) getActivity().getApplicationContext()).getAppComponent());
         mainActivity = (MainActivity)getActivity();
         // Toolbar title
         mainActivity.setToolBarTitle(R.string.menu_pets);
@@ -84,29 +68,9 @@ public class PetFragment extends Fragment {
     }
 
     private void setAdapter(RecyclerView recyclerView) {
-        if (petService.getPfcRepository().getUserPets() != null) {
-            petFragmentViewModel.refresh(petService.getPfcRepository().getUserPets().getValue());
-        }
-        adapter = new MyPetRecyclerViewAdapter(this, mListener);
+        adapter = new MyPetRecyclerViewAdapter(this,
+                mainActivity.getMainActivityViewModel(), mListener);
         recyclerView.setAdapter(adapter);
-    }
-
-    private void manageUserAndPets() {
-        if (petService.getPfcRepository().getUserLogged().getValue() != null) {
-            adapter.setUserLogged(petService.getPfcRepository().getUserLogged().getValue());
-        }
-        if (petService.getPfcRepository().getUserPets() != null &&
-                petService.getPfcRepository().getUserPets().getValue() != null ) {
-            petFragmentViewModel.refresh(petService.getPfcRepository().getUserPets().getValue());
-            adapter.notifyDataSetChanged();
-            userPetObserver = list -> {
-            Log.i(TAG, "Pet list has changed.");
-            petFragmentViewModel.refresh(list);
-            adapter.notifyDataSetChanged();
-            };
-            petService.getPfcRepository().getUserPets().observe(getViewLifecycleOwner(),
-                    userPetObserver);
-        }
     }
 
     @Override
@@ -121,41 +85,15 @@ public class PetFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        Log.i(TAG, "onPause");
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        Log.i(TAG, "onStop");
-        petService.getPfcRepository().getUserPets().removeObserver(userPetObserver);
-        super.onStop();
-    }
-
-    @Override
     public void onStart() {
-        Log.i(TAG, "onStart");
-        manageUserAndPets();
+        adapter.notifyDataSetChanged();
         super.onStart();
-    }
-
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView");
-        super.onDestroyView();
     }
 
     @Override
     public void onDetach() {
-        Log.i(TAG, "onDetach");
         super.onDetach();
         mListener = null;
-    }
-
-    public PetFragmentViewModel getPetFragmentViewModel() {
-        return petFragmentViewModel;
     }
 
     /**

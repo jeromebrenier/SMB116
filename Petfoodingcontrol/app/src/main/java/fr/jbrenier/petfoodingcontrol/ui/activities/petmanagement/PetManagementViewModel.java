@@ -1,18 +1,22 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.pet.food.FoodSettings;
-import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.entities.pet.food.FoodSettings;
+import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 
 public class PetManagementViewModel extends ViewModel {
     private Pet petToAdd;
     private Photo petPhoto;
-    private List<User> petFeedersList;
+    private LiveData<List<User>> petFeeders;
+    /** Needed for the feeders list fragment */
+    private List<User> petFeedersArrayList = new ArrayList<>();
     private FoodSettings foodSettings;
 
     public Pet getPetToAdd() {
@@ -31,12 +35,12 @@ public class PetManagementViewModel extends ViewModel {
         this.petPhoto = petPhoto;
     }
 
-    public List<User> getPetFeedersList() {
-        return petFeedersList;
+    public LiveData<List<User>> getPetFeeders() {
+        return petFeeders;
     }
 
-    public void setPetFeedersList(List<User> petFeedersList) {
-        this.petFeedersList = petFeedersList;
+    public List<User> getPetFeedersArrayList() {
+        return petFeedersArrayList;
     }
 
     public FoodSettings getFoodSettings() {

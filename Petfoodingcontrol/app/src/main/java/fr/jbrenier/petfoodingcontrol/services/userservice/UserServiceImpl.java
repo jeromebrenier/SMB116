@@ -10,9 +10,10 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
-import fr.jbrenier.petfoodingcontrol.domain.user.AutoLogin;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.entities.user.AutoLogin;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
 import fr.jbrenier.petfoodingcontrol.utils.AutoLoginUtils;
@@ -34,12 +35,15 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
     /** Disposable management */
     private Map<Context, CompositeDisposable> compositeDisposableMap = new HashMap<>();
 
+    private PetFoodingControl petFoodingControl;
     private PetFoodingControlRepository pfcRepository;
     private SharedPreferences sharedPreferences;
 
     @Inject
-    public UserServiceImpl(PetFoodingControlRepository pfcRepository,
+    public UserServiceImpl(PetFoodingControl petFoodingControl,
+                           PetFoodingControlRepository pfcRepository,
                            SharedPreferences sharedPreferences) {
+        this.petFoodingControl = petFoodingControl;
         this.pfcRepository = pfcRepository;
         this.sharedPreferences = sharedPreferences;
     }
@@ -55,7 +59,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
             Log.i(TAG, "Auto login value stored in preferences : " + autoLogin);
             tryToAutologin(context, autoLogin);
         } else {
-            pfcRepository.setUserLogged(null);
+            petFoodingControl.getUserLogged().setValue(null);
         }
     }
 
@@ -67,10 +71,10 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
         Disposable disposable = pfcRepository.getUserByAutoLogin(autoLoginLocalToken).subscribe(
                 user -> {
                     Log.i(TAG, "User from AutoLogin successfully retrieved");
-                    pfcRepository.setUserLogged(user);
+                    petFoodingControl.getUserLogged().setValue(user);
                 }, throwable -> {
                     Log.e(TAG, "AutoLogin failed", throwable);
-                    pfcRepository.setUserLogged(null);
+                    petFoodingControl.getUserLogged().setValue(null);
                 });
         addToCompositeDisposable(context, disposable);
     }
@@ -90,7 +94,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
         Disposable disposable = pfcRepository.getUserByEmail(email).subscribe(
                 user -> CryptographyUtils.checkPassword(password, user.getPassword()).subscribe(
                         () -> {
-                            pfcRepository.setUserLogged(user);
+                            petFoodingControl.getUserLogged().setValue(user);
                             if (isKeepLogged) {
                                 setAutoLogin(context);
                             }
@@ -116,7 +120,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
         AutoLogin autoLogin = new AutoLogin(
                 AutoLoginUtils.getInstance().getUuid().toString(),
                 OffsetDateTime.now().plusWeeks(1L),
-                pfcRepository.getUserLogged().getValue().getUserId()
+                petFoodingControl.getUserLogged().getValue().getUserId()
         );
         Disposable disposable = pfcRepository.insert(autoLogin).subscribe(
                 () -> {
@@ -193,7 +197,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      * Update the user in the data source.
      * Return a SingleLiveEvent<Integer> taking the value 0 in case of success and 1 in case
      * of failure.
-     * @param context the Context of the caller
+     * @param object the caller
      * @param userData the updated user data
      * @return updateUserResult SingleLiveEvent<Integer> result of the operation
      */
@@ -204,7 +208,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
         userData = managePasswordData(userData);
         userData = setOrigPwdIfNoPwdUpdate(userData);
         if (!(compareDataToCurrentUserLogged(userData))) {
-            User userLogged = pfcRepository.getUserLogged().getValue();
+            User userLogged = petFoodingControl.getUserLogged().getValue();
             User userUpdated = new User(
                     userLogged.getUserId(),
                     userData.get(UserServiceKeysEnum.USERNAME_KEY),
@@ -215,7 +219,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
             Disposable disposable = pfcRepository.update(userUpdated).subscribe(
                     () -> {
                         updateUserResult.setValue(0);
-                        pfcRepository.getUserLogged().setValue(userUpdated);
+                        petFoodingControl.getUserLogged().setValue(userUpdated);
                         Log.i(TAG,"User updated");
                     },
                     throwable -> {
@@ -231,7 +235,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
 
     private Map<UserServiceKeysEnum, String> managePasswordData(
             Map<UserServiceKeysEnum, String> userData) {
-        User userLogged = pfcRepository.getUserLogged().getValue();
+        User userLogged = petFoodingControl.getUserLogged().getValue();
         String passwordProvided = userData.get(UserServiceKeysEnum.PASSWORD_KEY);
         if (passwordProvided.equals("")) {
             // No update we put the current user password in the map
@@ -253,7 +257,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      */
     private Map<UserServiceKeysEnum, String> setOrigPwdIfNoPwdUpdate(
             Map<UserServiceKeysEnum, String> userData) {
-        User userLogged = pfcRepository.getUserLogged().getValue();
+        User userLogged = petFoodingControl.getUserLogged().getValue();
         if (userData.get(UserServiceKeysEnum.PASSWORD_KEY).equals("")) {
             userData.replace(UserServiceKeysEnum.PASSWORD_KEY, "",
                     userLogged.getPassword());
@@ -268,7 +272,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      * @return the result of the comparison
      */
     private boolean compareDataToCurrentUserLogged(Map<UserServiceKeysEnum, String> userData) {
-        User userLogged = pfcRepository.getUserLogged().getValue();
+        User userLogged = petFoodingControl.getUserLogged().getValue();
         return (userLogged.getEmail().equals(userData.get(UserServiceKeysEnum.EMAIL_KEY)) &&
                 userLogged.getPassword().equals(userData.get(UserServiceKeysEnum.PASSWORD_KEY)) &&
                 userLogged.getDisplayedName()
@@ -280,7 +284,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      */
     @Override
     public void logout() {
-        pfcRepository.setUserLogged(null);
+        petFoodingControl.getUserLogged().setValue(null);
         if (sharedPreferences.contains(AUTO_LOGIN_TOKEN)) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(AUTO_LOGIN_TOKEN);
@@ -290,7 +294,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
 
     @Override
     public void leave() {
-        pfcRepository.setUserLogged(null);
+        petFoodingControl.getUserLogged().setValue(null);
     }
 
     @Override

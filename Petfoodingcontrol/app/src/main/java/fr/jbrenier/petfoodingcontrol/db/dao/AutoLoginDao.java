@@ -5,8 +5,8 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import fr.jbrenier.petfoodingcontrol.domain.user.AutoLogin;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.entities.user.AutoLogin;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 

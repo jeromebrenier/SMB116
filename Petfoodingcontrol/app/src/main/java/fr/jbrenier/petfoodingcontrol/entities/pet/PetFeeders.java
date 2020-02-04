@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.domain.pet;
+package fr.jbrenier.petfoodingcontrol.entities.pet;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,7 +9,7 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 
 /**
  * Pet feeders.

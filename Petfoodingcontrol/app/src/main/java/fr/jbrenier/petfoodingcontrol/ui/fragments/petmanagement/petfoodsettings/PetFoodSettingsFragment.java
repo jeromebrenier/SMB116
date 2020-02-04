@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.domain.pet.food.FoodSettings;
+import fr.jbrenier.petfoodingcontrol.entities.pet.food.FoodSettings;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
 

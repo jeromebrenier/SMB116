@@ -8,10 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment.OnListFragmentInteractionListener;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent.DummyItem;
-
-import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
@@ -20,11 +19,15 @@ import java.util.List;
  */
 public class MyPetFeedersRecyclerViewAdapter extends RecyclerView.Adapter<MyPetFeedersRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private PetFeedersFragment petFeedersFragment;
+    private PetManagementViewModel petManagementViewModel;
 
-    public MyPetFeedersRecyclerViewAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
-        mValues = items;
+    public MyPetFeedersRecyclerViewAdapter(PetFeedersFragment petFeedersFragment,
+                                           PetManagementViewModel petManagementViewModel,
+                                           OnListFragmentInteractionListener listener) {
+        this.petFeedersFragment = petFeedersFragment;
+        this.petManagementViewModel = petManagementViewModel;
         mListener = listener;
     }
 
@@ -37,43 +40,43 @@ public class MyPetFeedersRecyclerViewAdapter extends RecyclerView.Adapter<MyPetF
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.feeder = petManagementViewModel.getPetFeedersArrayList().get(position);
+        holder.mFeederNameView.setText(
+                petManagementViewModel.getPetFeedersArrayList().get(position).getDisplayedName());
+        holder.mFeederEmailView.setText(
+                petManagementViewModel.getPetFeedersArrayList().get(position).getEmail());
 
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
-                }
+        holder.mView.setOnClickListener(view -> {
+            if (null != mListener) {
+                // Notify the active callbacks interface (the activity, if the
+                // fragment is attached to one) that an item has been selected.
+                mListener.onListFragmentInteraction(holder.feeder);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return petManagementViewModel.getPetFeedersArrayList() == null ? 0 :
+                petManagementViewModel.getPetFeedersArrayList().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView mFeederNameView;
+        public final TextView mFeederEmailView;
+        public User feeder;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mFeederNameView = (TextView) view.findViewById(R.id.txt_pet_feeder_name);
+            mFeederEmailView = (TextView) view.findViewById(R.id.txt_pet_feeder_email);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mFeederEmailView.getText() + "'";
         }
     }
 }

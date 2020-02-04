@@ -9,7 +9,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import fr.jbrenier.petfoodingcontrol.domain.pet.food.Fooding;
+import fr.jbrenier.petfoodingcontrol.entities.pet.food.Fooding;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 

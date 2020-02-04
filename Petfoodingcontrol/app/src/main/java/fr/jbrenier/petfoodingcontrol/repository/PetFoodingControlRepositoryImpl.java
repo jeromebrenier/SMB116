@@ -3,8 +3,6 @@ package fr.jbrenier.petfoodingcontrol.repository;
 import android.app.Application;
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.room.Room;
 
 import java.util.List;
@@ -12,10 +10,10 @@ import java.util.List;
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.db.PetFoodingControlDatabase;
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.domain.user.AutoLogin;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.entities.user.AutoLogin;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -33,8 +31,6 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
 
     private static final String DB_NAME = "pfc_db";
     private final PetFoodingControlDatabase petFoodingControlDatabase;
-    private final MutableLiveData<User> userLogged = new MutableLiveData<>();
-    private LiveData<List<Pet>> userPets;
 
     @Inject
     public PetFoodingControlRepositoryImpl(Application application) {
@@ -144,27 +140,6 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
         return petFoodingControlDatabase.getPhotoDao().getPhotoById(pet.getPhotoId())
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    @Override
-    public void setUserLogged(User user) {
-        Log.d(TAG, "setUserLogged(" + user + ")");
-        userLogged.setValue(user);
-    }
-
-    @Override
-    public MutableLiveData<User> getUserLogged() {
-        return userLogged;
-    }
-
-    @Override
-    public LiveData<List<Pet>> getUserPets() {
-        return userPets;
-    }
-
-    @Override
-    public void setUserPets(LiveData<List<Pet>> userPets) {
-        this.userPets = userPets;
     }
 
     @Override

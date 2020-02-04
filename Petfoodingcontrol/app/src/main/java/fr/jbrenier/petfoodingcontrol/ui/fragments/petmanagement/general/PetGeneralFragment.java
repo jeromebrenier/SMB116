@@ -20,7 +20,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,9 +30,10 @@ import java.time.OffsetDateTime;
 import java.util.Calendar;
 import java.util.Locale;
 
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
@@ -61,6 +61,7 @@ public class PetGeneralFragment extends PetManagementFragment
     private ImageButton datePickerButton;
     private final Calendar calendar = Calendar.getInstance();
     private View petGeneralFragmentView;
+    private PetFoodingControl petFoodingControl;
     private PetManagementActivity petManagementActivity;
     private OnSaveButtonClickListener callback;
 
@@ -116,6 +117,7 @@ public class PetGeneralFragment extends PetManagementFragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         petManagementActivity = (PetManagementActivity) getActivity();
+        petFoodingControl = (PetFoodingControl) petManagementActivity.getApplication();
         if (petManagementActivity.isCreationMode()) {
             setDefaultPhoto();
         }
@@ -245,9 +247,9 @@ public class PetGeneralFragment extends PetManagementFragment
         } else {
             pet = new Pet(null, null, null, null, null, null);
         }
-        if (petManagementActivity.getUserService().getPfcRepository().getUserLogged().getValue()
+        if (petFoodingControl.getUserLogged().getValue()
                 != null) {
-            pet.setUserId(petManagementActivity.getUserService().getPfcRepository().getUserLogged().
+            pet.setUserId(petFoodingControl.getUserLogged().
                     getValue().getUserId());
         } else  {
             Log.e(TAG, "No user logged.");

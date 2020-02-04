@@ -1,11 +1,8 @@
-package fr.jbrenier.petfoodingcontrol.domain.pet.food;
+package fr.jbrenier.petfoodingcontrol.entities.pet.food;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
 import java.util.ArrayList;

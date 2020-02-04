@@ -6,6 +6,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetServiceImpl;
@@ -19,17 +20,16 @@ public class ServicesModule {
 
     @Singleton
     @Provides
-    public UserService getUserService(PetFoodingControlRepository pfcRepository,
+    public UserService getUserService(PetFoodingControl petFoodingControl,
+                                      PetFoodingControlRepository pfcRepository,
                                       SharedPreferences sharedPreferences) {
-        return new UserServiceImpl(pfcRepository, sharedPreferences);
+        return new UserServiceImpl(petFoodingControl, pfcRepository, sharedPreferences);
     }
 
     @Singleton
     @Provides
-    public PetService getPetService(PetFoodingControlRepository pfcRepository,
-                                      SharedPreferences sharedPreferences,
-                                      UserService userService) {
-        return new PetServiceImpl(pfcRepository, sharedPreferences, userService);
+    public PetService getPetService(PetFoodingControlRepository pfcRepository) {
+        return new PetServiceImpl(pfcRepository);
     }
 
     @Singleton

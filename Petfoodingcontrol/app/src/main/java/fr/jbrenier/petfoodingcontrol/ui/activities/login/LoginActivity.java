@@ -32,10 +32,13 @@ public class LoginActivity extends AppCompatActivity {
     @Inject
     UserService userService;
 
+    private PetFoodingControl petFoodingControl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((PetFoodingControl) getApplicationContext()).getAppComponent().inject(this);
+        petFoodingControl = (PetFoodingControl) getApplication();
+        petFoodingControl.getAppComponent().inject(this);
         setContentView(R.layout.activity_login);
         if (savedInstanceState == null) {
             setupUserLoggedListener();
@@ -100,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
      * in the contrary.
      */
     private void setupUserLoggedListener() {
-        userService.getPfcRepository().getUserLogged().observe(this, user -> {
+        petFoodingControl.getUserLogged().observe(this, user -> {
             if (user == null) {
                 loadFragment(new LoginFieldsFragment());
             } else {

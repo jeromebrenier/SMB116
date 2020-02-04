@@ -32,16 +32,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
-import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
-import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
-import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
@@ -81,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         petFoodingControl = (PetFoodingControl) getApplication();
-        mainActivityViewModel = new MainActivityViewModel(petFoodingControl.getAppComponent())
+        mainActivityViewModel = new MainActivityViewModel(petFoodingControl);
         setContentView(R.layout.activity_main);
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -100,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements
         setupLogoutListener(navigationView);
         setupUserLoggedListener();
         permissionProcessDone.observe(this, bool -> {
-            if (mainActivityViewModel.getUserLogged().getValue() == null) {
+            if (petFoodingControl.getUserLogged().getValue() == null) {
                 Log.i(TAG, "Launching login activity.");
                 launchLoginActivity();
             }
@@ -202,10 +197,24 @@ public class MainActivity extends AppCompatActivity implements
      * Setup user logged listener to display its data in the header.
      */
     private void setupUserLoggedListener() {
-        mainActivityViewModel.getUserLogged().observe(this, user -> {
+        petFoodingControl.getUserLogged().observe(this, user -> {
             mainActivityViewModel.updateUserPetsAndPhoto(user);
+            setupUserPetsListener();
             setUserDataInNavBar(user);
         });
+    }
+
+    /**
+     * Setup a listener on user's pet to launch an update on the corresponding ArrayList.
+     */
+    private void setupUserPetsListener() {
+        mainActivityViewModel.getUserPets().observe(this,
+                this.mainActivityViewModel::updateUserPetsArrayList);
+        if (mainActivityViewModel.getUserPets() != null &&
+                mainActivityViewModel.getUserPets().getValue() != null ) {
+            mainActivityViewModel.updateUserPetsArrayList(
+                    mainActivityViewModel.getUserPets().getValue());
+        }
     }
 
     /**
@@ -321,12 +330,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onSaveButtonClick(Map<UserServiceKeysEnum, String> userData) {
-        User userLogged = userService.getPfcRepository().getUserLogged().getValue();
         mainActivityViewModel.updateUser(userData).observe(this, result -> {
             if (result == 1) {
                 showToast(getResources().getString(R.string.toast_account_update_failure));
             } else if (result == 0) {
-                updateUserPhoto(userLogged, userData);
+                updateUserPhoto(userData);
             }
         });
     }
@@ -335,8 +343,8 @@ public class MainActivity extends AppCompatActivity implements
      * Update the user's photo.
      * @param userData the user's data retrieved from the input
      */
-    private void updateUserPhoto(User userLogged, Map<UserServiceKeysEnum, String> userData) {
-        photoService.update(this, userLogged, userData).observe(
+    private void updateUserPhoto(Map<UserServiceKeysEnum, String> userData) {
+        mainActivityViewModel.updateUserPhoto(userData).observe(
                 this, updateResult -> {
             if (updateResult == 1) {
                 showToast(getResources().getString(R.string.toast_account_update_failure));
@@ -353,5 +361,9 @@ public class MainActivity extends AppCompatActivity implements
     private void showToast(String message) {
         Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
         toast.show();
+    }
+
+    public MainActivityViewModel getMainActivityViewModel() {
+        return mainActivityViewModel;
     }
 }

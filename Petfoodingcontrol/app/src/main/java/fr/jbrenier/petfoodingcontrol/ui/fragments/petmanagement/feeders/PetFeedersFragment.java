@@ -3,7 +3,7 @@ package fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders;
 import android.content.Context;
 import android.os.Bundle;
 
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,10 +13,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.dummy.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.
@@ -29,11 +29,9 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
     /** LOGGING */
     private static final String TAG = "PetFeedersFragment";
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
+    private PetManagementActivity petManagementActivity;
     private OnListFragmentInteractionListener mListener;
+    private MyPetFeedersRecyclerViewAdapter adapter;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -42,42 +40,46 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
     public PetFeedersFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static PetFeedersFragment newInstance(int columnCount) {
-        PetFeedersFragment fragment = new PetFeedersFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_pet_feeders_list, container, false);
+        petManagementActivity = (PetManagementActivity)getActivity();
 
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyPetFeedersRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+            setAdapter(recyclerView);
         }
         return view;
+    }
+
+    private void setAdapter(RecyclerView recyclerView) {
+        adapter = new MyPetFeedersRecyclerViewAdapter(this,
+                petManagementActivity.getPetManagementViewModel(), mListener);
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        showAddAFeederButtonIfVisible();
+    }
+
+    /**
+     * Show the add a feeder floating button if not visible.
+     */
+    private void showAddAFeederButtonIfVisible() {
+        if (petManagementActivity.findViewById(R.id.add_a_feeder).getVisibility() != View.VISIBLE) {
+            petManagementActivity.findViewById(R.id.add_a_feeder).setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -108,7 +110,7 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(User feeder);
     }
 
     @Override

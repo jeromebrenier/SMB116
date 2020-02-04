@@ -9,14 +9,8 @@ import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
-import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
-import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
-
-import java.util.List;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivityViewModel;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Pet} and makes a call to the
@@ -24,15 +18,16 @@ import java.util.List;
  */
 public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Pet> mUserPets;
     private PetFragment petFragment;
+    private MainActivityViewModel mainActivityViewModel;
 
     private final PetFragment.OnListFragmentInteractionListener mListener;
 
     public MyPetRecyclerViewAdapter(PetFragment petFragment,
+                                    MainActivityViewModel mainActivityViewModel,
                                     PetFragment.OnListFragmentInteractionListener listener) {
         this.petFragment = petFragment;
-        mUserPets = petFragment.getPetFragmentViewModel().getUserPets();
+        this.mainActivityViewModel = mainActivityViewModel;
         mListener = listener;
     }
 
@@ -45,15 +40,15 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        holder.pet = mUserPets.get(position);
-        petFragment.getPetFragmentViewModel().photoService.get(
-                petFragment.getContext(), holder.pet).observe(
+        holder.pet = mainActivityViewModel.getUserPetsArrayList().get(position);
+        mainActivityViewModel.getPetPhoto(holder.pet).observe(
                 petFragment.getViewLifecycleOwner(), holder.mPetImageView::setImageBitmap);
-        holder.mPetNameView.setText(mUserPets.get(position).getName());
+        holder.mPetNameView.setText(
+                mainActivityViewModel.getUserPetsArrayList().get(position).getName());
         holder.mPetStatusView.setText(R.string.pet_status_unknown);
-        if (petFragment.getPetFragmentViewModel().getUserLogged() != null) {
+/*        if (petFragment.getPetFragmentViewModel().getUserLogged() != null) {
            // setPetOwnedTxtVisibility(holder, holder.pet.getAuthorizedFeeders());
-        }
+        }*/
 
 
         holder.mView.setOnClickListener(view -> {
@@ -76,18 +71,19 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
      * @param holder
      * @param authorizedFeeders
      */
-    private void setPetOwnedTxtVisibility(ViewHolder holder, List<String> authorizedFeeders) {
+/*    private void setPetOwnedTxtVisibility(ViewHolder holder, List<String> authorizedFeeders) {
         boolean isAuthorizedFeeder = authorizedFeeders.stream().anyMatch(
                 authorizedFeeder -> authorizedFeeder.equals(
                         petFragment.getPetFragmentViewModel().getUserLogged().getEmail()));
         if (!isAuthorizedFeeder) {
             holder.mPetOwnedView.setVisibility(View.VISIBLE);
         }
-    }
+    }*/
 
     @Override
     public int getItemCount() {
-        return mUserPets == null ? 0 : mUserPets.size();
+        return mainActivityViewModel.getUserPetsArrayList() == null ? 0 :
+                mainActivityViewModel.getUserPetsArrayList().size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

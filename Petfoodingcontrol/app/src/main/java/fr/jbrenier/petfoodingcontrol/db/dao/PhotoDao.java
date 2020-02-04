@@ -6,9 +6,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import java.util.List;
-
-import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 

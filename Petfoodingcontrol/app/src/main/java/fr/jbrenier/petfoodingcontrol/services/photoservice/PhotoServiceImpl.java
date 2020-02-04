@@ -14,9 +14,9 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
@@ -49,12 +49,12 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
 
     /**
      * Update the user's photo.
-     * @param context
-     * @param userData
-     * @return
+     * @param object the calling object
+     * @param userData the user's data
+     * @return a SingleLiveEvent<Integer>
      */
     @Override
-    public SingleLiveEvent<Integer> update(Context context, User currentUser,
+    public SingleLiveEvent<Integer> update(Object object, User currentUser,
                                            Map<UserServiceKeysEnum, String> userData) {
         SingleLiveEvent<Integer> updateUserResult = new SingleLiveEvent<>();
         Disposable disposableGet = pfcRepository.getUserPhoto(currentUser).subscribe(
@@ -74,14 +74,14 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                                             + ") 's photo update error.", throwable);
                                 }
                         );
-                        addToCompositeDisposable(context, disposableUpdate);
+                        addToCompositeDisposable(object, disposableUpdate);
                     } else {
                         updateUserResult.setValue(0);
                         Log.i(TAG, "User's photo update not necessary.");
                     }
                 }, throwable ->
                         Log.e(TAG, "User's photo not loaded."));
-        addToCompositeDisposable(context, disposableGet);
+        addToCompositeDisposable(object, disposableGet);
         return updateUserResult;
     }
 
@@ -170,7 +170,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
      * @return the bitmap corresponding to the pet's photo
      */
     @Override
-    public MutableLiveData<Bitmap> get(Context context, Pet pet) {
+    public MutableLiveData<Bitmap> get(Object object, Pet pet) {
         MutableLiveData<Bitmap> bitmapRetrieved = new MutableLiveData<>(null);
         Disposable disposable = pfcRepository.getPetPhoto(pet).subscribe(
                 photo -> {
@@ -181,7 +181,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                     bitmapRetrieved.setValue(decodedByte);
                 }, throwable ->
                         Log.e(TAG, "Pet's photo not loaded."));
-        addToCompositeDisposable(context, disposable);
+        addToCompositeDisposable(object, disposable);
         return bitmapRetrieved;
     }
 }

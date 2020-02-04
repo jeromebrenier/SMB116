@@ -7,15 +7,16 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
-import fr.jbrenier.petfoodingcontrol.di.app.AppComponent;
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
@@ -34,14 +35,15 @@ public class MainActivityViewModel extends ViewModel {
     @Inject
     PetService petService;
 
-    private MutableLiveData<User> userLogged;
+    private PetFoodingControl petFoodingControl;
     private MutableLiveData<Bitmap> userPhoto;
     private LiveData<List<Pet>> userPets;
+    /** Needed for the pet list fragment */
+    private List<Pet> userPetsArrayList = new ArrayList<>();
 
-    MainActivityViewModel(AppComponent appComponent) {
-        appComponent.inject(this);
-        userLogged = userService.getPfcRepository().getUserLogged();
-        userPets = petService.getPfcRepository().getUserPets();
+    MainActivityViewModel(PetFoodingControl petFoodingControl) {
+        this.petFoodingControl = petFoodingControl;
+        petFoodingControl.getAppComponent().inject(this);
     }
 
     /**
@@ -50,7 +52,7 @@ public class MainActivityViewModel extends ViewModel {
      */
     void updateUserPetsAndPhoto(User user) {
         if (user != null) {
-            petService.setUserPets(user);
+            userPets = petService.getUserPets(user);
             userPhoto = photoService.get(this, user);
             Log.i(TAG, "User logged changed to " + user.getUserId().toString());
         } else {
@@ -58,8 +60,20 @@ public class MainActivityViewModel extends ViewModel {
         }
     }
 
+    void updateUserPetsArrayList(List<Pet> newUserPetsList) {
+        Log.i(TAG, "plop");
+        userPetsArrayList.clear();
+        if (newUserPetsList != null) {
+            userPetsArrayList.addAll(newUserPetsList);
+        }
+    }
+
     SingleLiveEvent<Integer> updateUser(Map<UserServiceKeysEnum, String> userData) {
         return userService.update(this, userData);
+    }
+
+    SingleLiveEvent<Integer> updateUserPhoto(Map<UserServiceKeysEnum, String> userData) {
+        return photoService.update(this, petFoodingControl.getUserLogged().getValue(), userData);
     }
 
     /**
@@ -81,8 +95,8 @@ public class MainActivityViewModel extends ViewModel {
         userService.leave();
     }
 
-    public MutableLiveData<User> getUserLogged() {
-        return userLogged;
+    public MutableLiveData<Bitmap> getPetPhoto(Pet pet) {
+        return photoService.get(this, pet);
     }
 
     public MutableLiveData<Bitmap> getUserPhoto() {
@@ -91,5 +105,9 @@ public class MainActivityViewModel extends ViewModel {
 
     public LiveData<List<Pet>> getUserPets() {
         return userPets;
+    }
+
+    public List<Pet> getUserPetsArrayList() {
+        return userPetsArrayList;
     }
 }

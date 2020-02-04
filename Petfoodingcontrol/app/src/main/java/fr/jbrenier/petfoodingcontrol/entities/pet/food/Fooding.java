@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.domain.pet.food;
+package fr.jbrenier.petfoodingcontrol.entities.pet.food;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -13,8 +13,8 @@ import androidx.room.TypeConverters;
 import java.time.OffsetDateTime;
 
 import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
-import fr.jbrenier.petfoodingcontrol.domain.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.user.User;
+import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.entities.user.User;
 
 
 /**
