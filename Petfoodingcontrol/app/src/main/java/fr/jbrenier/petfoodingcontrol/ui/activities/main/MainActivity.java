@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
+    private NavController navController;
     private View headerView;
 
     private MainActivityViewModel mainActivityViewModel;
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements
                 R.id.nav_pets, R.id.nav_account_settings, R.id.nav_logout)
                 .setDrawerLayout(mDrawerLayout)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         headerView = navigationView.getHeaderView(0);
@@ -198,9 +199,11 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void setupUserLoggedListener() {
         petFoodingControl.getUserLogged().observe(this, user -> {
-            mainActivityViewModel.updateUserPetsAndPhoto(user);
-            setupUserPetsListener();
-            setUserDataInNavBar(user);
+            if (user != null) {
+                mainActivityViewModel.updateUserPetsAndPhoto(user);
+                setupUserPetsListener();
+                setUserDataInNavBar(user);
+            }
         });
     }
 
@@ -301,9 +304,10 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
             case ADD_PET_REQUEST:
-                if (resultCode == RESULT_OK) {
-                    return;
+                if (resultCode != RESULT_OK) {
+                    finishAndRemoveTask();
                 }
+                break;
             default:
                 break;
         }

@@ -63,7 +63,7 @@
             android:layout_height="match_parent">
 
             <EditText
-                android:id="@+id/txt_pet_feeder_name"
+                android:id="@+id/txt_pet_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/fieldset_fields_spacing"

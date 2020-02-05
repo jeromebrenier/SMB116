@@ -8,12 +8,9 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
@@ -31,7 +28,7 @@ public class PetFragment extends Fragment {
     private static final String TAG = "PetFragment";
 
     private MainActivity mainActivity;
-    private Observer<List<Pet>> userPetObserver;
+    private Observer<Boolean> userPetsArrayListChangeObserver;
     private MyPetRecyclerViewAdapter adapter;
     private OnListFragmentInteractionListener mListener;
 
@@ -40,6 +37,12 @@ public class PetFragment extends Fragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public PetFragment() {
+    }
+
+    @Override
+    public void onCreate (Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        userPetsArrayListChangeObserver = bool -> adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -86,8 +89,16 @@ public class PetFragment extends Fragment {
 
     @Override
     public void onStart() {
-        adapter.notifyDataSetChanged();
+        mainActivity.getMainActivityViewModel().getUserPetsArrayListChanged().observe(this,
+                userPetsArrayListChangeObserver);
         super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        mainActivity.getMainActivityViewModel().getUserPetsArrayListChanged().removeObserver(
+                userPetsArrayListChangeObserver);
+        super.onStop();
     }
 
     @Override

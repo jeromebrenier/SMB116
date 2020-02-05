@@ -40,6 +40,7 @@ public class MainActivityViewModel extends ViewModel {
     private LiveData<List<Pet>> userPets;
     /** Needed for the pet list fragment */
     private List<Pet> userPetsArrayList = new ArrayList<>();
+    private MutableLiveData<Boolean> userPetsArrayListChanged = new MutableLiveData<>(false);
 
     MainActivityViewModel(PetFoodingControl petFoodingControl) {
         this.petFoodingControl = petFoodingControl;
@@ -60,12 +61,18 @@ public class MainActivityViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Update the UserPetsArrayList with the retrieve userPets list.
+     * Change the MutableLiveData<Boolean> in the same time.
+     * @param newUserPetsList the new userPets list
+     */
     void updateUserPetsArrayList(List<Pet> newUserPetsList) {
-        Log.i(TAG, "plop");
+        Log.d(TAG, "updateUserPetsArrayList " + newUserPetsList.size());
         userPetsArrayList.clear();
-        if (newUserPetsList != null) {
-            userPetsArrayList.addAll(newUserPetsList);
-        }
+        userPetsArrayList.addAll(newUserPetsList);
+        boolean currentValue = userPetsArrayListChanged.getValue() != null &&
+                userPetsArrayListChanged.getValue();
+        userPetsArrayListChanged.setValue(currentValue);
     }
 
     SingleLiveEvent<Integer> updateUser(Map<UserServiceKeysEnum, String> userData) {
@@ -109,5 +116,9 @@ public class MainActivityViewModel extends ViewModel {
 
     public List<Pet> getUserPetsArrayList() {
         return userPetsArrayList;
+    }
+
+    public MutableLiveData<Boolean> getUserPetsArrayListChanged() {
+        return userPetsArrayListChanged;
     }
 }
