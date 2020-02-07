@@ -8,12 +8,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment.OnListFragmentInteractionListener;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link Feeder} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
@@ -34,7 +34,7 @@ public class MyPetFeedersRecyclerViewAdapter extends RecyclerView.Adapter<MyPetF
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_pet_feeders, parent, false);
+                .inflate(R.layout.pet_feeders_fragment, parent, false);
         return new ViewHolder(view);
     }
 
@@ -65,7 +65,7 @@ public class MyPetFeedersRecyclerViewAdapter extends RecyclerView.Adapter<MyPetF
         public final View mView;
         public final TextView mFeederNameView;
         public final TextView mFeederEmailView;
-        public User feeder;
+        public Feeder feeder;
 
         public ViewHolder(View view) {
             super(view);

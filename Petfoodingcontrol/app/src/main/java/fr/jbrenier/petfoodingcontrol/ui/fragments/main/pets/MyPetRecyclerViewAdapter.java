@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivityViewModel;
 
 /**
@@ -34,7 +34,7 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_pet, parent, false);
+                .inflate(R.layout.pet_fragment, parent, false);
         return new ViewHolder(view);
     }
 

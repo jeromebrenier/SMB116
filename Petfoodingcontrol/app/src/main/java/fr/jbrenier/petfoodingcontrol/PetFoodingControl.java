@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import fr.jbrenier.petfoodingcontrol.di.app.AppComponent;
 import fr.jbrenier.petfoodingcontrol.di.app.DaggerAppComponent;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 
 /**
  * The Pet Fooding Control application class.

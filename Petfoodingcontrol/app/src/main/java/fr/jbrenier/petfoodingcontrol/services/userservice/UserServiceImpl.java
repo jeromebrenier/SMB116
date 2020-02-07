@@ -12,8 +12,8 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
-import fr.jbrenier.petfoodingcontrol.entities.user.AutoLogin;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
 import fr.jbrenier.petfoodingcontrol.utils.AutoLoginUtils;

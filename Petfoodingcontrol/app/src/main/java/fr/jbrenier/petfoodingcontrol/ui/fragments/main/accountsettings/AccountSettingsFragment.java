@@ -29,7 +29,7 @@ public class AccountSettingsFragment extends Fragment {
     }
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_account_settings, container, false);
+        View root = inflater.inflate(R.layout.account_settings_fragment, container, false);
         mainActivity = (MainActivity)getActivity();
         // Hide the add a pet button if visible
         if (getActivity().findViewById(R.id.main_addPet).getVisibility() == View.VISIBLE) {

@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import java.util.Map;
 
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 
 public interface UserService {

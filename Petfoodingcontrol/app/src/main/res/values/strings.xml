@@ -5,6 +5,7 @@
     <!-- Global -->
     <string name="btn_save">Save</string>
     <string name="btn_OK">OK</string>
+    <string name="btn_add">Add</string>
     <string name="btn_cancel">Cancel</string>
     <string name="error_email">Invalid email, it does not match the ****@**** format</string>
     <string name="error_date">Invalid date, it does not match the dd/MM/yy format</string>
@@ -94,5 +95,12 @@
     <string name="hint_food_portion4">Portion 4 (g)</string>
     <string name="hint_food_portion5">Portion 5 (g)</string>
     <string name="hint_food_portion6">Portion 6 (g)</string>
+
+    <!-- Pet management Feeders -->
+    <string name="title_dialog_new_pet">Add a new feeder</string>
+    <string name="new_feeder_success">New feeder successfully added</string>
+    <string name="error_user_mail_entered">You cannot add yourself as a feeder</string>
+    <string name="error_feeder_mail">Feeder does noy exist</string>
+    <string name="btn_new_feeder">Add</string>
 
 </resources>

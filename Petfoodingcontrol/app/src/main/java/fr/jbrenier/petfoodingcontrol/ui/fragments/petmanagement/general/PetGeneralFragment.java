@@ -32,8 +32,8 @@ import java.util.Locale;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
@@ -68,7 +68,7 @@ public class PetGeneralFragment extends PetManagementFragment
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        petGeneralFragmentView = inflater.inflate(R.layout.fragment_pet_general, container, false);
+        petGeneralFragmentView = inflater.inflate(R.layout.pet_general_fragment, container, false);
         dateEditText = petGeneralFragmentView.findViewById(R.id.txt_pet_birthdate);
         datePickerButton = petGeneralFragmentView.findViewById(R.id.ibtn_datepicker);
         setupDatePickerLaunch();
@@ -137,7 +137,7 @@ public class PetGeneralFragment extends PetManagementFragment
      * Set the default pet avatar in the ImageView.
      */
     private void setDefaultPhoto() {
-        Log.i(TAG, "setDefaultPhoto");
+        Log.d(TAG, "setDefaultPhoto");
         ((ImageView) petGeneralFragmentView.findViewById(R.id.imv_pet_photo))
                 .setImageDrawable(getResources().getDrawable(R.drawable.default_pet, null));
     }

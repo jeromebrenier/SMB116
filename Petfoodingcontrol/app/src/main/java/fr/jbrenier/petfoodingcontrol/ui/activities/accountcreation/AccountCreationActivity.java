@@ -15,8 +15,8 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
@@ -47,7 +47,7 @@ public class AccountCreationActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         petFoodingControl = ((PetFoodingControl) getApplication());
-        setContentView(R.layout.activity_account_creation);
+        setContentView(R.layout.account_creation_activity);
         setActivityTitle();
         petFoodingControl.getAppComponent().inject(this);
         if (savedInstanceState == null) {

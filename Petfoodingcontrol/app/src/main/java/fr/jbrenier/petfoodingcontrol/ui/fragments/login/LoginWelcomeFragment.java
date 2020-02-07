@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 
 import static android.app.Activity.RESULT_OK;
@@ -28,9 +28,9 @@ public class LoginWelcomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.fragment_login_welcome, container, false);
+        View fragmentView = inflater.inflate(R.layout.login_welcome_fragment, container, false);
         ((PetFoodingControl) getActivity().getApplication()).getUserLogged().observe(
-                this, user -> setWelcomeText(fragmentView, user));
+                getViewLifecycleOwner(), user -> setWelcomeText(fragmentView, user));
         return fragmentView;
     }
 

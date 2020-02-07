@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
@@ -48,7 +48,7 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_pet_feeders_list, container, false);
+        View view = inflater.inflate(R.layout.pet_feeders_fragment_list, container, false);
         petManagementActivity = (PetManagementActivity)getActivity();
 
         // Set the adapter
@@ -110,7 +110,7 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(User feeder);
+        void onListFragmentInteraction(Feeder feeder);
     }
 
     @Override

@@ -2,10 +2,11 @@ package fr.jbrenier.petfoodingcontrol.repository;
 
 import java.util.List;
 
-import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.entities.user.AutoLogin;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -30,5 +31,6 @@ public interface PetFoodingControlRepository {
     Completable update(Pet pet);
     Single<Pet> getPetById(Long petId);
     Single<Photo> getPetPhoto(Pet pet);
+    Single<Feeder> getFeederByEmail(String feederEmail);
     Flowable<List<Pet>> getAllUserPetsByUserId(Long userId);
 }

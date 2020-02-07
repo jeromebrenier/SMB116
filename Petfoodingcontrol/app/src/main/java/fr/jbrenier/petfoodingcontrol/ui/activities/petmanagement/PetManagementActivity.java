@@ -3,26 +3,24 @@ package fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 import androidx.viewpager.widget.ViewPager;
-
-import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
-import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
-import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
-import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
-import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
+import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.SectionsPagerAdapter;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment;
@@ -34,19 +32,10 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.general.PetGener
  */
 public class PetManagementActivity extends AppCompatActivity
         implements PetFeedersFragment.OnListFragmentInteractionListener,
-        PetGeneralFragment.OnSaveButtonClickListener {
+        PetGeneralFragment.OnSaveButtonClickListener{
 
     /** LOGGING */
     private static final String TAG = "PetManagementActivity";
-
-    @Inject
-    UserService userService;
-
-    @Inject
-    PhotoService photoService;
-
-    @Inject
-    PetService petService;
 
     private PetManagementViewModel petManagementViewModel;
     private boolean isCreationMode = false;
@@ -55,8 +44,8 @@ public class PetManagementActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PetFoodingControl petFoodingControl = (PetFoodingControl) getApplication();
-        petFoodingControl.getAppComponent().inject(this);
         petManagementViewModel = new PetManagementViewModel();
+        petFoodingControl.getAppComponent().inject(petManagementViewModel);
         if (getCallingActivity() != null &&
                 !getCallingActivity().getClassName().equals(MainActivity.class.getName())) {
             // Here we are in modification mode
@@ -65,7 +54,7 @@ public class PetManagementActivity extends AppCompatActivity
             isCreationMode = true;
             Log.i(TAG, "Creation mode.");
         }
-        setContentView(R.layout.activity_pet_management);
+        setContentView(R.layout.pet_management_activity);
         setupToolBar();
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
                 this, this, getSupportFragmentManager());
@@ -121,99 +110,78 @@ public class PetManagementActivity extends AppCompatActivity
      */
     private void setupAddFeederButton() {
         FloatingActionButton addAFeeder = findViewById(R.id.add_a_feeder);
-        addAFeeder.setOnClickListener(view ->
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        );
+        addAFeeder.setOnClickListener(view -> newFeederDialog());
+    }
+
+    private void newFeederDialog() {
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View newFeederView = layoutInflater.inflate(R.layout.new_feeder_dialog, null);
+        Toolbar toolbar = newFeederView.findViewById(R.id.new_feeder_toolbar);
+        toolbar.setTitle(R.string.title_dialog_new_pet);
+        final AlertDialog newFeederDialog = new AlertDialog.Builder(this).create();
+
+        EditText editFeeder = newFeederView.findViewById(R.id.txt_feeder_email);
+
+        Observer<Feeder> observer = feeder -> {
+            if (feeder != null) {
+                petManagementViewModel.getPetFeedersArrayList().add(feeder);
+                showToast(R.string.new_feeder_success);
+                newFeederDialog.dismiss();
+            } else {
+                showToast(R.string.error_feeder_mail);
+            }
+        };
+
+        Button newFeederButton = newFeederView.findViewById(R.id.btn_new_feeder_add);
+        newFeederButton.setOnClickListener(view -> {
+            String feederEmail = editFeeder.getText().toString();
+            PetFoodingControl pfc = ((PetFoodingControl) getApplication());
+            String userLoggedEmail = null;
+            if (pfc.getUserLogged() != null && pfc.getUserLogged().getValue() != null
+                    && pfc.getUserLogged().getValue().getEmail() != null) {
+                userLoggedEmail = pfc.getUserLogged().getValue().getEmail();
+            }
+            if (userLoggedEmail != null && userLoggedEmail.equals(feederEmail)) {
+                showToast(R.string.error_user_mail_entered);
+            } else {
+                petManagementViewModel.checkFeederExistance(feederEmail).observe(this, observer);
+            }
+        });
+
+        Button cancelButton = newFeederView.findViewById(R.id.btn_new_feeder_cancel);
+        cancelButton.setOnClickListener(view -> newFeederDialog.cancel());
+
+        newFeederDialog.setView(newFeederView);
+        newFeederDialog.show();
+    }
+
+    /**
+     * Create and show a toast.
+     * @param resId the resource to show
+     */
+    private void showToast(int resId) {
+        Toast toast = Toast.makeText(this, getResources().getString(resId),
+                Toast.LENGTH_LONG);
+        toast.show();
     }
 
     @Override
-    public void onListFragmentInteraction(User feeder) {
+    public void onListFragmentInteraction(Feeder feeder) {
 
     }
 
     @Override
     public void onSaveButtonClick() {
         if (isCreationMode) {
-            Log.i(TAG, "Saving pet in DB...");
-            savePetData();
+            Log.d(TAG, "Saving pet in DB...");
+            petManagementViewModel.savePetData().observe(this, bool -> {
+                if (bool) {
+                    finishPetManagementActivity(RESULT_OK);
+                } else {
+                    finishPetManagementActivity(RESULT_CANCELED);
+                }
+            });
         }
-    }
-
-    /**
-     * Save the pet data in the DB.
-     */
-    private void savePetData() {
-        saveNewPet().observe(this, pet -> {
-            if (pet != null) {
-                savePetPhoto(pet).observe(this, result -> {
-                    if (result) {
-                        Log.i(TAG, "Pet photo saved.");
-                    } else {
-                        Log.i(TAG, "Pet photo updated.");
-                    }
-                });
-                savePetFeeders(pet);
-                finishPetManagementActivity(RESULT_OK);
-            } else {
-                finishPetManagementActivity(RESULT_CANCELED);
-            }
-        });
-    }
-
-    /**
-     * Save in the DB a new pet present in the viewModel.
-     */
-    private SingleLiveEvent<Pet> saveNewPet() {
-        SingleLiveEvent<Pet> result = new SingleLiveEvent<>();
-        if (petManagementViewModel.getPetToAdd() != null) {
-            addFoodSettingsToPet();
-            petService.save(this, petManagementViewModel.getPetToAdd()).observe(
-                    this, pet -> {
-                        Log.i(TAG, "PET ID : " + pet.getPetId());
-                        result.setValue(pet);
-                    });
-        } else {
-            result.setValue(null);
-        }
-        return result;
-    }
-
-    /**
-     * Add the food settings to the Pet present in the viewModel
-     */
-    private void addFoodSettingsToPet() {
-        if (petManagementViewModel.getFoodSettings() != null) {
-            petManagementViewModel.getPetToAdd().setFoodSettings(
-                    petManagementViewModel.getFoodSettings());
-        }
-    }
-
-    /**
-     * Save in the DB a new pet present in the viewModel.
-     * @param pet Pet the photo belongs to
-     */
-    private SingleLiveEvent<Boolean> savePetPhoto(Pet pet) {
-        SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
-        Photo photoToSave = petManagementViewModel.getPetPhoto();
-        if (photoToSave != null) {
-            if (photoToSave.getPhotoId() == null) {
-                photoService.save(this, photoToSave, pet);
-            } else {
-                photoService.update(this, photoToSave);
-            }
-            result.setValue(true);
-        } else {
-            result.setValue(false);
-            Log.d(TAG, "No pet photo to save to the DB.");
-        }
-        return result;
-    }
-
-    private SingleLiveEvent<Boolean> savePetFeeders(Pet pet) {
-        SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
-        result.setValue(true);
-        return result;
     }
 
     /**
@@ -233,18 +201,4 @@ public class PetManagementActivity extends AppCompatActivity
     public boolean isCreationMode() {
         return isCreationMode;
     }
-
-    public UserService getUserService() {
-        return userService;
-    }
-
-    public PhotoService getPhotoService() {
-        return photoService;
-    }
-
-    public PetService getPetService() {
-        return petService;
-    }
-
-
 }

@@ -87,7 +87,7 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_account_management_form, container, false);
+        return inflater.inflate(R.layout.account_management_form_fragment, container, false);
     }
 
     @Override

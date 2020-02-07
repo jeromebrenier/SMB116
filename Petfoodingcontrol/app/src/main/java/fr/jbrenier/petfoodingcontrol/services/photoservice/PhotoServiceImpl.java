@@ -14,9 +14,9 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
-import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
@@ -115,26 +115,38 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
      * @param pet the pet to update with the photo id
      */
     @Override
-    public void save(Context context, Photo photo, Pet pet) {
+    public SingleLiveEvent<Boolean> save(Object object, Photo photo, Pet pet) {
+        SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.save(photo).subscribe(
                 (photoId) -> {
                     Log.i(TAG,"Pet's photo saved with id " + photoId);
                     pet.setPhotoId(photoId);
                     Log.i(TAG,"Pet's photo id attribute " + pet.getPhotoId());
-                    petService.update(context, pet);
+                    petService.update(object, pet);
+                    result.setValue(true);
                 },
                 throwable -> {
+                    result.setValue(false);
                     Log.e(TAG, "Pet's photo saving failure.", throwable);
                 });
-        addToCompositeDisposable(context, disposable);
+        addToCompositeDisposable(object, disposable);
+        return result;
     }
 
     @Override
-    public void update(Context context, Photo photo) {
+    public SingleLiveEvent<Boolean> update(Object object, Photo photo) {
+        SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.update(photo).subscribe(
-                () -> Log.i(TAG, "Photo " + photo.getPhotoId() + " updated."),
-                throwable -> Log.e(TAG, "Photo " + photo.getPhotoId() + " update failure."));
-        addToCompositeDisposable(context, disposable);
+                () -> {
+                    result.setValue(true);
+                    Log.i(TAG, "Photo " + photo.getPhotoId() + " updated.");
+                },
+                throwable -> {
+                    result.setValue(false);
+                    Log.e(TAG, "Photo " + photo.getPhotoId() + " update failure.");
+                });
+        addToCompositeDisposable(object, disposable);
+        return result;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.entities.user;
+package fr.jbrenier.petfoodingcontrol.domain.entities.user;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,7 +11,7 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 
 /**
  * A Pet Fooding Control user.

@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.entities.pet;
+package fr.jbrenier.petfoodingcontrol.domain.entities.pet;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -16,9 +16,9 @@ import androidx.room.TypeConverters;
 import java.time.OffsetDateTime;
 
 import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
-import fr.jbrenier.petfoodingcontrol.entities.pet.food.FoodSettings;
-import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.FoodSettings;
+import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 
 /**
  * A Pet that can be fed and weight through the application

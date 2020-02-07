@@ -17,6 +17,7 @@ import fr.jbrenier.petfoodingcontrol.ui.activities.accountcreation.AccountCreati
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivityViewModel;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountCreationFormFragment;
 
 @Singleton
@@ -26,7 +27,7 @@ public interface AppComponent {
     void inject(AccountCreationActivity accountCreationActivity);
     void inject(MainActivityViewModel mainActivityViewModel);
     void inject(AccountCreationFormFragment accountCreationFormFragment);
-    void inject(PetManagementActivity petManagementActivity);
+    void inject(PetManagementViewModel petManagementViewModel);
 
     @Singleton
     SharedPreferences sharedPreferences();

@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.entities.photo;
+package fr.jbrenier.petfoodingcontrol.domain.entities.photo;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.entities.user;
+package fr.jbrenier.petfoodingcontrol.domain.entities.user;
 
 import android.os.Parcel;
 import android.os.Parcelable;

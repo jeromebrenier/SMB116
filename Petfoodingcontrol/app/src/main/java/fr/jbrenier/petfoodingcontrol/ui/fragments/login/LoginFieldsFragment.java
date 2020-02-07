@@ -5,12 +5,10 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +40,7 @@ public class LoginFieldsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        loginFieldsView = inflater.inflate(R.layout.fragment_login_fields, container, false);
+        loginFieldsView = inflater.inflate(R.layout.login_fields_fragment, container, false);
         setLoginButtonOnClickListener();
         setupCreateAccountButton();
         return loginFieldsView;

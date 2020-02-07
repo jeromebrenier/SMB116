@@ -8,9 +8,9 @@ import androidx.room.Update;
 
 import java.util.List;
 
-import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.entities.pet.PetFeeders;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
+import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -26,7 +26,9 @@ public interface PetFeedersDao {
     Flowable<List<Pet>> getPetsforFeeder(Long userId);
     @Query("SELECT * FROM PetFeeders INNER JOIN User ON PetFeeders.user_Id = User.user_Id " +
             "WHERE pet_Id = :petId")
-    Flowable<List<User>> getUsersForPet (Long petId);
+    Flowable<List<Feeder>> getFeedersForPet (Long petId);
+    @Query("SELECT User.user_Id,User.displayedName,User.email FROM User WHERE email = :feederEmail")
+    Single<Feeder> getFeederByEmail(String feederEmail);
     @Update
     Completable update(PetFeeders petFeeders);
     @Delete

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.entities.pet.food.FoodSettings;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.FoodSettings;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
 
@@ -31,7 +31,7 @@ public class PetFoodSettingsFragment extends PetManagementFragment implements Pe
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_pet_food_settings, container, false);
+        View root = inflater.inflate(R.layout.pet_food_settings_fragment, container, false);
         return root;
     }
 

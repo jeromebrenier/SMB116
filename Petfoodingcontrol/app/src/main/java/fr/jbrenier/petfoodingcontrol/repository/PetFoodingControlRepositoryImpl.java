@@ -10,10 +10,11 @@ import java.util.List;
 import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.db.PetFoodingControlDatabase;
-import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.entities.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.entities.user.AutoLogin;
-import fr.jbrenier.petfoodingcontrol.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
@@ -138,6 +139,14 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     public Single<Photo> getPetPhoto(Pet pet) {
         Log.d(TAG, "getPetPhoto(" + pet + ")");
         return petFoodingControlDatabase.getPhotoDao().getPhotoById(pet.getPhotoId())
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Single<Feeder> getFeederByEmail(String feederEmail) {
+        Log.d(TAG, "getFeederByEmail(" + feederEmail + ")");
+        return petFoodingControlDatabase.getPetFeedersDao().getFeederByEmail(feederEmail)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }

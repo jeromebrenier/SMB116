@@ -13,7 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 
 /**
@@ -48,7 +48,7 @@ public class PetFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_pet_list, container, false);
+        View view = inflater.inflate(R.layout.pet_list_fragment, container, false);
         mainActivity = (MainActivity)getActivity();
         // Toolbar title
         mainActivity.setToolBarTitle(R.string.menu_pets);

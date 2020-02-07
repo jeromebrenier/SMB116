@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
@@ -39,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         petFoodingControl = (PetFoodingControl) getApplication();
         petFoodingControl.getAppComponent().inject(this);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.login_activity);
         if (savedInstanceState == null) {
             setupUserLoggedListener();
         }
