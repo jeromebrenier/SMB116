@@ -7,15 +7,21 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.FoodSettings;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
@@ -44,10 +50,11 @@ public class PetManagementViewModel extends ViewModel {
     private FoodSettings foodSettings;
 
     /* REFERENCES FOR CLEARING */
-    private SingleLiveEvent<Pet> saveNewPet;
-    private Observer<Pet> saveNewPetObserver;
-    private SingleLiveEvent<Boolean> saveNewPetPhoto;
-    private Observer<Boolean> saveNewPetPhotoObserver;
+    private Map<SingleLiveEvent<Pet>, Observer<Pet>> saveNewPetMap = new HashMap<>();
+    private Map<SingleLiveEvent<Boolean>, Observer<Boolean>> saveNewPetPhotoMap = new HashMap<>();
+    private Map<SingleLiveEvent<Feeder>, Observer<Feeder>> checkFeederExistanceMap =
+            new HashMap<>();
+    private Map<SingleLiveEvent<Integer>, Observer<Integer>> savePetFeedersMap = new HashMap<>();
 
     /**
      * Save in the DB a new pet present in the viewModel.
@@ -73,12 +80,12 @@ public class PetManagementViewModel extends ViewModel {
      * Save the pet data in the DB.
      */
     SingleLiveEvent<Boolean> savePetData() {
-        saveNewPet = saveNewPet();
-        saveNewPetObserver = pet -> {
+        SingleLiveEvent<Pet> saveNewPet = saveNewPet();
+        Observer<Pet> saveNewPetObserver = pet -> {
             if (pet != null) {
                 Log.i(TAG, "Pet saved.");
-                saveNewPetPhoto = savePetPhoto(pet);
-                saveNewPetPhotoObserver = result -> {
+                SingleLiveEvent<Boolean> saveNewPetPhoto = savePetPhoto(pet);
+                Observer<Boolean> saveNewPetPhotoObserver = result -> {
                     if (result) {
                         Log.i(TAG, "Pet photo saved.");
                     } else {
@@ -86,6 +93,7 @@ public class PetManagementViewModel extends ViewModel {
                     }
                 };
                 saveNewPetPhoto.observeForever(saveNewPetPhotoObserver);
+                saveNewPetPhotoMap.put(saveNewPetPhoto, saveNewPetPhotoObserver);
                 savePetFeeders(pet);
                 petSavingStatus.setValue(true);
             } else {
@@ -93,6 +101,7 @@ public class PetManagementViewModel extends ViewModel {
             }
         };
         saveNewPet.observeForever(saveNewPetObserver);
+        saveNewPetMap.put(saveNewPet, saveNewPetObserver);
         return petSavingStatus;
     }
 
@@ -112,19 +121,86 @@ public class PetManagementViewModel extends ViewModel {
     }
 
     private SingleLiveEvent<Boolean> savePetFeeders(Pet pet) {
-        SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
-        result.setValue(true);
+        SingleLiveEvent<Boolean> savePetFeedersResult = new SingleLiveEvent<>();
+        Function<Feeder, PetFeeders> mapper =
+                feeder -> new PetFeeders(pet.getPetId(), feeder.getUserId());
+        List<PetFeeders>  listPetFeeders =
+                petFeedersArrayList.stream().map(mapper).collect(Collectors.toList());
+        Observer<Integer> observer = result -> savePetFeedersResult.setValue(result == 0);
+        SingleLiveEvent<Integer> observable = petService.savePetFeeders(this, listPetFeeders);
+        observable.observeForever(observer);
+        savePetFeedersMap.put(observable, observer);
+        return savePetFeedersResult;
+    }
+
+    /**
+     * Add the feeder whose email has been given to the ArrayList used for the feeder list
+     * production if :
+     * <ul>
+     *     <li>The email is not empty</li>
+     *     <li>The email does not belong to an existing feeder for the pet</li>
+     *     <li>The email given in parameter is not the user logged's one</li>
+     *     <li>the email given matches one user in the db</li>
+     * </ul>
+     * Returns :
+     * <ul>
+     *     <li>0 if successful</li>
+     *     <li>1 if the email given is the user's one</li>
+     *     <li>2 if the email given does not exist in the db</li>
+     *     <li>3 if the email belongs to an existing feeder for the pet</li>
+     * </ul>
+     * @param feederEmail the email of the feeder to add
+     * @return yhe result of the process
+     */
+    SingleLiveEvent<Integer> newFeederAddInarraylist(String feederEmail) {
+        SingleLiveEvent<Integer> result = new SingleLiveEvent<>();
+        if (petFeedersArrayList.stream().anyMatch(
+                feeder -> feeder.getEmail().equals(feederEmail))) {
+            result.setValue(3);
+            return result;
+        }
+        String userLoggedEmail = null;
+        PetFoodingControl pfc = userService.getPetFoodingControl();
+        if (pfc.getUserLogged() != null && pfc.getUserLogged().getValue() != null
+                && pfc.getUserLogged().getValue().getEmail() != null) {
+            userLoggedEmail = pfc.getUserLogged().getValue().getEmail();
+        }
+        if (userLoggedEmail != null && userLoggedEmail.equals(feederEmail)) {
+            result.setValue(1);
+            //showToast(R.string.error_user_mail_entered);
+        } else {
+            checkFeederExistance(feederEmail, result);
+        }
         return result;
     }
 
-    public SingleLiveEvent<Feeder> checkFeederExistance(String email) {
-        return petService.checkFeederExistance(this, email);
+    private void checkFeederExistance(String feederMail, SingleLiveEvent<Integer> result) {
+        Observer<Feeder> observer = feeder -> {
+            if (feeder != null) {
+                petFeedersArrayList.add(feeder);
+                result.setValue(0);
+/*                showToast(R.string.new_feeder_success);
+                newFeederDialog.dismiss();*/
+            } else {
+                result.setValue(2);
+                /*showToast(R.string.error_feeder_mail);*/
+            }
+        };
+        SingleLiveEvent<Feeder> check = petService.checkFeederExistance(this, feederMail);
+        check.observeForever(observer);
+        checkFeederExistanceMap.put(check, observer);
     }
 
     @Override
     public void onCleared() {
-        saveNewPet.removeObserver(saveNewPetObserver);
-        saveNewPetPhoto.removeObserver(saveNewPetPhotoObserver);
+        saveNewPetMap.entrySet().forEach(getConsumer());
+        saveNewPetPhotoMap.entrySet().forEach(getConsumer());
+        checkFeederExistanceMap.entrySet().forEach(getConsumer());
+        savePetFeedersMap.entrySet().forEach(getConsumer());
+    }
+
+    private <T> Consumer<Map.Entry<SingleLiveEvent<T>, Observer<T>>> getConsumer() {
+        return entrySet -> entrySet.getKey().removeObserver(entrySet.getValue());
     }
 
     public Pet getPetToAdd() {

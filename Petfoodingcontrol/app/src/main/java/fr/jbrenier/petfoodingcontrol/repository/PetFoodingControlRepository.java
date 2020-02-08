@@ -3,6 +3,7 @@ package fr.jbrenier.petfoodingcontrol.repository;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
@@ -33,4 +34,6 @@ public interface PetFoodingControlRepository {
     Single<Photo> getPetPhoto(Pet pet);
     Single<Feeder> getFeederByEmail(String feederEmail);
     Flowable<List<Pet>> getAllUserPetsByUserId(Long userId);
+    Single<Long> insert(PetFeeders petFeeders);
+    Completable insert(List<PetFeeders> petFeedersList);
 }

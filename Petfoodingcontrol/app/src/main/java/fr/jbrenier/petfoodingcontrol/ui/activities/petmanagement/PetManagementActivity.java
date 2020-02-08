@@ -2,11 +2,14 @@ package fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -25,6 +28,10 @@ import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.SectionsPagerAdapter;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.general.PetGeneralFragment;
+import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
+
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
 
 /**
  * The activity for adding a pet with the Pet Fooding Control application.
@@ -39,6 +46,9 @@ public class PetManagementActivity extends AppCompatActivity
 
     private PetManagementViewModel petManagementViewModel;
     private boolean isCreationMode = false;
+
+    private View newFeederView;
+    private Button addNewFeederButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,44 +125,76 @@ public class PetManagementActivity extends AppCompatActivity
 
     private void newFeederDialog() {
         LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View newFeederView = layoutInflater.inflate(R.layout.new_feeder_dialog, null);
+        newFeederView = layoutInflater.inflate(R.layout.new_feeder_dialog, null);
         Toolbar toolbar = newFeederView.findViewById(R.id.new_feeder_toolbar);
         toolbar.setTitle(R.string.title_dialog_new_pet);
         final AlertDialog newFeederDialog = new AlertDialog.Builder(this).create();
+        setupDialogButtons(newFeederDialog);
+        newFeederDialog.setView(newFeederView);
+        newFeederDialog.show();
+    }
 
-        EditText editFeeder = newFeederView.findViewById(R.id.txt_feeder_email);
-
-        Observer<Feeder> observer = feeder -> {
-            if (feeder != null) {
-                petManagementViewModel.getPetFeedersArrayList().add(feeder);
-                showToast(R.string.new_feeder_success);
-                newFeederDialog.dismiss();
-            } else {
-                showToast(R.string.error_feeder_mail);
-            }
-        };
-
-        Button newFeederButton = newFeederView.findViewById(R.id.btn_new_feeder_add);
-        newFeederButton.setOnClickListener(view -> {
+    private void setupDialogButtons(AlertDialog newFeederDialog) {
+        addNewFeederButton = newFeederView.findViewById(R.id.btn_new_feeder_add);
+        addNewFeederButton.setVisibility(INVISIBLE);
+        EditText editFeeder = getFeederEmailEditText();
+        addNewFeederButton.setOnClickListener(view -> {
             String feederEmail = editFeeder.getText().toString();
-            PetFoodingControl pfc = ((PetFoodingControl) getApplication());
-            String userLoggedEmail = null;
-            if (pfc.getUserLogged() != null && pfc.getUserLogged().getValue() != null
-                    && pfc.getUserLogged().getValue().getEmail() != null) {
-                userLoggedEmail = pfc.getUserLogged().getValue().getEmail();
-            }
-            if (userLoggedEmail != null && userLoggedEmail.equals(feederEmail)) {
-                showToast(R.string.error_user_mail_entered);
-            } else {
-                petManagementViewModel.checkFeederExistance(feederEmail).observe(this, observer);
-            }
+            Observer<Integer> obs = result -> {
+                switch (result) {
+                    case 0 :
+                        showToast(R.string.new_feeder_success);
+                        newFeederDialog.dismiss();
+                        break;
+                    case 1 :
+                        showToast(R.string.error_user_mail_entered);
+                        break;
+                    case 2 :
+                        showToast(R.string.error_feeder_mail);
+                        break;
+                    case 3 :
+                        showToast(R.string.error_feeder_mail_already_in_list);
+                }
+            };
+            petManagementViewModel.newFeederAddInarraylist(feederEmail).observe(this, obs);
         });
 
         Button cancelButton = newFeederView.findViewById(R.id.btn_new_feeder_cancel);
         cancelButton.setOnClickListener(view -> newFeederDialog.cancel());
+    }
 
-        newFeederDialog.setView(newFeederView);
-        newFeederDialog.show();
+    private EditText getFeederEmailEditText() {
+        EditText editFeeder = newFeederView.findViewById(R.id.txt_feeder_email);
+        TextView errorMessage = newFeederView.findViewById(R.id.txt_feeder_mail_invalid);
+        errorMessage.setVisibility(INVISIBLE);
+        editFeeder.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    if (InputValidationUtils.isEmailValid(s.toString())) {
+                        addNewFeederButton.setVisibility(VISIBLE);
+                        errorMessage.setVisibility(INVISIBLE);
+                    } else {
+                        addNewFeederButton.setVisibility(INVISIBLE);
+                        errorMessage.setVisibility(VISIBLE);
+                    }
+                } else {
+                    addNewFeederButton.setVisibility(INVISIBLE);
+                    errorMessage.setVisibility(INVISIBLE);
+                }
+            }
+        });
+        return editFeeder;
     }
 
     /**

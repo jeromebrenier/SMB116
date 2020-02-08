@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.db.PetFoodingControlDatabase;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
@@ -155,6 +156,23 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     public Flowable<List<Pet>> getAllUserPetsByUserId(Long userId) {
         Log.d(TAG, "getAllUserPetsByUserId(" + userId + ")");
         return petFoodingControlDatabase.getPetDao().getAllUserPetsByUserId(userId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Single<Long> insert(PetFeeders petFeeders) {
+        Log.d(TAG, "insert PetFeeders "
+                + petFeeders.getPetId() + " - " + petFeeders.getUserId());
+        return petFoodingControlDatabase.getPetFeedersDao().insert(petFeeders)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Completable insert(List<PetFeeders> petFeedersList) {
+        Log.d(TAG, "insert List of " + petFeedersList.size() + " PetFeeders ");
+        return petFoodingControlDatabase.getPetFeedersDao().insert(petFeedersList)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }

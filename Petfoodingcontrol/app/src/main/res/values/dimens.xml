@@ -25,4 +25,5 @@
     <dimen name="btn_datepicker_horiz_marging">16dp</dimen>
     <dimen name="title_police_size">20sp</dimen>
     <dimen name="title_margin_bottom">10dp</dimen>
+    <dimen name="top_margin_message_edit_text">5dp</dimen>
 </resources>

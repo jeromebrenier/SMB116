@@ -1,10 +1,10 @@
 package fr.jbrenier.petfoodingcontrol.services.userservice;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.util.Map;
 
+import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
@@ -20,5 +20,5 @@ public interface UserService {
     void leave();
     void clearDisposables(Object object);
     PetFoodingControlRepository getPfcRepository();
-    SharedPreferences getSharedPreferences();
+    PetFoodingControl getPetFoodingControl();
 }

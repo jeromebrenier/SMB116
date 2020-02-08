@@ -16,17 +16,25 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp">
+
+        <TextView
+            android:id="@+id/txt_feeder_mail_invalid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/top_margin_message_edit_text"
+            android:text="@string/error_email"
+            android:textColor="@color/design_default_color_error" />
 
         <EditText
             android:id="@+id/txt_feeder_email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="24dp"
-            android:layout_marginBottom="@dimen/fieldset_fields_spacing"
             android:ems="10"
             android:hint="@string/hint_email"
             android:inputType="textEmailAddress" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout

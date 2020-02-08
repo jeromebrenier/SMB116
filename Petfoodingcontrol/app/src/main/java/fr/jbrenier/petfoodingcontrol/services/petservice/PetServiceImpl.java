@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
@@ -82,6 +83,22 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
         );
         addToCompositeDisposable(object, disposable);
         return checkFeederExistanceResult;
+    }
+
+    @Override
+    public SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeders> petFeedersList) {
+        SingleLiveEvent<Integer> savePetFeedersResult = new SingleLiveEvent<>();
+        Disposable disposable = pfcRepository.insert(petFeedersList).subscribe(
+                () -> {
+                    savePetFeedersResult.setValue(0);
+                    Log.i(TAG,"PetFeeders saved successfully");
+                },
+                throwable -> {
+                    savePetFeedersResult.setValue(1);
+                    Log.e(TAG, "PetFeeders saving failure : ", throwable);
+                });
+        addToCompositeDisposable(object, disposable);
+        return savePetFeedersResult;
     }
 
     @Override

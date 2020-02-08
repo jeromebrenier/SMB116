@@ -302,11 +302,13 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
         compositeDisposableClear(object);
     }
 
+    @Override
     public PetFoodingControlRepository getPfcRepository() {
         return pfcRepository;
     }
 
-    public SharedPreferences getSharedPreferences() {
-        return sharedPreferences;
+    @Override
+    public PetFoodingControl getPetFoodingControl() {
+        return petFoodingControl;
     }
 }
