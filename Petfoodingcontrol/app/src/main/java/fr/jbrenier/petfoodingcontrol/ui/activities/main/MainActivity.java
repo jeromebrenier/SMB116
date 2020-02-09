@@ -39,9 +39,11 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
-import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetCreationActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountCreationFormFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
+
+import static com.loopj.android.http.AsyncHttpClient.log;
 
 /**
  * Main activity of the Pet Fooding Control application.
@@ -67,7 +69,6 @@ public class MainActivity extends AppCompatActivity implements
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
-    private NavController navController;
     private View headerView;
 
     private MainActivityViewModel mainActivityViewModel;
@@ -88,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements
                 R.id.nav_pets, R.id.nav_account_settings, R.id.nav_logout)
                 .setDrawerLayout(mDrawerLayout)
                 .build();
-        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         headerView = navigationView.getHeaderView(0);
@@ -145,9 +146,7 @@ public class MainActivity extends AppCompatActivity implements
     private boolean addPermission(List<String> permissionsList, String permission) {
         if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
             permissionsList.add(permission);
-            if (!shouldShowRequestPermissionRationale(permission)) {
-                return false;
-            }
+            return shouldShowRequestPermissionRationale(permission);
         }
         return true;
     }
@@ -243,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void sendPetAdditionActivityIntent() {
-        Intent petAdditionActivityIntent = new Intent(this, PetManagementActivity.class);
+        Intent petAdditionActivityIntent = new Intent(this, PetCreationActivity.class);
         startActivityForResult(petAdditionActivityIntent, ADD_PET_REQUEST);
     }
 
@@ -304,9 +303,9 @@ public class MainActivity extends AppCompatActivity implements
                 }
                 break;
             case ADD_PET_REQUEST:
-                if (resultCode != RESULT_OK) {
-                    finishAndRemoveTask();
-                }
+                log.d(TAG, "return for pet addition "
+                        + (resultCode != RESULT_OK ? "without" : "with")
+                        + " RESULT_OK");
                 break;
             default:
                 break;

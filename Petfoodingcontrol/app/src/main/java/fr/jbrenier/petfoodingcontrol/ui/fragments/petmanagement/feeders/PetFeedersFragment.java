@@ -30,7 +30,7 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
     private static final String TAG = "PetFeedersFragment";
 
     private PetManagementActivity petManagementActivity;
-    private OnListFragmentInteractionListener mListener;
+    private onRemoveFeederButtonClickListener mListener;
     private MyPetFeedersRecyclerViewAdapter adapter;
 
     /**
@@ -70,13 +70,19 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        showAddAFeederButtonIfVisible();
+        Log.i(TAG, "onActivityCreated");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        showAddAFeederButton();
     }
 
     /**
      * Show the add a feeder floating button if not visible.
      */
-    private void showAddAFeederButtonIfVisible() {
+    private void showAddAFeederButton() {
         if (petManagementActivity.findViewById(R.id.add_a_feeder).getVisibility() != View.VISIBLE) {
             petManagementActivity.findViewById(R.id.add_a_feeder).setVisibility(View.VISIBLE);
         }
@@ -85,11 +91,11 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
+        if (context instanceof onRemoveFeederButtonClickListener) {
+            mListener = (onRemoveFeederButtonClickListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
+                    + " must implement onRemoveFeederButtonClickListener");
         }
     }
 
@@ -99,27 +105,17 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(Feeder feeder);
+    public interface onRemoveFeederButtonClickListener {
+        void onRemoveFeederButtonClick(Feeder feeder, MyPetFeedersRecyclerViewAdapter adapter);
     }
 
     @Override
     public void loadPetData() {
-        Log.i(TAG, "loadPetData");
+        Log.i(TAG, "PetFeedersFragment loadPetData");
     }
 
     @Override
     public void savePetData() {
-        Log.i(TAG, "savePetData");
+        Log.i(TAG, "PetFeedersFragment savePetData");
     }
 }

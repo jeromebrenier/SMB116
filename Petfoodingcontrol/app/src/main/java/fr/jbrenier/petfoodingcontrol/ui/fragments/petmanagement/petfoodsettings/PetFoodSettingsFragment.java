@@ -36,8 +36,8 @@ public class PetFoodSettingsFragment extends PetManagementFragment implements Pe
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+    public void onStart() {
+        super.onStart();
         hideAddAFeederButtonIfVisible();
     }
 

@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import fr.jbrenier.petfoodingcontrol.R;
-import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.general.PetGeneralFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.petfoodsettings.PetFoodSettingsFragment;
@@ -51,9 +50,6 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
                 itemToShow = new PetFeedersFragment();
         }
         return itemToShow;
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        // return PlaceholderFragment.newInstance(position + 1);
     }
 
     @Nullable

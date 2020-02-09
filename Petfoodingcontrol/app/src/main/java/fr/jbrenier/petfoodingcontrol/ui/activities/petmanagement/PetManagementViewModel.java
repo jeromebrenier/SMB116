@@ -191,6 +191,14 @@ public class PetManagementViewModel extends ViewModel {
         checkFeederExistanceMap.put(check, observer);
     }
 
+    /**
+     * Remove a feeder from the petFeedersArrayList.
+     * @param feeder the feeder to remove
+     */
+    void removeFeeder(Feeder feeder) {
+        petFeedersArrayList.remove(feeder);
+    }
+
     @Override
     public void onCleared() {
         saveNewPetMap.entrySet().forEach(getConsumer());

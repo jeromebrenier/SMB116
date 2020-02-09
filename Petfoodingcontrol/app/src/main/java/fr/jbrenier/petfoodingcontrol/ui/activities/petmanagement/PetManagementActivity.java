@@ -24,8 +24,8 @@ import androidx.viewpager.widget.ViewPager;
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
-import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.SectionsPagerAdapter;
+import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.MyPetFeedersRecyclerViewAdapter;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.general.PetGeneralFragment;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
@@ -34,19 +34,18 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 /**
- * The activity for adding a pet with the Pet Fooding Control application.
+ * The super activity for managing a pet (creating a pet or modifying it) within the
+ * Pet Fooding Control application.
  * @author Jérôme Brenier
  */
-public class PetManagementActivity extends AppCompatActivity
-        implements PetFeedersFragment.OnListFragmentInteractionListener,
+public abstract class PetManagementActivity extends AppCompatActivity
+        implements PetFeedersFragment.onRemoveFeederButtonClickListener,
         PetGeneralFragment.OnSaveButtonClickListener{
 
     /** LOGGING */
     private static final String TAG = "PetManagementActivity";
 
-    private PetManagementViewModel petManagementViewModel;
-    private boolean isCreationMode = false;
-
+    PetManagementViewModel petManagementViewModel;
     private View newFeederView;
     private Button addNewFeederButton;
 
@@ -56,30 +55,31 @@ public class PetManagementActivity extends AppCompatActivity
         PetFoodingControl petFoodingControl = (PetFoodingControl) getApplication();
         petManagementViewModel = new PetManagementViewModel();
         petFoodingControl.getAppComponent().inject(petManagementViewModel);
-        if (getCallingActivity() != null &&
-                !getCallingActivity().getClassName().equals(MainActivity.class.getName())) {
-            // Here we are in modification mode
-            Log.i(TAG, "Modification mode.");
-        } else {
-            isCreationMode = true;
-            Log.i(TAG, "Creation mode.");
-        }
         setContentView(R.layout.pet_management_activity);
-        setupToolBar();
+
+        // Needed for title display
+        setSupportActionBar(findViewById(R.id.pet_management_toolbar));
+
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
                 this, this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(sectionsPagerAdapter);
-        loadAndSavePetDataOnPageChange(viewPager, sectionsPagerAdapter);
+        viewPager.addOnPageChangeListener(getOnPageChangeListener(sectionsPagerAdapter));
         TabLayout tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
         setupAddFeederButton();
     }
 
-
-    private void loadAndSavePetDataOnPageChange(ViewPager viewPager,
-                                                SectionsPagerAdapter sectionsPagerAdapter) {
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    /**
+     * Return an OnPageChangeListener for managing data loading / saving of pages and new pet feeder
+     * button visibility.
+     * @param sectionsPagerAdapter the section page adapter used
+     * @return the OnPageChangeListener
+     */
+    private ViewPager.OnPageChangeListener getOnPageChangeListener(
+            SectionsPagerAdapter sectionsPagerAdapter) {
+        return new ViewPager.OnPageChangeListener() {
             int nbItems = sectionsPagerAdapter.getCount();
 
             @Override
@@ -90,29 +90,53 @@ public class PetManagementActivity extends AppCompatActivity
 
             @Override
             public void onPageSelected(int position) {
-                ((PetData) sectionsPagerAdapter.getItem(position)).loadPetData();
-                for (int i = nbItems - 1; i >= 0 ; i--) {
-                    if (i != position) {
-                        ((PetData) sectionsPagerAdapter.getItem(i)).savePetData();
-                    }
-                }
+                loadAndSavePetData(position, nbItems, sectionsPagerAdapter);
+                showOrHideNewFeederFloatingButton(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
 
             }
-        });
+        };
     }
 
-    private void setupToolBar() {
-        Toolbar toolbar = findViewById(R.id.pet_addition_toolbar);
-        setSupportActionBar(toolbar);
-        // Title
+    /**
+     * Manage data loading / saving of pages depending on the position of the selected page.
+     * @param position the position of the selected page
+     * @param nbItems the number of pages
+     * @param sectionsPagerAdapter the section page adapter used
+     */
+    private void loadAndSavePetData(int position, int nbItems,
+                                    SectionsPagerAdapter sectionsPagerAdapter) {
+        ((PetData) sectionsPagerAdapter.getItem(position)).loadPetData();
+        Log.d(TAG, "loadPetData() " + position);
+        for (int i = nbItems - 1; i >= 0 ; i--) {
+            if (i != position) {
+                ((PetData) sectionsPagerAdapter.getItem(i)).savePetData();
+                Log.d(TAG, "savePetData() " + i);
+            }
+        }
+    }
 
-        toolbar.setTitle(getResources().getString(
-                isCreationMode ? R.string.title_pet_modifcation_activity :
-                        R.string.title_add_a_pet_activity));
+    /**
+     * Manage the visibility of the new pet feeder floating button depending on the page selected.
+     * @param position the page selected
+     */
+    private void showOrHideNewFeederFloatingButton(int position) {
+        if (position == 2) {
+            setNewFeederFloatingButtonVisibility(true);
+        } else {
+            setNewFeederFloatingButtonVisibility(false);
+        }
+    }
+
+    /**
+     * Set the visibility of the new pet feeder floating button.
+     * @param visible the status of visibility (true if visible, false otherwise)
+     */
+    private void setNewFeederFloatingButtonVisibility(boolean visible) {
+        findViewById(R.id.add_a_feeder).setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
     /**
@@ -123,6 +147,9 @@ public class PetManagementActivity extends AppCompatActivity
         addAFeeder.setOnClickListener(view -> newFeederDialog());
     }
 
+    /**
+     * Create an alert dialog with a text input to add a new feeder through his address.
+     */
     private void newFeederDialog() {
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         newFeederView = layoutInflater.inflate(R.layout.new_feeder_dialog, null);
@@ -134,6 +161,10 @@ public class PetManagementActivity extends AppCompatActivity
         newFeederDialog.show();
     }
 
+    /**
+     * Setup the Add / Cancel button of the new feeder dialog.
+     * @param newFeederDialog the new feeder dialog hosting the buttons
+     */
     private void setupDialogButtons(AlertDialog newFeederDialog) {
         addNewFeederButton = newFeederView.findViewById(R.id.btn_new_feeder_add);
         addNewFeederButton.setVisibility(INVISIBLE);
@@ -208,28 +239,35 @@ public class PetManagementActivity extends AppCompatActivity
     }
 
     @Override
-    public void onListFragmentInteraction(Feeder feeder) {
+    public void onRemoveFeederButtonClick(Feeder feeder, MyPetFeedersRecyclerViewAdapter adapter) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle(getResources().getString(R.string.new_feeder_confirm_delete_title));
+        alertDialog.setMessage(getResources().getString(R.string.new_feeder_confirm_delete_text));
 
+        alertDialog.setButton(
+                AlertDialog.BUTTON_POSITIVE,
+                getResources().getString(R.string.new_feeder_confirm_delete),
+                (dialog, which) -> {
+                    petManagementViewModel.removeFeeder(feeder);
+                    adapter.notifyDataSetChanged();
+                });
+
+        alertDialog.setButton(
+                AlertDialog.BUTTON_NEGATIVE,
+                getResources().getString(R.string.btn_cancel),
+                (dialog, which) -> dialog.cancel());
+
+        alertDialog.show();
     }
 
     @Override
     public void onSaveButtonClick() {
-        if (isCreationMode) {
-            Log.d(TAG, "Saving pet in DB...");
-            petManagementViewModel.savePetData().observe(this, bool -> {
-                if (bool) {
-                    finishPetManagementActivity(RESULT_OK);
-                } else {
-                    finishPetManagementActivity(RESULT_CANCELED);
-                }
-            });
-        }
     }
 
     /**
      * Return to the Main activity, and finishes the Login activity.
      */
-    private void finishPetManagementActivity(int resultCode) {
+    void finishPetManagementActivity(int resultCode) {
         Intent retIntent = new Intent();
         setResult(resultCode, retIntent);
         finish();
@@ -238,9 +276,5 @@ public class PetManagementActivity extends AppCompatActivity
 
     public PetManagementViewModel getPetManagementViewModel() {
         return petManagementViewModel;
-    }
-
-    public boolean isCreationMode() {
-        return isCreationMode;
     }
 }

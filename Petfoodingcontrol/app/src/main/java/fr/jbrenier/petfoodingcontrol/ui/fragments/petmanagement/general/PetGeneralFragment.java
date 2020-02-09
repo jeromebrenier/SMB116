@@ -34,6 +34,7 @@ import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetCreationActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
@@ -116,15 +117,15 @@ public class PetGeneralFragment extends PetManagementFragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.i(TAG, "onActivityCreated");
         petManagementActivity = (PetManagementActivity) getActivity();
         petFoodingControl = (PetFoodingControl) petManagementActivity.getApplication();
-        if (petManagementActivity.isCreationMode()) {
+        if (petManagementActivity instanceof PetCreationActivity) {
             setDefaultPhoto();
         }
         setupButtonOnClickListeners();
         setupDateEditTextValidation();
         loadPetInfoInInputFromViewModel();
-        hideAddAFeederButtonIfVisible();
     }
 
     private void setupButtonOnClickListeners() {
@@ -172,6 +173,12 @@ public class PetGeneralFragment extends PetManagementFragment
             }
         };
         birthDate.addTextChangedListener(birthDateWatcher);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        hideAddAFeederButtonIfVisible();
     }
 
     /**
