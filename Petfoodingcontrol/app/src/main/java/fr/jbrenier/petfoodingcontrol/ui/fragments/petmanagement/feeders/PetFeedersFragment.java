@@ -16,6 +16,7 @@ import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
 
 /**
@@ -76,16 +77,6 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
     @Override
     public void onStart() {
         super.onStart();
-        showAddAFeederButton();
-    }
-
-    /**
-     * Show the add a feeder floating button if not visible.
-     */
-    private void showAddAFeederButton() {
-        if (petManagementActivity.findViewById(R.id.add_a_feeder).getVisibility() != View.VISIBLE) {
-            petManagementActivity.findViewById(R.id.add_a_feeder).setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -110,12 +101,12 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
     }
 
     @Override
-    public void loadPetData() {
+    public void loadPetData(PetManagementActivity pMA) {
         Log.i(TAG, "PetFeedersFragment loadPetData");
     }
 
     @Override
-    public void savePetData() {
+    public void savePetData(PetManagementActivity pMA) {
         Log.i(TAG, "PetFeedersFragment savePetData");
     }
 }

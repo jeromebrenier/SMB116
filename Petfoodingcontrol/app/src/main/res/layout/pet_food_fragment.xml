@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="petfoodfragmentviewmodel"
+            type="fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingViewModel" />
+    </data>
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 <LinearLayout
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -109,7 +117,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(0) == null ? View.GONE : View.VISIBLE}"
+                    android:text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(0) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(0)}" />
 
                 <Button
                     android:id="@+id/btn_portion2"
@@ -117,7 +126,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(1) == null ? View.GONE : View.VISIBLE}"
+                    android:text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(1) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(1)}" />
 
                 <Button
                     android:id="@+id/btn_portion3"
@@ -125,7 +135,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(2) == null ? View.GONE : View.VISIBLE}"
+                    android:text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(2) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(2)}" />
             </TableRow>
 
             <TableRow
@@ -139,7 +150,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(3) == null ? View.GONE : View.VISIBLE}"
+                    android:text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(3) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(3)}" />
 
                 <Button
                     android:id="@+id/btn_portion5"
@@ -147,7 +159,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(4) == null ? View.GONE : View.VISIBLE}"
+                    android:text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(4) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(4)}" />
 
                 <Button
                     android:id="@+id/btn_portion6"
@@ -155,7 +168,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                     android:layout_weight="1"
-                    android:text="Button" />
+                    android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(5) == null ? View.GONE : View.VISIBLE}"
+                    android:text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(5) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(5)}" />
             </TableRow>
 
         </TableLayout>
@@ -165,3 +179,4 @@
 
 </LinearLayout>
 </ScrollView>
+</layout>

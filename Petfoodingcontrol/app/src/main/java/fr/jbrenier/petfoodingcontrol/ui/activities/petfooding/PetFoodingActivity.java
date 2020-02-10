@@ -20,7 +20,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petfooding.SectionsPagerAdapte
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petfooding.food.PetFoodFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petfooding.weight.PetWeightFragment;
 
-import static androidx.databinding.library.baseAdapters.BR.petfoodingviewmodel;
+import static fr.jbrenier.petfoodingcontrol.BR.petfoodingviewmodel;
 
 public class PetFoodingActivity extends AppCompatActivity
                                 implements PetFoodFragment.OnFragmentInteractionListener,
@@ -43,7 +43,7 @@ public class PetFoodingActivity extends AppCompatActivity
         setSupportActionBar(findViewById(R.id.pet_fooding_toolbar));
 
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.view_pager);
+        ViewPager viewPager = findViewById(R.id.pet_fooding_view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.pet_fooding_tabs);
         tabs.setupWithViewPager(viewPager);
@@ -70,5 +70,9 @@ public class PetFoodingActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public PetFoodingViewModel getPetFoodingViewModel() {
+        return petFoodingViewModel;
     }
 }

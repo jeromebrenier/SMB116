@@ -37,6 +37,7 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetCreationActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
 import fr.jbrenier.petfoodingcontrol.utils.DateTimeUtils;
 import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
@@ -117,7 +118,7 @@ public class PetGeneralFragment extends PetManagementFragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.i(TAG, "onActivityCreated");
+        Log.d(TAG, "onActivityCreated");
         petManagementActivity = (PetManagementActivity) getActivity();
         petFoodingControl = (PetFoodingControl) petManagementActivity.getApplication();
         if (petManagementActivity instanceof PetCreationActivity) {
@@ -125,7 +126,8 @@ public class PetGeneralFragment extends PetManagementFragment
         }
         setupButtonOnClickListeners();
         setupDateEditTextValidation();
-        loadPetInfoInInputFromViewModel();
+        loadPetInfoInInputFromViewModel(petManagementActivity);
+        hideAddAFeederButtonIfVisible();
     }
 
     private void setupButtonOnClickListeners() {
@@ -178,7 +180,6 @@ public class PetGeneralFragment extends PetManagementFragment
     @Override
     public void onStart() {
         super.onStart();
-        hideAddAFeederButtonIfVisible();
     }
 
     /**
@@ -198,92 +199,95 @@ public class PetGeneralFragment extends PetManagementFragment
 
 
     @Override
-    public void loadPetData() {
-        loadPetInfoInInputFromViewModel();
+    public void loadPetData(PetManagementActivity petManagementActivity) {
+        loadPetInfoInInputFromViewModel(petManagementActivity);
     }
 
     /**
      * Load the data from Pet in ViewModel into the input.
      */
-    private void loadPetInfoInInputFromViewModel() {
+    private void loadPetInfoInInputFromViewModel(PetManagementActivity pMA) {
         Log.i(TAG,"loadFoodPetInfoInInputFromViewModel");
         Pet pet;
         Photo photo;
-        if (petManagementViewModel == null || petManagementViewModel.getPetToAdd() == null) {
+        PetManagementViewModel viewModel = pMA.getPetManagementViewModel();
+        if (viewModel == null || viewModel.getPetToAdd() == null) {
             return;
         } else {
-            pet = petManagementViewModel.getPetToAdd();
+            pet = viewModel.getPetToAdd();
         }
         String name = pet.getName();
         if (name != null && !name.equals("")) {
-            ((EditText) petManagementActivity.findViewById(R.id.txt_pet_name)).setText(name);
+            ((EditText) pMA.findViewById(R.id.txt_pet_name)).setText(name);
         }
         if (pet.getBirthDate() != null) {
-            ((EditText) petManagementActivity.findViewById(R.id.txt_pet_birthdate))
+            ((EditText) pMA.findViewById(R.id.txt_pet_birthdate))
                     .setText(DateTimeUtils.getStringBirthDateFromOffsetDateTime(pet.getBirthDate()));
         }
-        if (petManagementViewModel.getPetPhoto() == null) {
+        if (viewModel.getPetPhoto() == null) {
             return;
         } else {
-            photo = petManagementViewModel.getPetPhoto();
+            photo = viewModel.getPetPhoto();
         }
         String image = photo.getImage();
         if (image != null && !image.isEmpty()) {
-            ((ImageView) petManagementActivity.findViewById(R.id.imv_pet_photo))
+            ((ImageView) pMA.findViewById(R.id.imv_pet_photo))
                     .setImageBitmap(ImageUtils.getBitmapFromBase64String(image));
         }
     }
 
     @Override
-    public void savePetData() {
-        savePetInfoFromInputInViewModel();
+    public void savePetData(PetManagementActivity petManagementActivity) {
+        savePetInfoFromInputInViewModel(petManagementActivity);
     }
 
     /**
      * Save food settings from inputs in the ViewModel.
      */
-    private void savePetInfoFromInputInViewModel() {
+    private void savePetInfoFromInputInViewModel(PetManagementActivity pMA) {
         Log.i(TAG, "savePetInfoFromInputInViewModel");
         Pet pet;
         Photo photo;
-        if (petManagementViewModel == null) {
+        PetManagementViewModel viewModel = pMA.getPetManagementViewModel();
+        PetFoodingControl pFC = (PetFoodingControl) pMA.getApplication();
+        if (viewModel == null) {
             return;
         }
-        if (petManagementViewModel.getPetToAdd() != null) {
-            pet = petManagementViewModel.getPetToAdd();
+        if (viewModel.getPetToAdd() != null) {
+            pet = viewModel.getPetToAdd();
         } else {
             pet = new Pet(null, null, null, null, null, null);
         }
-        if (petFoodingControl.getUserLogged().getValue()
+        if (pFC.getUserLogged().getValue()
                 != null) {
-            pet.setUserId(petFoodingControl.getUserLogged().
+            pet.setUserId(pFC.getUserLogged().
                     getValue().getUserId());
         } else  {
             Log.e(TAG, "No user logged.");
             return;
         }
-        String name = ((EditText) petManagementActivity.findViewById(R.id.txt_pet_name))
+        String name = ((EditText) pMA.findViewById(R.id.txt_pet_name))
                 .getText().toString();
         if (!name.equals("")) {
             pet.setName(name);
         }
-        String birthDate = ((EditText) petManagementActivity.findViewById(R.id.txt_pet_birthdate))
+        String birthDate = ((EditText) pMA.findViewById(R.id.txt_pet_birthdate))
                 .getText().toString();
         if (!birthDate.equals("") && InputValidationUtils.isDateValid(birthDate)) {
             OffsetDateTime date = DateTimeUtils.getOffsetDateTimeFromBirthDate(birthDate);
             pet.setBirthDate(date);
         }
-        petManagementViewModel.setPetToAdd(pet);
-        if (petManagementViewModel.getPetPhoto() != null) {
-            photo = petManagementViewModel.getPetPhoto();
+        viewModel.setPetToAdd(pet);
+        if (viewModel.getPetPhoto() != null) {
+            photo = viewModel.getPetPhoto();
         } else {
             photo = new Photo(null, null);
         }
         Drawable userPhotoDrawable =
-                ((ImageView) petManagementActivity.findViewById(R.id.imv_pet_photo)).getDrawable();
+                ((ImageView) pMA.findViewById(R.id.imv_pet_photo)).getDrawable();
         Bitmap petPhotoBitmap = ((BitmapDrawable) userPhotoDrawable).getBitmap();
         photo.setImage(ImageUtils.getBase64StringFromBitmap(petPhotoBitmap));
-        petManagementViewModel.setPetPhoto(photo);
+        viewModel.setPetPhoto(photo);
     }
 
     @Override
@@ -292,7 +296,7 @@ public class PetGeneralFragment extends PetManagementFragment
             case R.id.btn_pet_save :
                 if (checkPetInfos()) {
                     Log.i(TAG, "Saving pet in DB...");
-                    savePetInfoFromInputInViewModel();
+                    savePetInfoFromInputInViewModel((PetManagementActivity) getActivity());
                     callback.onSaveButtonClick();
                 }
                 break;

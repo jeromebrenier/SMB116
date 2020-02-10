@@ -1,5 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.petfoodsettings;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,8 @@ import java.util.List;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.FoodSettings;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
 
 /**
@@ -38,41 +41,30 @@ public class PetFoodSettingsFragment extends PetManagementFragment implements Pe
     @Override
     public void onStart() {
         super.onStart();
-        hideAddAFeederButtonIfVisible();
     }
-
-    /**
-     * Hide the add a feeder floating button if visible.
-     */
-    private void hideAddAFeederButtonIfVisible() {
-        // Hide the add a feeder button if visible
-        if (petManagementActivity.findViewById(R.id.add_a_feeder).getVisibility() == View.VISIBLE) {
-            petManagementActivity.findViewById(R.id.add_a_feeder).setVisibility(View.INVISIBLE);
-        }
-    }
-
 
     @Override
-    public void loadPetData() {
-        loadFoodSettingsInInputFromViewModel();
+    public void loadPetData(PetManagementActivity pMA) {
+        loadFoodSettingsInInputFromViewModel(pMA);
     }
 
     /**
      * Load food settings from the ViewModel in the corresponding inputs.
      */
-    private void loadFoodSettingsInInputFromViewModel() {
-        Log.i(TAG,"loadFoodSettingsInInputFromViewModel");
+    private void loadFoodSettingsInInputFromViewModel(PetManagementActivity pMA) {
+        Log.d(TAG,"loadFoodSettingsInInputFromViewModel");
         FoodSettings foodSettings;
-        if (petManagementViewModel == null || petManagementViewModel.getFoodSettings() == null) {
+        PetManagementViewModel pMVM = pMA.getPetManagementViewModel();
+        if (pMVM == null || pMVM.getFoodSettings() == null) {
             return;
         } else {
-            foodSettings = petManagementViewModel.getFoodSettings();
+            foodSettings = pMVM.getFoodSettings();
         }
-        if (foodSettings.getDailyQuantity() != null) {
-            ((EditText) petManagementActivity.findViewById(R.id.txt_daily_food))
+        if (foodSettings.getDailyQuantity() != null && foodSettings.getDailyQuantity() != 0) {
+            ((EditText) pMA.findViewById(R.id.txt_daily_food))
                     .setText(String.valueOf(foodSettings.getDailyQuantity()));
         }
-        List<Integer> portionsRecorded = petManagementViewModel.getFoodSettings()
+        List<Integer> portionsRecorded = pMVM.getFoodSettings()
                 .getPreSetPortionList();
         if (portionsRecorded == null) {return;}
         int[] portionsId = {
@@ -84,33 +76,34 @@ public class PetFoodSettingsFragment extends PetManagementFragment implements Pe
                 R.id.txt_food_portion6};
         int currentIndex = 0;
         for (Integer portionRecorded : portionsRecorded) {
-            ((EditText) petManagementActivity.findViewById(portionsId[currentIndex]))
+            ((EditText) pMA.findViewById(portionsId[currentIndex]))
                     .setText(String.valueOf(portionRecorded));
             currentIndex++;
         }
     }
 
     @Override
-    public void savePetData() {
-        saveFoodSettingsFromInputInViewModel();
+    public void savePetData(PetManagementActivity pMA) {
+        saveFoodSettingsFromInputInViewModel(pMA);
     }
 
     /**
      * Save food settings from inputs in the ViewModel.
      */
-    private void saveFoodSettingsFromInputInViewModel() {
-        Log.i(TAG, "saveFoodSettingsFromInputInViewModel");
+    private void saveFoodSettingsFromInputInViewModel(PetManagementActivity pMA) {
+        Log.d(TAG, "saveFoodSettingsFromInputInViewModel");
+        PetManagementViewModel pMVM = pMA.getPetManagementViewModel();
         FoodSettings foodSettings;
-        if (petManagementViewModel == null) {
+        if (pMVM == null) {
             return;
-        } else if (petManagementViewModel.getFoodSettings() != null) {
-            foodSettings = petManagementViewModel.getFoodSettings();
+        } else if (pMVM.getFoodSettings() != null) {
+            foodSettings = pMVM.getFoodSettings();
         } else {
-            foodSettings = new FoodSettings(null, new ArrayList<>());
+            foodSettings = new FoodSettings(0, new ArrayList<>());
         }
-        String dailyFood = ((EditText) petManagementActivity.findViewById(R.id.txt_daily_food))
+        String dailyFood = ((EditText) pMA.findViewById(R.id.txt_daily_food))
                 .getText().toString();
-        if (!dailyFood.equals("")) {
+        if (!dailyFood.isEmpty()) {
             foodSettings.setDailyQuantity(Integer.valueOf(dailyFood));
         }
         int[] portionsId = {
@@ -121,12 +114,13 @@ public class PetFoodSettingsFragment extends PetManagementFragment implements Pe
                 R.id.txt_food_portion5,
                 R.id.txt_food_portion6};
         for (int portionId : portionsId) {
-            String portion = ((EditText) petManagementActivity.findViewById(portionId))
+            String portion = ((EditText) pMA.findViewById(portionId))
                     .getText().toString();
-            if (!portion.equals("")) {
+            if (!portion.isEmpty()) {
                 foodSettings.getPreSetPortionList().add(Integer.valueOf(portion));
             }
         }
-        petManagementViewModel.setFoodSettings(foodSettings);
+        Log.d(TAG, "FOODSETTINGS " + foodSettings);
+        pMVM.setFoodSettings(foodSettings);
     }
 }

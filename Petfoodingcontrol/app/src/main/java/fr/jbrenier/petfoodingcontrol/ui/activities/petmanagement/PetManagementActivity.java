@@ -81,12 +81,13 @@ public abstract class PetManagementActivity extends AppCompatActivity
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
-
+                ((PetData) sectionsPagerAdapter.getItem(position)).savePetData(PetManagementActivity.this);
             }
 
             @Override
             public void onPageSelected(int position) {
-                loadAndSavePetData(position, nbItems, sectionsPagerAdapter);
+                ((PetData) sectionsPagerAdapter.getItem(position)).loadPetData(PetManagementActivity.this);
+                //loadAndSavePetData(position, nbItems, sectionsPagerAdapter);
                 showOrHideNewFeederFloatingButton(position);
             }
 
@@ -103,7 +104,7 @@ public abstract class PetManagementActivity extends AppCompatActivity
      * @param nbItems the number of pages
      * @param sectionsPagerAdapter the section page adapter used
      */
-    private void loadAndSavePetData(int position, int nbItems,
+/*    private void loadAndSavePetData(int position, int nbItems,
                                     SectionsPagerAdapter sectionsPagerAdapter) {
         ((PetData) sectionsPagerAdapter.getItem(position)).loadPetData();
         Log.d(TAG, "loadPetData() " + position);
@@ -113,7 +114,7 @@ public abstract class PetManagementActivity extends AppCompatActivity
                 Log.d(TAG, "savePetData() " + i);
             }
         }
-    }
+    }*/
 
     /**
      * Manage the visibility of the new pet feeder floating button depending on the page selected.

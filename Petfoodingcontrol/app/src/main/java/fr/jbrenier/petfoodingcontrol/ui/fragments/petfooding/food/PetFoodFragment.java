@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -11,17 +14,19 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingViewModel;
+
+import static fr.jbrenier.petfoodingcontrol.BR.petfoodfragmentviewmodel;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PetFoodFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
+ * The Pet food fragment.
+ * @author Jérôme Brenier
  */
 public class PetFoodFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
 
     private OnFragmentInteractionListener mListener;
+    private ViewDataBinding binding;
 
     public PetFoodFragment() {
     }
@@ -34,8 +39,16 @@ public class PetFoodFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.pet_food_fragment, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.pet_food_fragment, container, false);
+        binding.setLifecycleOwner(this);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        PetFoodingViewModel pfcVM = ((PetFoodingActivity) getActivity()).getPetFoodingViewModel();
+        binding.setVariable(petfoodfragmentviewmodel, pfcVM);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

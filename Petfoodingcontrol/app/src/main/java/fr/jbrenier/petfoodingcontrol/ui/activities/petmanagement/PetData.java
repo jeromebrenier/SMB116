@@ -1,6 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement;
 
 public interface PetData {
-    void loadPetData();
-    void savePetData();
+    void loadPetData(PetManagementActivity petManagementActivity);
+    void savePetData(PetManagementActivity petManagementActivity);
 }
