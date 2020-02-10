@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.activities.petmanagement.PetManagementActivity">
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/add_a_pet_bar"
         android:layout_width="match_parent"
@@ -21,7 +22,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
+            android:id="@+id/pet_management_tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?attr/colorPrimary"

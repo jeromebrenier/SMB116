@@ -24,7 +24,7 @@
             android:name=".ui.activities.petfooding.PetFoodingActivity"
             android:label="@string/title_activity_pet_fooding"
             android:parentActivityName=".ui.activities.main.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppThemeNoAppBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity" />

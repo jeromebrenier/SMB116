@@ -17,8 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -37,6 +35,7 @@ import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
+import fr.jbrenier.petfoodingcontrol.ui.uihelpers.EmailValidatedHelper;
 import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
@@ -97,41 +96,12 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
         activity.findViewById(R.id.btn_account_save).setOnClickListener(this);
         activity.findViewById((R.id.btn_pick_user_photo_on_disk)).setOnClickListener(this);
         activity.findViewById((R.id.btn_take_user_photo)).setOnClickListener(this);
-        setupEmailVisualValidation();
+        EmailValidatedHelper.getWithValidationControlEmailEditText(
+                activity.findViewById(R.id.txt_account_email),
+                activity.findViewById(R.id.txt_account_email_invalid)
+        );
         hideCameraButtonIfNoCameraOrNoPermission();
         hidePickImageButtonIfNoExtStoragePermission();
-    }
-
-    /**
-     * Check that the text entered in the email EditText is a valid email. Set a listener on key
-     * pressed to color the text accordingly to alert the user.
-     */
-    private void setupEmailVisualValidation() {
-        EditText emailEntered = activity.findViewById(R.id.txt_account_email);
-        TextWatcher emailWatcher = new TextWatcher() {
-            boolean ignore = false;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (ignore || s.length() == 0) {return;}
-                ignore = true;
-                if (!InputValidationUtils.isEmailValid(s.toString())) {
-                    emailEntered.setError(getResources().getString(R.string.error_email));
-                }
-                ignore = false;
-            }
-        };
-        emailEntered.addTextChangedListener(emailWatcher);
     }
 
     /**

@@ -39,11 +39,10 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
+import fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetCreationActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountCreationFormFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.main.pets.PetFragment;
-
-import static com.loopj.android.http.AsyncHttpClient.log;
 
 /**
  * Main activity of the Pet Fooding Control application.
@@ -53,10 +52,13 @@ public class MainActivity extends AppCompatActivity implements
         PetFragment.OnListFragmentInteractionListener,
         AccountCreationFormFragment.OnSaveButtonClickListener{
 
-    private static final int LOGIN_REQUEST = 1;
-    private static final int ADD_PET_REQUEST = 2;
+    /** Request code for Logging */
+    private static final int LOGIN_REQUEST = 99;
 
-    /** PERMISSIONS */
+    /** Intent extras key for pet transmission to a Pet Fooding Activity */
+    public static final String PET_EXTRA = "petExtra";
+
+    /* PERMISSIONS */
     private static final int PERMISSIONS_REQUEST = 3;
     private final SingleLiveEvent<Boolean> permissionProcessDone = new SingleLiveEvent<>();
 
@@ -106,7 +108,9 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     /**
-     * Check the application permissions.
+     * Check if the required permissions to use the application have been accepted and are already
+     * granted. If not, launch a dialog to inform the user of the permission need for the missing
+     * ones.
      */
     private void checkApplicationPermissions() {
         Log.i(TAG, "Checking permissions.");
@@ -238,12 +242,15 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void setupAddButton() {
         FloatingActionButton addPet = findViewById(R.id.main_addPet);
-        addPet.setOnClickListener(view -> sendPetAdditionActivityIntent());
+        addPet.setOnClickListener(view -> sendPetCreationActivityIntent());
     }
 
-    private void sendPetAdditionActivityIntent() {
-        Intent petAdditionActivityIntent = new Intent(this, PetCreationActivity.class);
-        startActivityForResult(petAdditionActivityIntent, ADD_PET_REQUEST);
+    /**
+     * Start a Pet Creation activity through an Intent.
+     */
+    private void sendPetCreationActivityIntent() {
+        Intent petCreationActivityIntent = new Intent(this, PetCreationActivity.class);
+        startActivity(petCreationActivityIntent);
     }
 
     /**
@@ -295,20 +302,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case LOGIN_REQUEST:
-                if (resultCode != RESULT_OK) {
-                    finishAndRemoveTask();
-                    checkApplicationPermissions();
-                }
-                break;
-            case ADD_PET_REQUEST:
-                log.d(TAG, "return for pet addition "
-                        + (resultCode != RESULT_OK ? "without" : "with")
-                        + " RESULT_OK");
-                break;
-            default:
-                break;
+        if (requestCode == LOGIN_REQUEST && resultCode != RESULT_OK) {
+            finishAndRemoveTask();
+            checkApplicationPermissions();
         }
     }
 
@@ -328,7 +324,17 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onListFragmentInteraction(Pet pet) {
+        launchPetFoodingActivity(pet);
+    }
 
+    /**
+     * Launch a pet fooding acivity for a pet.
+     * @param pet the pet to launch a fooding activity for
+     */
+    private void launchPetFoodingActivity(Pet pet) {
+        Intent petFoodingActivityIntent = new Intent(this, PetFoodingActivity.class);
+        petFoodingActivityIntent.putExtra(PET_EXTRA, pet);
+        startActivity(petFoodingActivityIntent);
     }
 
     @Override

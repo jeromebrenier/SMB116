@@ -19,6 +19,7 @@ import android.widget.TextView;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.ui.activities.accountcreation.AccountCreationActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
+import fr.jbrenier.petfoodingcontrol.ui.uihelpers.EmailValidatedHelper;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
 /**
@@ -76,38 +77,9 @@ public class LoginFieldsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loginActivity = (LoginActivity) getActivity();
-        setupEmailVisualValidation();
-    }
-
-    /**
-     * Check that the text entered in the email EditText is a valid email. Set a listener on key
-     * pressed to color the text accordingly to alert the user.
-     */
-    private void setupEmailVisualValidation() {
-        EditText emailEntered = loginActivity.findViewById(R.id.txt_login_email);
-        TextWatcher emailWatcher = new TextWatcher() {
-            boolean ignore = false;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (ignore || s.length() == 0) {return;}
-                ignore = true;
-                if (!InputValidationUtils.isEmailValid(s.toString())) {
-                    emailEntered.setError(getResources().getString(R.string.error_email));
-                }
-                ignore = false;
-            }
-        };
-        emailEntered.addTextChangedListener(emailWatcher);
+        EmailValidatedHelper.getWithValidationControlEmailEditText(
+                loginActivity.findViewById(R.id.txt_login_email),
+                loginActivity.findViewById(R.id.txt_login_mail_invalid)
+        );
     }
 }

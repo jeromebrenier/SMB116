@@ -1,15 +1,11 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -28,7 +24,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.SectionsPagerAda
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.MyPetFeedersRecyclerViewAdapter;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.general.PetGeneralFragment;
-import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
+import fr.jbrenier.petfoodingcontrol.ui.uihelpers.EmailValidatedHelper;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -66,7 +62,7 @@ public abstract class PetManagementActivity extends AppCompatActivity
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(sectionsPagerAdapter);
         viewPager.addOnPageChangeListener(getOnPageChangeListener(sectionsPagerAdapter));
-        TabLayout tabs = findViewById(R.id.tabs);
+        TabLayout tabs = findViewById(R.id.pet_management_tabs);
         tabs.setupWithViewPager(viewPager);
         setupAddFeederButton();
     }
@@ -167,8 +163,11 @@ public abstract class PetManagementActivity extends AppCompatActivity
      */
     private void setupDialogButtons(AlertDialog newFeederDialog) {
         addNewFeederButton = newFeederView.findViewById(R.id.btn_new_feeder_add);
-        addNewFeederButton.setVisibility(INVISIBLE);
-        EditText editFeeder = getFeederEmailEditText();
+        EditText editFeeder = EmailValidatedHelper.getWithValidationControlEmailEditText(
+                newFeederView.findViewById(R.id.txt_feeder_email),
+                newFeederView.findViewById(R.id.txt_feeder_mail_invalid),
+                addNewFeederButton
+        );
         addNewFeederButton.setOnClickListener(view -> {
             String feederEmail = editFeeder.getText().toString();
             Observer<Integer> obs = result -> {
@@ -192,40 +191,6 @@ public abstract class PetManagementActivity extends AppCompatActivity
 
         Button cancelButton = newFeederView.findViewById(R.id.btn_new_feeder_cancel);
         cancelButton.setOnClickListener(view -> newFeederDialog.cancel());
-    }
-
-    private EditText getFeederEmailEditText() {
-        EditText editFeeder = newFeederView.findViewById(R.id.txt_feeder_email);
-        TextView errorMessage = newFeederView.findViewById(R.id.txt_feeder_mail_invalid);
-        errorMessage.setVisibility(INVISIBLE);
-        editFeeder.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (s.length() > 0) {
-                    if (InputValidationUtils.isEmailValid(s.toString())) {
-                        addNewFeederButton.setVisibility(VISIBLE);
-                        errorMessage.setVisibility(INVISIBLE);
-                    } else {
-                        addNewFeederButton.setVisibility(INVISIBLE);
-                        errorMessage.setVisibility(VISIBLE);
-                    }
-                } else {
-                    addNewFeederButton.setVisibility(INVISIBLE);
-                    errorMessage.setVisibility(INVISIBLE);
-                }
-            }
-        });
-        return editFeeder;
     }
 
     /**
@@ -263,16 +228,6 @@ public abstract class PetManagementActivity extends AppCompatActivity
     @Override
     public void onSaveButtonClick() {
     }
-
-    /**
-     * Return to the Main activity, and finishes the Login activity.
-     */
-    void finishPetManagementActivity(int resultCode) {
-        Intent retIntent = new Intent();
-        setResult(resultCode, retIntent);
-        finish();
-    }
-
 
     public PetManagementViewModel getPetManagementViewModel() {
         return petManagementViewModel;

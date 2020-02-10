@@ -15,12 +15,6 @@ public class PetCreationActivity extends PetManagementActivity {
     @Override
     public void onSaveButtonClick() {
             Log.d(TAG, "Saving pet in DB...");
-            petManagementViewModel.savePetData().observe(this, bool -> {
-                if (bool) {
-                    finishPetManagementActivity(RESULT_OK);
-                } else {
-                    finishPetManagementActivity(RESULT_CANCELED);
-                }
-            });
+            petManagementViewModel.savePetData().observe(this, bool -> finish());
     }
 }

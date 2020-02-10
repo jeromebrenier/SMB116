@@ -56,16 +56,26 @@
         android:orientation="vertical">
 
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="411dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/fieldset_fields_spacing">
+
+            <TextView
+                android:id="@+id/txt_account_email_invalid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/top_margin_message_edit_text"
+                android:text="@string/error_email"
+                android:textColor="@color/design_default_color_error" />
 
             <EditText
                 android:id="@+id/txt_account_email"
-                android:layout_width="411dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/fieldset_fields_spacing"
-                android:inputType="textEmailAddress"
-                android:hint="@string/hint_account_email" />
+                android:ems="10"
+                android:hint="@string/hint_email"
+                android:inputType="textEmailAddress" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
