@@ -112,5 +112,8 @@
     <string name="title_activity_pet_fooding">My Pet</string>
     <string name="tab_text_pet_fooding_food">Food</string>
     <string name="tab_text_pet_fooding_weight">Weight</string>
-
+    <string name="petfooding_quantity_today">Quantity given today</string>
+    <string name="petfooding_feed">Feed</string>
+    <string name="hint_petfooding_free_portion">Free portion (g)</string>
+    <string name="petfooding_give_">Give</string>
 </resources>

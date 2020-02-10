@@ -28,6 +28,7 @@ public interface PetDao {
             "SELECT Pet.* FROM PetFeeders INNER JOIN Pet ON PetFeeders.pet_Id = Pet.pet_id " +
             "WHERE PetFeeders.user_Id = :userId")
     Flowable<List<Pet>> getAllUserPetsByUserId(Long userId);
+    @Query("SELECT * FROM ")
     @Update
     Completable update(Pet pet);
     @Delete
