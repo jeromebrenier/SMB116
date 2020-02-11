@@ -1,6 +1,5 @@
 package fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.petfoodsettings;
 
-import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -120,7 +119,6 @@ public class PetFoodSettingsFragment extends PetManagementFragment implements Pe
                 foodSettings.getPreSetPortionList().add(Integer.valueOf(portion));
             }
         }
-        Log.d(TAG, "FOODSETTINGS " + foodSettings);
         pMVM.setFoodSettings(foodSettings);
     }
 }
