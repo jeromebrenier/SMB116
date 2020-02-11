@@ -16,9 +16,47 @@ import static android.view.View.VISIBLE;
  * Helper class for email inputs with a validation message TextView associated.
  * @author Jérpome Brenier
  */
-public class EmailValidatedHelper {
+public class InputValidatedHelper {
 
-    private EmailValidatedHelper() {}
+    private InputValidatedHelper() {}
+
+    /**
+     * Returns a date input EditText with a validation listener that trigger the visibility of an
+     * error message if date is invalid.
+     * @param editTextDate the EditText corresponding to the email
+     * @param txtViewMessage the TextView of the error message
+     * @return the EditText corresponding to the email with validation
+     */
+    public static EditText getWithValidationControlDateEditText(
+            EditText editTextDate,
+            TextView txtViewMessage) {
+        txtViewMessage.setVisibility(GONE);
+        editTextDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 0) {
+                    if (InputValidationUtils.isDateValid(s.toString())) {
+                        txtViewMessage.setVisibility(GONE);
+                    } else {
+                        txtViewMessage.setVisibility(VISIBLE);
+                    }
+                } else {
+                    txtViewMessage.setVisibility(GONE);
+                }
+            }
+        });
+        return editTextDate;
+    }
 
     /**
      * Returns a mail input EditText with a validation listener that trigger the visibility of an

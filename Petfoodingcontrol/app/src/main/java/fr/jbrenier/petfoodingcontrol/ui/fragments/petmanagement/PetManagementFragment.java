@@ -13,9 +13,10 @@ import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementVi
 
 public class PetManagementFragment extends Fragment {
 
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "PetManagementFragment";
 
+    // Used by subclasses Protected visibility
     protected PetManagementViewModel petManagementViewModel;
     protected PetManagementActivity petManagementActivity;
 

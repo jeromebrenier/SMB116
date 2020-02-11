@@ -1,7 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +23,7 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.SectionsPagerAda
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.MyPetFeedersRecyclerViewAdapter;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.feeders.PetFeedersFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.general.PetGeneralFragment;
-import fr.jbrenier.petfoodingcontrol.ui.uihelpers.EmailValidatedHelper;
+import fr.jbrenier.petfoodingcontrol.ui.uihelpers.InputValidatedHelper;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -76,18 +75,17 @@ public abstract class PetManagementActivity extends AppCompatActivity
     private ViewPager.OnPageChangeListener getOnPageChangeListener(
             SectionsPagerAdapter sectionsPagerAdapter) {
         return new ViewPager.OnPageChangeListener() {
-            int nbItems = sectionsPagerAdapter.getCount();
-
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
-                ((PetData) sectionsPagerAdapter.getItem(position)).savePetData(PetManagementActivity.this);
+                ((PetData) sectionsPagerAdapter.getItem(position))
+                        .savePetData(PetManagementActivity.this);
             }
 
             @Override
             public void onPageSelected(int position) {
-                ((PetData) sectionsPagerAdapter.getItem(position)).loadPetData(PetManagementActivity.this);
-                //loadAndSavePetData(position, nbItems, sectionsPagerAdapter);
+                ((PetData) sectionsPagerAdapter.getItem(position))
+                        .loadPetData(PetManagementActivity.this);
                 showOrHideNewFeederFloatingButton(position);
             }
 
@@ -97,24 +95,6 @@ public abstract class PetManagementActivity extends AppCompatActivity
             }
         };
     }
-
-    /**
-     * Manage data loading / saving of pages depending on the position of the selected page.
-     * @param position the position of the selected page
-     * @param nbItems the number of pages
-     * @param sectionsPagerAdapter the section page adapter used
-     */
-/*    private void loadAndSavePetData(int position, int nbItems,
-                                    SectionsPagerAdapter sectionsPagerAdapter) {
-        ((PetData) sectionsPagerAdapter.getItem(position)).loadPetData();
-        Log.d(TAG, "loadPetData() " + position);
-        for (int i = nbItems - 1; i >= 0 ; i--) {
-            if (i != position) {
-                ((PetData) sectionsPagerAdapter.getItem(i)).savePetData();
-                Log.d(TAG, "savePetData() " + i);
-            }
-        }
-    }*/
 
     /**
      * Manage the visibility of the new pet feeder floating button depending on the page selected.
@@ -164,7 +144,7 @@ public abstract class PetManagementActivity extends AppCompatActivity
      */
     private void setupDialogButtons(AlertDialog newFeederDialog) {
         addNewFeederButton = newFeederView.findViewById(R.id.btn_new_feeder_add);
-        EditText editFeeder = EmailValidatedHelper.getWithValidationControlEmailEditText(
+        EditText editFeeder = InputValidatedHelper.getWithValidationControlEmailEditText(
                 newFeederView.findViewById(R.id.txt_feeder_email),
                 newFeederView.findViewById(R.id.txt_feeder_mail_invalid),
                 addNewFeederButton

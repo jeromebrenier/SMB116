@@ -1,6 +1,7 @@
 package fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.general;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -14,14 +15,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import android.provider.MediaStore;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -39,6 +37,7 @@ import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petmanagement.PetManagementFragment;
+import fr.jbrenier.petfoodingcontrol.ui.uihelpers.InputValidatedHelper;
 import fr.jbrenier.petfoodingcontrol.utils.DateTimeUtils;
 import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
@@ -59,11 +58,9 @@ public class PetGeneralFragment extends PetManagementFragment
     private static final int PICK_IMAGE_REQUEST = 10;
     private static final int TAKE_PHOTO_REQUEST = 11;
 
-    private EditText dateEditText;
-    private ImageButton datePickerButton;
     private final Calendar calendar = Calendar.getInstance();
     private View petGeneralFragmentView;
-    private PetFoodingControl petFoodingControl;
+    private EditText dateInputEditText;
     private PetManagementActivity petManagementActivity;
     private OnSaveButtonClickListener callback;
 
@@ -71,15 +68,11 @@ public class PetGeneralFragment extends PetManagementFragment
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         petGeneralFragmentView = inflater.inflate(R.layout.pet_general_fragment, container, false);
-        dateEditText = petGeneralFragmentView.findViewById(R.id.txt_pet_birthdate);
-        datePickerButton = petGeneralFragmentView.findViewById(R.id.ibtn_datepicker);
-        setupDatePickerLaunch();
         return petGeneralFragmentView;
     }
 
     /**
-     * Setup the launch a DatePicker on a date EditText click and the management of the date
-     * selected.
+     * Setup the launch a DatePicker on a date EditText focus taken.
      */
     private void setupDatePickerLaunch() {
         DatePickerDialog.OnDateSetListener onDateListener =
@@ -89,7 +82,7 @@ public class PetGeneralFragment extends PetManagementFragment
                     calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                     updateDateEditText();
                 };
-        setDatePickerButtonOnClickListener(onDateListener);
+        setDatePickerLaunchOnFocusChangeListener(onDateListener);
     }
 
     /**
@@ -98,42 +91,52 @@ public class PetGeneralFragment extends PetManagementFragment
     private void updateDateEditText() {
         String myFormat = "dd/MM/yy"; //In which you need put here
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.FRANCE);
-        dateEditText.setText(sdf.format(calendar.getTime()));
+        dateInputEditText.setText(sdf.format(calendar.getTime()));
     }
 
     /**
-     * Set a listener on the EditText for date to launch a DatePicker and fill in the date.
+     * Set a onFocusChange listener on the EditText for date to launch a DatePicker and fill in the
+     * date.
      */
-    private void setDatePickerButtonOnClickListener(
+    private void setDatePickerLaunchOnFocusChangeListener(
             DatePickerDialog.OnDateSetListener onDateSetListener) {
-        datePickerButton.setOnClickListener(
-                view -> new DatePickerDialog(getContext(), onDateSetListener, calendar
+        dateInputEditText.setOnFocusChangeListener((view, hasFocus) -> {
+            if (hasFocus) {
+                new DatePickerDialog(petManagementActivity, onDateSetListener, calendar
                         .get(Calendar.YEAR), calendar.get(Calendar.MONTH),
-                        calendar.get(Calendar.DAY_OF_MONTH)).show()
-        );
+                        calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
     }
 
-
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        petManagementActivity = (PetManagementActivity) context;
+    }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated");
-        petManagementActivity = (PetManagementActivity) getActivity();
-        petFoodingControl = (PetFoodingControl) petManagementActivity.getApplication();
         if (petManagementActivity instanceof PetCreationActivity) {
             setDefaultPhoto();
         }
         setupButtonOnClickListeners();
-        setupDateEditTextValidation();
+        dateInputEditText = InputValidatedHelper.getWithValidationControlDateEditText(
+                petManagementActivity.findViewById(R.id.txt_pet_birthdate),
+                petManagementActivity.findViewById(R.id.txt_pet_birthdate_invalid)
+        );
+        setupDatePickerLaunch();
         loadPetInfoInInputFromViewModel(petManagementActivity);
         hideAddAFeederButtonIfVisible();
     }
 
     private void setupButtonOnClickListeners() {
-        getActivity().findViewById(R.id.btn_take_pet_photo).setOnClickListener(this);
-        getActivity().findViewById(R.id.btn_pick_pet_photo_on_disk).setOnClickListener(this);
-        getActivity().findViewById(R.id.btn_pet_save).setOnClickListener(this);
+        petManagementActivity.findViewById(R.id.btn_take_pet_photo).setOnClickListener(this);
+        petManagementActivity.findViewById(R.id.btn_pick_pet_photo_on_disk)
+                .setOnClickListener(this);
+        petManagementActivity.findViewById(R.id.btn_pet_save).setOnClickListener(this);
     }
 
     /**
@@ -146,43 +149,6 @@ public class PetGeneralFragment extends PetManagementFragment
     }
 
     /**
-     * Setup a listener on key pressed in the birth date input to validate that it matches the
-     * correct dd/MM/yy format. If not the user is alerted by a red color change on the text.
-     */
-    private void setupDateEditTextValidation() {
-        EditText birthDate = petManagementActivity.findViewById(R.id.txt_pet_birthdate);
-        TextWatcher birthDateWatcher = new TextWatcher() {
-            boolean ignore = false;
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (ignore || s.length() == 0) {return;}
-                ignore = true;
-                if (!InputValidationUtils.isDateValid(s.toString())) {
-                    dateEditText.setError(getResources().getString(R.string.error_date));
-                }
-                ignore = false;
-            }
-        };
-        birthDate.addTextChangedListener(birthDateWatcher);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    /**
      * Hide the add a feeder floating button if visible.
      */
     private void hideAddAFeederButtonIfVisible() {
@@ -190,13 +156,6 @@ public class PetGeneralFragment extends PetManagementFragment
             petManagementActivity.findViewById(R.id.add_a_feeder).setVisibility(View.INVISIBLE);
         }
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-
 
     @Override
     public void loadPetData(PetManagementActivity petManagementActivity) {
