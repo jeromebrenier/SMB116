@@ -16,7 +16,7 @@ import io.reactivex.Single;
 @Dao
 public interface FoodingDao {
     @Insert
-    Single<Long> insert(Fooding fooding);
+    Completable insert(Fooding fooding);
     @Insert
     Single<List<Long>> insert(List<Fooding> foodingList);
     @Query("SELECT * FROM Fooding WHERE pet_Id = :petId")

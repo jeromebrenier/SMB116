@@ -1,6 +1,7 @@
 package fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -42,7 +43,6 @@ public abstract class PetManagementActivity extends AppCompatActivity
 
     PetManagementViewModel petManagementViewModel;
     private View newFeederView;
-    private Button addNewFeederButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,23 +75,30 @@ public abstract class PetManagementActivity extends AppCompatActivity
     private ViewPager.OnPageChangeListener getOnPageChangeListener(
             SectionsPagerAdapter sectionsPagerAdapter) {
         return new ViewPager.OnPageChangeListener() {
+            int nbPages = sectionsPagerAdapter.getCount();
+
             @Override
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
-                ((PetData) sectionsPagerAdapter.getItem(position))
-                        .savePetData(PetManagementActivity.this);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                ((PetData) sectionsPagerAdapter.getItem(position))
-                        .loadPetData(PetManagementActivity.this);
+                Log.d(TAG, "onPageScrolled " + position);
+                for (int pageNumber = 0 ; pageNumber < nbPages ; pageNumber++) {
+                    if (pageNumber == position) {
+                        ((PetData) sectionsPagerAdapter.getItem(pageNumber))
+                                .loadPetData(PetManagementActivity.this);
+                    } else {
+                        ((PetData) sectionsPagerAdapter.getItem(pageNumber))
+                                .savePetData(PetManagementActivity.this);
+                    }
+                }
                 showOrHideNewFeederFloatingButton(position);
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onPageSelected(int position) {
+            }
 
+            @Override
+            public void onPageScrollStateChanged(int state) {
             }
         };
     }
@@ -143,7 +150,7 @@ public abstract class PetManagementActivity extends AppCompatActivity
      * @param newFeederDialog the new feeder dialog hosting the buttons
      */
     private void setupDialogButtons(AlertDialog newFeederDialog) {
-        addNewFeederButton = newFeederView.findViewById(R.id.btn_new_feeder_add);
+        Button addNewFeederButton = newFeederView.findViewById(R.id.btn_new_feeder_add);
         EditText editFeeder = InputValidatedHelper.getWithValidationControlEmailEditText(
                 newFeederView.findViewById(R.id.txt_feeder_email),
                 newFeederView.findViewById(R.id.txt_feeder_mail_invalid),

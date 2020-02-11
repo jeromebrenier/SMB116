@@ -18,6 +18,7 @@ import fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingActivity
 import fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingViewModel;
 
 import static fr.jbrenier.petfoodingcontrol.BR.petfoodfragmentviewmodel;
+import static fr.jbrenier.petfoodingcontrol.BR.petfoodingactivity;
 
 /**
  * The Pet food fragment.
@@ -49,6 +50,7 @@ public class PetFoodFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         PetFoodingViewModel pfcVM = ((PetFoodingActivity) getActivity()).getPetFoodingViewModel();
         binding.setVariable(petfoodfragmentviewmodel, pfcVM);
+        binding.setVariable(petfoodingactivity, getActivity());
     }
 
     // TODO: Rename method, update argument and hook method into UI event

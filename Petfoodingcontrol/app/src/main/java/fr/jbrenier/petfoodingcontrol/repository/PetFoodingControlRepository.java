@@ -42,4 +42,5 @@ public interface PetFoodingControlRepository {
 
     /* Fooding */
     Flowable<List<Fooding>> getFoodingsForPet (Long petId);
+    Completable insert(Fooding fooding);
 }

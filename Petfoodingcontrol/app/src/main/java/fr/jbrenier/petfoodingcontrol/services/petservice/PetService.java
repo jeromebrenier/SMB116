@@ -20,4 +20,5 @@ public interface PetService {
     SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeders> petFeedersList);
     PetFoodingControlRepository getPfcRepository();
     LiveData<List<Fooding>> getPetFoodings(Pet pet);
+    SingleLiveEvent<Boolean> savePetFooding(Object object, Fooding fooding);
 }

@@ -2,10 +2,11 @@ package fr.jbrenier.petfoodingcontrol.ui.activities.petfooding;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -17,12 +18,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petfooding.SectionsPagerAdapter;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petfooding.food.PetFoodFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petfooding.weight.PetWeightFragment;
 
-import static fr.jbrenier.petfoodingcontrol.BR.petfoodingactivity;
 import static fr.jbrenier.petfoodingcontrol.BR.petfoodingviewmodel;
 
 public class PetFoodingActivity extends AppCompatActivity
@@ -44,7 +45,6 @@ public class PetFoodingActivity extends AppCompatActivity
         ViewDataBinding petFoodingBinding =
                 DataBindingUtil.setContentView(this, R.layout.pet_fooding_activity);
         petFoodingBinding.setLifecycleOwner(this);
-        petFoodingBinding.setVariable(petfoodingactivity,  this);
         petFoodingBinding.setVariable(petfoodingviewmodel, petFoodingViewModel);
 
         // Needed for title display
@@ -81,7 +81,27 @@ public class PetFoodingActivity extends AppCompatActivity
     }
 
     public void saveFooding(View view) {
-        Log.d(TAG, "plop");
+        if (view.getId() == R.id.btn_free_portion) {
+            saveFreePortionFooding();
+        } else {
+            Button buttonClicked = (Button)view;
+            String buttonText = buttonClicked.getText().toString();
+            User userLogged = ((PetFoodingControl) getApplication()).getUserLogged().getValue();
+            if (userLogged != null) {
+                petFoodingViewModel.saveFooding(Integer.valueOf(buttonText), userLogged);
+            }
+        }
+    }
+
+    private void saveFreePortionFooding() {
+        String freePortionEntered = ((EditText) findViewById(R.id.txt_petfooding_free_portion))
+                .getText().toString();
+        if (!freePortionEntered.isEmpty()) {
+            User userLogged = ((PetFoodingControl) getApplication()).getUserLogged().getValue();
+            if (userLogged != null) {
+                petFoodingViewModel.saveFooding(Integer.valueOf(freePortionEntered), userLogged);
+            }
+        }
     }
 
     public PetFoodingViewModel getPetFoodingViewModel() {

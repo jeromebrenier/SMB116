@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.Fooding;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 
@@ -71,8 +73,13 @@ public class PetFoodingViewModel extends ViewModel {
         strPetDailyFooding.setValue(integer + " g out of " + daily + " g");
     }
 
-    public void saveFooding() {
-        Log.d(TAG, "saveFooding");
+    public void saveFooding(Integer value, User userLogged) {
+        if (pet.getValue() == null) { return; }
+        Fooding fooding = new Fooding(
+                userLogged.getUserId(),
+                pet.getValue().getPetId(),
+                OffsetDateTime.now(), value);
+        petService.savePetFooding(this, fooding);
     }
 
     @Override

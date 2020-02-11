@@ -112,4 +112,20 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
         return LiveDataReactiveStreams.fromPublisher(
                 pfcRepository.getFoodingsForPet(pet.getPetId()));
     }
+
+    @Override
+    public SingleLiveEvent<Boolean> savePetFooding(Object object, Fooding fooding) {
+        SingleLiveEvent<Boolean> savePetFoodingResult = new SingleLiveEvent<>();
+        Disposable disposable = pfcRepository.insert(fooding).subscribe(
+                () -> {
+                    savePetFoodingResult.setValue(true);
+                    Log.d(TAG,"Pet Fooding saved successfully");
+                },
+                throwable -> {
+                    savePetFoodingResult.setValue(false);
+                    Log.e(TAG, "Pet Fooding saving failure : ", throwable);
+                });
+        addToCompositeDisposable(object, disposable);
+        return savePetFoodingResult;
+    }
 }

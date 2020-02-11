@@ -185,4 +185,13 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }
+
+    @Override
+    public Completable insert(Fooding fooding) {
+        Log.d(TAG, "insert fooding of " + fooding.getQuantity() + " for pet id ("
+                + fooding.getPetId() + ") and user id (" + fooding.getUserId() + ")");
+        return petFoodingControlDatabase.getFoodingDao().insert(fooding)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
 }
