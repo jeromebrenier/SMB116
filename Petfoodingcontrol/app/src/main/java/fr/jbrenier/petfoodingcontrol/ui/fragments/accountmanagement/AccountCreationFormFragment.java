@@ -35,7 +35,7 @@ import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
-import fr.jbrenier.petfoodingcontrol.ui.uihelpers.EmailValidatedHelper;
+import fr.jbrenier.petfoodingcontrol.ui.uihelpers.InputValidatedHelper;
 import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
@@ -96,7 +96,7 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
         activity.findViewById(R.id.btn_account_save).setOnClickListener(this);
         activity.findViewById((R.id.btn_pick_user_photo_on_disk)).setOnClickListener(this);
         activity.findViewById((R.id.btn_take_user_photo)).setOnClickListener(this);
-        EmailValidatedHelper.getWithValidationControlEmailEditText(
+        InputValidatedHelper.getWithValidationControlEmailEditText(
                 activity.findViewById(R.id.txt_account_email),
                 activity.findViewById(R.id.txt_account_email_invalid)
         );

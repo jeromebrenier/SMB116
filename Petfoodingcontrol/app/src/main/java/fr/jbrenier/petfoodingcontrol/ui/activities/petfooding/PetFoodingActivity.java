@@ -2,8 +2,10 @@ package fr.jbrenier.petfoodingcontrol.ui.activities.petfooding;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -20,23 +22,29 @@ import fr.jbrenier.petfoodingcontrol.ui.fragments.petfooding.SectionsPagerAdapte
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petfooding.food.PetFoodFragment;
 import fr.jbrenier.petfoodingcontrol.ui.fragments.petfooding.weight.PetWeightFragment;
 
+import static fr.jbrenier.petfoodingcontrol.BR.petfoodingactivity;
 import static fr.jbrenier.petfoodingcontrol.BR.petfoodingviewmodel;
 
 public class PetFoodingActivity extends AppCompatActivity
                                 implements PetFoodFragment.OnFragmentInteractionListener,
                                            PetWeightFragment.OnFragmentInteractionListener {
 
+    /** Logging */
+    private static final String TAG = "PetFoodingActivity";
+
     private PetFoodingViewModel petFoodingViewModel;
-    private ViewDataBinding petFoodingBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Pet petExtra = getIntent().getParcelableExtra(MainActivity.PET_EXTRA);
-        petFoodingViewModel = new PetFoodingViewModel(petExtra);
+        petFoodingViewModel = new PetFoodingViewModel();
         ((PetFoodingControl) getApplication()).getAppComponent().inject(petFoodingViewModel);
-        petFoodingBinding = DataBindingUtil.setContentView(this, R.layout.pet_fooding_activity);
+        Pet petExtra = getIntent().getParcelableExtra(MainActivity.PET_EXTRA);
+        petFoodingViewModel.getPet().setValue(petExtra);
+        ViewDataBinding petFoodingBinding =
+                DataBindingUtil.setContentView(this, R.layout.pet_fooding_activity);
         petFoodingBinding.setLifecycleOwner(this);
+        petFoodingBinding.setVariable(petfoodingactivity,  this);
         petFoodingBinding.setVariable(petfoodingviewmodel, petFoodingViewModel);
 
         // Needed for title display
@@ -70,6 +78,10 @@ public class PetFoodingActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    public void saveFooding(View view) {
+        Log.d(TAG, "plop");
     }
 
     public PetFoodingViewModel getPetFoodingViewModel() {

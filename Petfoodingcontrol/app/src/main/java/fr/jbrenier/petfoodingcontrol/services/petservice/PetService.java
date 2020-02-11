@@ -7,6 +7,7 @@ import java.util.List;
 import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.Fooding;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
@@ -18,4 +19,5 @@ public interface PetService {
     SingleLiveEvent<Feeder> checkFeederExistance(Object object, String email);
     SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeders> petFeedersList);
     PetFoodingControlRepository getPfcRepository();
+    LiveData<List<Fooding>> getPetFoodings(Pet pet);
 }

@@ -113,7 +113,10 @@
     <string name="tab_text_pet_fooding_food">Food</string>
     <string name="tab_text_pet_fooding_weight">Weight</string>
     <string name="petfooding_quantity_today">Quantity given today</string>
-    <string name="petfooding_feed">Feed</string>
+    <string name="petfooding_feed_free_portion">Free portion</string>
+    <string name="petfooding_feed_preset_portions">PreSet portions</string>
     <string name="hint_petfooding_free_portion">Free portion (g)</string>
     <string name="petfooding_give_">Give</string>
+    <string name="daily_weight_food_given_out_of"> g ouf of </string>
+    <string name="daily_weight_food_given_g">g</string>
 </resources>

@@ -7,20 +7,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.ui.activities.accountcreation.AccountCreationActivity;
 import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
-import fr.jbrenier.petfoodingcontrol.ui.uihelpers.EmailValidatedHelper;
-import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
+import fr.jbrenier.petfoodingcontrol.ui.uihelpers.InputValidatedHelper;
 
 /**
  * The fragment that contains the form to complete with credentials in order to login.
@@ -77,7 +73,7 @@ public class LoginFieldsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loginActivity = (LoginActivity) getActivity();
-        EmailValidatedHelper.getWithValidationControlEmailEditText(
+        InputValidatedHelper.getWithValidationControlEmailEditText(
                 loginActivity.findViewById(R.id.txt_login_email),
                 loginActivity.findViewById(R.id.txt_login_mail_invalid)
         );

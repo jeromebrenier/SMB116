@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import fr.jbrenier.petfoodingcontrol.db.PetFoodingControlDatabase;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.Fooding;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
@@ -173,6 +174,14 @@ public class PetFoodingControlRepositoryImpl implements PetFoodingControlReposit
     public Completable insert(List<PetFeeders> petFeedersList) {
         Log.d(TAG, "insert List of " + petFeedersList.size() + " PetFeeders ");
         return petFoodingControlDatabase.getPetFeedersDao().insert(petFeedersList)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Flowable<List<Fooding>> getFoodingsForPet(Long petId) {
+        Log.d(TAG, "getFoodingsForPet(" + petId + ")");
+        return petFoodingControlDatabase.getFoodingDao().getFoodingsForPet(petId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }

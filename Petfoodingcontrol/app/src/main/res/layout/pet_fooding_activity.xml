@@ -40,7 +40,7 @@
                     android:layout_height="@dimen/big_image_width_height"
                     android:layout_gravity="center"
                     android:layout_weight="1"
-                    app:srcCompat="@drawable/default_pet" />
+                    app:set_bitmap="@{petfoodingviewmodel.petPhoto}" />
 
                 <TextView
                     android:id="@+id/textView"

@@ -112,6 +112,7 @@ public class PetFoodSettingsFragment extends PetManagementFragment implements Pe
                 R.id.txt_food_portion4,
                 R.id.txt_food_portion5,
                 R.id.txt_food_portion6};
+        foodSettings.getPreSetPortionList().clear();
         for (int portionId : portionsId) {
             String portion = ((EditText) pMA.findViewById(portionId))
                     .getText().toString();
