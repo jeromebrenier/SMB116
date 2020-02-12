@@ -6,10 +6,9 @@
     <data>
 
         <import type="android.view.View" />
-        <import type="java.time.OffsetDateTime"/>
 
         <variable
-            name="petfoodfragmentviewmodel"
+            name="petweightfragmentviewmodel"
             type="fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingViewModel" />
 
         <variable
@@ -43,13 +42,12 @@
             android:id="@+id/txt_petffoding_last_weight"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:set_integer_text="@{petfoodfragmentviewmodel.twoLastPetWeighings.size() == 0 || petfoodfragmentviewmodel.twoLastPetWeighings.get(0) == null ? 0 : petfoodfragmentviewmodel.twoLastPetWeighings.get(0).getWeightInGrams()}" />
+            app:set_weighing_text="@{petweightfragmentviewmodel.petWeighings}" />
 
         <TextView
             android:id="@+id/txt_petfooding_last_weight_date"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-             />
+            android:layout_height="wrap_content" />
     </LinearLayout>
 
     <LinearLayout

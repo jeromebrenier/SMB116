@@ -205,9 +205,9 @@ public class PetFoodingControlRepositoryDaoImpl implements PetFoodingControlRepo
     }
 
     @Override
-    public Flowable<List<Weighing>> get2LastWeighings(Long petId) {
+    public Flowable<List<Weighing>> getWeighingsForPet(Long petId) {
         Log.d(TAG, "get2LastWeighings(" + petId + ")");
-        return petFoodingControlDatabase.getPetDao().get2LastWeighings(petId)
+        return petFoodingControlDatabase.getPetDao().getWeighingsForPet(petId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }

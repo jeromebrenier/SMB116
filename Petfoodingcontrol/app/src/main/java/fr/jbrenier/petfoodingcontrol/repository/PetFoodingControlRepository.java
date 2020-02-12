@@ -47,6 +47,6 @@ public interface PetFoodingControlRepository {
     Completable insertFooding(Fooding fooding);
 
     /* Weighing */
-    Flowable<List<Weighing>> get2LastWeighings(Long petId);
+    Flowable<List<Weighing>> getWeighingsForPet(Long petId);
     Completable insertWeighing(Weighing weighing);
 }

@@ -137,9 +137,9 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     }
 
     @Override
-    public LiveData<List<Weighing>> get2LastWeighings(Pet pet) {
+    public LiveData<List<Weighing>> getWeighingsForPet(Pet pet) {
         return LiveDataReactiveStreams.fromPublisher(
-                pfcRepository.get2LastWeighings(pet.getPetId()));
+                pfcRepository.getWeighingsForPet(pet.getPetId()));
     }
 
     @Override

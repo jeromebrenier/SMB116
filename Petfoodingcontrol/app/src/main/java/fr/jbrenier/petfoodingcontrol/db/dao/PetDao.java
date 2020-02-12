@@ -77,8 +77,6 @@ public interface PetDao {
     Single<List<Long>> insertWeighing(List<Weighing> weighingList);
     @Query("SELECT * FROM Weighing WHERE pet_Id = :petId")
     Flowable<List<Weighing>> getWeighingsForPet(Long petId);
-    @Query("SELECT * FROM Weighing WHERE pet_Id = :petId ORDER BY weighing_date ASC LIMIT 2")
-    Flowable<List<Weighing>> get2LastWeighings(Long petId);
     @Update
     Completable updateWeighing(Weighing weighing);
     @Delete

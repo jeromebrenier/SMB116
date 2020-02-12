@@ -23,6 +23,6 @@ public interface PetService {
     LiveData<List<Fooding>> getPetFoodings(Pet pet);
     LiveData<List<Fooding>> getDailyPetFoodings(Pet pet);
     SingleLiveEvent<Boolean> savePetFooding(Object object, Fooding fooding);
-    LiveData<List<Weighing>> get2LastWeighings(Pet pet);
+    LiveData<List<Weighing>> getWeighingsForPet(Pet pet);
     SingleLiveEvent<Boolean> saveNewWeighing(Object object, Weighing weighing);
 }

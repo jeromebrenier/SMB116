@@ -35,13 +35,12 @@ public class PetFoodingViewModel extends ViewModel {
     /** Logging */
     private static final String TAG = "PetFoodingViewModel";
 
-    private MutableLiveData<Pet> pet = new MutableLiveData<>();
+    private final MutableLiveData<Pet> pet = new MutableLiveData<>();
     private MutableLiveData<Bitmap> petPhoto;
-    private MutableLiveData<Integer> petDailyFooding = new MutableLiveData<>();
-    private MutableLiveData<String> strPetDailyFooding = new MutableLiveData<>("No data");
-    private MutableLiveData<List<Weighing>> twoLastPetWeighings =
+    private final MutableLiveData<Integer> petDailyFooding = new MutableLiveData<>();
+    private final MutableLiveData<String> strPetDailyFooding = new MutableLiveData<>("No data");
+    private final MutableLiveData<List<Weighing>> petWeighings =
             new MutableLiveData<>(new ArrayList<>());
-
     private Map<LiveData<?>, Observer> mapObservableObserver = new HashMap<>();
 
     public PetFoodingViewModel() {
@@ -88,21 +87,10 @@ public class PetFoodingViewModel extends ViewModel {
     }
 
     private void updateWeighing(Pet pet) {
-        LiveData<List<Weighing>> petWeighings = petService.get2LastWeighings(pet);
-        Observer<List<Weighing>> obsPetWeighing =
-                list -> list.forEach(this::saveWeighing);
+        LiveData<List<Weighing>> petWeighings = petService.getWeighingsForPet(pet);
+        Observer<List<Weighing>> obsPetWeighing = this.petWeighings::setValue;
         petWeighings.observeForever(obsPetWeighing);
         mapObservableObserver.put(petWeighings, obsPetWeighing);
-    }
-
-    private void saveWeighing(Weighing weighing) {
-        Log.d(TAG, "saveWeighing" + weighing.getWeightInGrams());
-        List<Weighing> newList = new ArrayList<>();
-        if (twoLastPetWeighings.getValue().size() > 0) {
-            newList.add(twoLastPetWeighings.getValue().get(0));
-        }
-        newList.add(weighing);
-        twoLastPetWeighings.setValue(newList);
     }
 
     void saveFooding(Integer value, User userLogged) {
@@ -150,7 +138,7 @@ public class PetFoodingViewModel extends ViewModel {
         return strPetDailyFooding;
     }
 
-    public MutableLiveData<List<Weighing>> getTwoLastPetWeighings() {
-        return twoLastPetWeighings;
+    public MutableLiveData<List<Weighing>> getPetWeighings() {
+        return petWeighings;
     }
 }

@@ -17,8 +17,8 @@ import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingActivity;
 import fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingViewModel;
 
-import static fr.jbrenier.petfoodingcontrol.BR.petfoodfragmentviewmodel;
 import static fr.jbrenier.petfoodingcontrol.BR.petfoodingactivity;
+import static fr.jbrenier.petfoodingcontrol.BR.petweightfragmentviewmodel;
 
 public class PetWeightFragment extends Fragment {
 
@@ -46,7 +46,7 @@ public class PetWeightFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         PetFoodingViewModel pfcVM = ((PetFoodingActivity) getActivity()).getPetFoodingViewModel();
-        binding.setVariable(petfoodfragmentviewmodel, pfcVM);
+        binding.setVariable(petweightfragmentviewmodel, pfcVM);
         binding.setVariable(petfoodingactivity, getActivity());
     }
 
