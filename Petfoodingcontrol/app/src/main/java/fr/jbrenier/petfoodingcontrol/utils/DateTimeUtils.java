@@ -1,8 +1,5 @@
 package fr.jbrenier.petfoodingcontrol.utils;
 
-import android.util.Log;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
@@ -23,7 +20,7 @@ public final class DateTimeUtils {
      * @param date_dd_MM_yy the date as a string
      * @return the OffsetDateTime result of the conversion
      */
-    public static OffsetDateTime getOffsetDateTimeFromBirthDate(String date_dd_MM_yy) {
+    public static OffsetDateTime getOffsetDateTimeFromDate(String date_dd_MM_yy) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy-HH:mm:ss");
         LocalDateTime datetime = LocalDateTime.parse(date_dd_MM_yy + "-00:00:00", formatter);
         ZonedDateTime zoned = datetime.atZone(TimeZone.getDefault().toZoneId());
@@ -35,7 +32,7 @@ public final class DateTimeUtils {
      * @param offsetDateTime the OffsetDateTime to convert
      * @return the string representation of the OffsetDateTime
      */
-    public static String getStringBirthDateFromOffsetDateTime(OffsetDateTime offsetDateTime) {
+    public static String getStringDateFromOffsetDateTime(OffsetDateTime offsetDateTime) {
         String result = offsetDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yy"));
         return offsetDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yy"));
     }

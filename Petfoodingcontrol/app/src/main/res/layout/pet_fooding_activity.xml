@@ -6,13 +6,13 @@
     <data>
         <variable
             name="petfoodingviewmodel"
-            type="fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingViewModel" />
+            type="fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.activities.petfooding.PetFoodingActivity">
+        tools:context=".android.activities.petfooding.PetFoodingActivity">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/pet_fooding_bar"
@@ -42,16 +42,6 @@
                     android:layout_weight="1"
                     app:set_bitmap="@{petfoodingviewmodel.petPhoto}" />
 
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:paddingTop="@dimen/big_image_text_vertical_spacing"
-                    android:textAlignment="center"
-                    android:text="@{petfoodingviewmodel.pet.name}"
-                    android:textSize="@dimen/big_image_text_size" />
             </LinearLayout>
 
             <com.google.android.material.tabs.TabLayout

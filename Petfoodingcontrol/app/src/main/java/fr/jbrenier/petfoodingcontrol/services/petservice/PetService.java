@@ -4,10 +4,11 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
+import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeder;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.Fooding;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.weight.Weighing;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
@@ -17,8 +18,11 @@ public interface PetService {
     SingleLiveEvent<Integer> update(Object object, Pet pet);
     LiveData<List<Pet>> getUserPets(User user);
     SingleLiveEvent<Feeder> checkFeederExistance(Object object, String email);
-    SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeders> petFeedersList);
+    SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeder> petFeederList);
     PetFoodingControlRepository getPfcRepository();
     LiveData<List<Fooding>> getPetFoodings(Pet pet);
+    LiveData<List<Fooding>> getDailyPetFoodings(Pet pet);
     SingleLiveEvent<Boolean> savePetFooding(Object object, Fooding fooding);
+    LiveData<List<Weighing>> get2LastWeighings(Pet pet);
+    SingleLiveEvent<Boolean> saveNewWeighing(Object object, Weighing weighing);
 }

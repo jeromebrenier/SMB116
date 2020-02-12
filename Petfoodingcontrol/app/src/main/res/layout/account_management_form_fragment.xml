@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".ui.fragments.accountmanagement.AccountCreationFormFragment">
+    tools:context=".android.fragments.accountmanagement.AccountCreationFormFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

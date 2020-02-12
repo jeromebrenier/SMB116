@@ -9,11 +9,11 @@
 
         <variable
             name="petfoodfragmentviewmodel"
-            type="fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingViewModel" />
+            type="fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingViewModel" />
 
         <variable
             name="petfoodingactivity"
-            type="fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingActivity" />
+            type="fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingActivity" />
 
     </data>
 
@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            tools:context=".ui.fragments.petfooding.food.PetFoodFragment">
+            tools:context=".android.fragments.petfooding.food.PetFoodFragment">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -82,10 +82,11 @@
                         android:id="@+id/txt_daily_weight_food_given_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/fooding_spacing_g"
                         android:layout_toEndOf="@id/txt_daily_weight_food_given_out_of"
-                        app:set_integer_text="@{petfoodfragmentviewmodel.pet.foodSettings.dailyQuantity}"
                         android:textSize="18sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        app:set_integer_text="@{petfoodfragmentviewmodel.pet.foodSettings.dailyQuantity}" />
 
                     <TextView
                         android:id="@+id/txt_daily_weight_food_given_g"
@@ -116,32 +117,25 @@
 
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/fieldset_fields_spacing">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/free_portion_input_layout"
+                    <EditText
+                        android:id="@+id/txt_petfooding_free_portion"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <EditText
-                            android:id="@+id/txt_petfooding_free_portion"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/field_horizontal_margin"
-                            android:layout_marginBottom="@dimen/fieldset_fields_spacing"
-                            android:ems="8"
-                            android:hint="@string/hint_petfooding_free_portion"
-                            android:inputType="number"
-                            android:maxEms="7"
-                            android:minEms="7" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/field_horizontal_margin"
+                        android:ems="7"
+                        android:inputType="number"
+                        android:maxEms="7"
+                        android:minEms="7" />
 
                     <Button
                         android:id="@+id/btn_free_portion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="@dimen/fooding_marging_daily_horiz"
-                        android:layout_toEndOf="@id/free_portion_input_layout"
+                        android:layout_toEndOf="@id/txt_petfooding_free_portion"
                         android:onClick="@{v -> petfoodingactivity.saveFooding(v)}"
                         android:text="@string/petfooding_give_" />
 
@@ -177,7 +171,7 @@
                             android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                             android:layout_weight="1"
                             android:onClick="@{v -> petfoodingactivity.saveFooding(v)}"
-                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() == 0 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(0) == null ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() == 0 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(0) == null ? View.INVISIBLE : View.VISIBLE}"
                             app:set_integer_text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() == 0 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(0) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(0)}" />
 
                         <Button
@@ -187,7 +181,7 @@
                             android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                             android:layout_weight="1"
                             android:onClick="@{v -> petfoodingactivity.saveFooding(v)}"
-                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 2 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(1) == null ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 2 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(1) == null ? View.INVISIBLE : View.VISIBLE}"
                             app:set_integer_text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 2 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(1) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(1)}" />
 
                         <Button
@@ -197,7 +191,7 @@
                             android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                             android:layout_weight="1"
                             android:onClick="@{v -> petfoodingactivity.saveFooding(v)}"
-                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 3 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(2) == null ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 3 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(2) == null ? View.INVISIBLE : View.VISIBLE}"
                             app:set_integer_text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 3 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(2) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(2)}" />
                     </TableRow>
 
@@ -213,7 +207,7 @@
                             android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                             android:layout_weight="1"
                             android:onClick="@{v -> petfoodingactivity.saveFooding(v)}"
-                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 4 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(3) == null ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 4 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(3) == null ? View.INVISIBLE : View.VISIBLE}"
                             app:set_integer_text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 4 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(3) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(3)}" />
 
                         <Button
@@ -223,7 +217,7 @@
                             android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                             android:layout_weight="1"
                             android:onClick="@{v -> petfoodingactivity.saveFooding(v)}"
-                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 5 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(4) == null ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 5 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(4) == null ? View.INVISIBLE : View.VISIBLE}"
                             app:set_integer_text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 5 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(4) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(4)}" />
 
                         <Button
@@ -233,7 +227,7 @@
                             android:layout_marginHorizontal="@dimen/field_horizontal_margin"
                             android:layout_weight="1"
                             android:onClick="@{v -> petfoodingactivity.saveFooding(v)}"
-                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 6 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(5) == null ? View.GONE : View.VISIBLE}"
+                            android:visibility="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 6 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(5) == null ? View.INVISIBLE : View.VISIBLE}"
                             app:set_integer_text="@{petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.size() &lt; 6 || petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(5) == null ? 0 : petfoodfragmentviewmodel.pet.foodSettings.preSetPortionList.get(5)}" />
                     </TableRow>
 

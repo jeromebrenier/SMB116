@@ -12,7 +12,7 @@
         android:required="false" />
 
     <application
-        android:name=".PetFoodingControl"
+        android:name=".android.application.PetFoodingControl"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -21,29 +21,29 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".ui.activities.petfooding.PetFoodingActivity"
+            android:name=".android.activities.petfooding.PetFoodingActivity"
             android:label="@string/title_activity_pet_fooding"
-            android:parentActivityName=".ui.activities.main.MainActivity"
+            android:parentActivityName=".android.activities.main.MainActivity"
             android:theme="@style/AppThemeNoAppBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity" />
+                android:value="fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.activities.accountcreation.AccountCreationActivity"
+            android:name=".android.activities.accountcreation.AccountCreationActivity"
             android:label="@string/title_activity_account_management"
             android:theme="@style/AppThemeNoAppBar" />
         <activity
-            android:name=".ui.activities.petmanagement.PetCreationActivity"
+            android:name=".android.activities.petmanagement.PetCreationActivity"
             android:label="@string/title_add_a_pet_activity"
-            android:parentActivityName=".ui.activities.main.MainActivity"
+            android:parentActivityName=".android.activities.main.MainActivity"
             android:theme="@style/AppThemeNoAppBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivity" />
+                android:value="fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivity" />
         </activity>
         <activity
-            android:name=".ui.activities.main.MainActivity"
+            android:name=".android.activities.main.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -53,7 +53,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.activities.login.LoginActivity"
+            android:name=".android.activities.login.LoginActivity"
             android:theme="@style/AppThemeNoAppBar" />
     </application>
 

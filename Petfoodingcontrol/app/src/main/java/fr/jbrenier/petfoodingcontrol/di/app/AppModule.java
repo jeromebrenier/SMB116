@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 
 import dagger.Module;
 import dagger.Provides;
-import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
+import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
 
 @Module
 public class AppModule {

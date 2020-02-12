@@ -79,7 +79,6 @@
     <string name="content_description_pet_photo">pet\'s photo</string>
     <string name="content_description_btn_pick_pet_photo_on_disk">pick a photo on the disk</string>
     <string name="content_description_btn_take_pet_photo">take a photo button</string>
-    <string name="content_description_btn_datepicker">pick a pet date of birth button</string>
     <string name="hint_pet_name">Name</string>
     <string name="hint_pet_birthdate">Date of birth</string>
     <string name="error_empty_pet_name">Please provide a pet name</string>
@@ -112,11 +111,20 @@
     <string name="title_activity_pet_fooding">My Pet</string>
     <string name="tab_text_pet_fooding_food">Food</string>
     <string name="tab_text_pet_fooding_weight">Weight</string>
-    <string name="petfooding_quantity_today">Quantity given today</string>
-    <string name="petfooding_feed_free_portion">Free portion</string>
-    <string name="petfooding_feed_preset_portions">PreSet portions</string>
-    <string name="hint_petfooding_free_portion">Free portion (g)</string>
+
+    <!-- Pet fooding food -->    
+    <string name="petfooding_quantity_today">Quantity aldready given today</string>
+    <string name="petfooding_feed_free_portion">Give a free portion (g)</string>
+    <string name="petfooding_feed_preset_portions">Give a PreSet portion</string>
+    <string name="hint_petfooding_free_portion">Free portion</string>
     <string name="petfooding_give_">Give</string>
     <string name="daily_weight_food_given_out_of"> g ouf of </string>
     <string name="daily_weight_food_given_g">g</string>
+
+    <!-- Pet fooding weight -->
+    <string name="petfoodind_last_weight_recorded">Last weight recorded</string>
+    <string name="title_dialog_new_weighing">Enter new weight</string>
+    <string name="new_weighing_success">New weighing successfully added</string>
+    <string name="new_weighing_error_empty">Please enter a new weight for the pet</string>
+    <string name="new_weighing_error_unknown">Error : weighing not added</string>
 </resources>

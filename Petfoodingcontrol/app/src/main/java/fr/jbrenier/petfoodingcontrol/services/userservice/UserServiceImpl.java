@@ -10,8 +10,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
-import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
+import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
+import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
@@ -122,7 +122,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                 OffsetDateTime.now().plusWeeks(1L),
                 petFoodingControl.getUserLogged().getValue().getUserId()
         );
-        Disposable disposable = pfcRepository.insert(autoLogin).subscribe(
+        Disposable disposable = pfcRepository.insertAutoLogin(autoLogin).subscribe(
                 () -> {
                     Log.i(TAG, "AutoLogin for user " + autoLogin.getUserId() +
                             " successfully inserted");
@@ -155,7 +155,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
     @Override
     public SingleLiveEvent<User> save(Context context, User user) {
         SingleLiveEvent<User> saveUserResult = new SingleLiveEvent<>();
-        Disposable disposable = pfcRepository.save(user).subscribe(
+        Disposable disposable = pfcRepository.saveUser(user).subscribe(
                 (userId) -> {
                     user.setUserId(userId);
                     saveUserResult.setValue(user);
@@ -180,7 +180,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
     @Override
     public SingleLiveEvent<Integer> update(Context context, User user) {
         SingleLiveEvent<Integer> updateUserResult = new SingleLiveEvent<>();
-        Disposable disposable = pfcRepository.update(user).subscribe(
+        Disposable disposable = pfcRepository.updateUser(user).subscribe(
                 () -> {
                     updateUserResult.setValue(0);
                     Log.i(TAG,"User updated");
@@ -216,7 +216,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                     userData.get(UserServiceKeysEnum.PASSWORD_KEY),
                     userLogged.getPhotoId()
             );
-            Disposable disposable = pfcRepository.update(userUpdated).subscribe(
+            Disposable disposable = pfcRepository.updateUser(userUpdated).subscribe(
                     () -> {
                         updateUserResult.setValue(0);
                         petFoodingControl.getUserLogged().setValue(userUpdated);

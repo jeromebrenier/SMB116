@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import java.util.Map;
 
-import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
+import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;

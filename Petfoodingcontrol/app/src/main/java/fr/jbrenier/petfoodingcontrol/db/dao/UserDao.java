@@ -6,12 +6,14 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import io.reactivex.Completable;
 import io.reactivex.Single;
 
 @Dao
 public interface UserDao {
+    /* USER */
     @Insert
     Single<Long> insert(User user);
     @Query("SELECT * FROM User WHERE user_Id = :userId")
@@ -24,4 +26,14 @@ public interface UserDao {
     Completable update(User user);
     @Delete
     Completable delete(User user);
+
+    /* AUTOLOGIN */
+    @Insert
+    Completable insertAutoLogin(AutoLogin autoLogin);
+    @Query("SELECT * FROM User INNER JOIN AutoLogin ON User.user_Id = AutoLogin.user_Id AND " +
+            "AutoLogin.token_Id = :autoLoginToken " +
+            "AND datetime(Autologin.expiration_date) > datetime(current_timestamp)")
+    Single<User> getUserByAutoLogin(String autoLoginToken);
+    @Delete
+    Completable deleteAutoLogin(AutoLogin autoLogin);
 }

@@ -9,7 +9,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    tools:context=".ui.fragments.petmanagement.petfoodsettings.PetFoodSettingsFragment">
+    tools:context=".android.fragments.petmanagement.petfoodsettings.PetFoodSettingsFragment">
 
     <TextView
         android:id="@+id/txt_title_daily_food"

@@ -13,13 +13,12 @@ import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
-import fr.jbrenier.petfoodingcontrol.ui.activities.accountcreation.AccountCreationActivity;
-import fr.jbrenier.petfoodingcontrol.ui.activities.login.LoginActivity;
-import fr.jbrenier.petfoodingcontrol.ui.activities.main.MainActivityViewModel;
-import fr.jbrenier.petfoodingcontrol.ui.activities.petfooding.PetFoodingViewModel;
-import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementActivity;
-import fr.jbrenier.petfoodingcontrol.ui.activities.petmanagement.PetManagementViewModel;
-import fr.jbrenier.petfoodingcontrol.ui.fragments.accountmanagement.AccountCreationFormFragment;
+import fr.jbrenier.petfoodingcontrol.android.activities.accountcreation.AccountCreationActivity;
+import fr.jbrenier.petfoodingcontrol.android.activities.login.LoginActivity;
+import fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivityViewModel;
+import fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingViewModel;
+import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetManagementViewModel;
+import fr.jbrenier.petfoodingcontrol.android.fragments.accountmanagement.AccountCreationFormFragment;
 
 @Singleton
 @Component(modules = {AppModule.class, RepositoryModule.class, ServicesModule.class})

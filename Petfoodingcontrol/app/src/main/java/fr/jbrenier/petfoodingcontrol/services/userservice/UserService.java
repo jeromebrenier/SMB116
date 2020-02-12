@@ -4,8 +4,8 @@ import android.content.Context;
 
 import java.util.Map;
 
-import fr.jbrenier.petfoodingcontrol.PetFoodingControl;
-import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
+import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
+import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 

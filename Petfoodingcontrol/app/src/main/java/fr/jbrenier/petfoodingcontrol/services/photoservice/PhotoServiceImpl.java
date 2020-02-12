@@ -13,7 +13,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
+import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
@@ -87,7 +87,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
 
     private Completable updateUserPhoto(User currentUser, String newPhotoBase64) {
         Photo newPhoto = new Photo(currentUser.getPhotoId(), newPhotoBase64);
-        return pfcRepository.update(newPhoto);
+        return pfcRepository.updatePhoto(newPhoto);
     }
 
     /**
@@ -97,7 +97,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
      */
     @Override
     public void save(Context context, Photo photo, User user) {
-        Disposable disposable = pfcRepository.save(photo).subscribe(
+        Disposable disposable = pfcRepository.savePhoto(photo).subscribe(
                 (photoId) -> {
                     Log.i(TAG,"User's photo saved with id " + photoId);
                     user.setPhotoId(photoId);
@@ -117,7 +117,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
     @Override
     public SingleLiveEvent<Boolean> save(Object object, Photo photo, Pet pet) {
         SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
-        Disposable disposable = pfcRepository.save(photo).subscribe(
+        Disposable disposable = pfcRepository.savePhoto(photo).subscribe(
                 (photoId) -> {
                     Log.i(TAG,"Pet's photo saved with id " + photoId);
                     pet.setPhotoId(photoId);
@@ -136,7 +136,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
     @Override
     public SingleLiveEvent<Boolean> update(Object object, Photo photo) {
         SingleLiveEvent<Boolean> result = new SingleLiveEvent<>();
-        Disposable disposable = pfcRepository.update(photo).subscribe(
+        Disposable disposable = pfcRepository.updatePhoto(photo).subscribe(
                 () -> {
                     result.setValue(true);
                     Log.i(TAG, "Photo " + photo.getPhotoId() + " updated.");

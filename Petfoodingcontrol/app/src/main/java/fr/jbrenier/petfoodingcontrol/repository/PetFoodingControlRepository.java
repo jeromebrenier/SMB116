@@ -3,8 +3,9 @@ package fr.jbrenier.petfoodingcontrol.repository;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeder;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.Fooding;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.weight.Weighing;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
@@ -19,28 +20,33 @@ public interface PetFoodingControlRepository {
     Single<User> getUserByEmail(String email);
     Single<User> getUserById(Long userId);
     Single<Photo> getUserPhoto(User user);
-    Single<Long> save(User user);
-    Completable update(User user);
+    Single<Long> saveUser(User user);
+    Completable updateUser(User user);
 
     /* AutoLogin */
     Single<User> getUserByAutoLogin(String autoLoginToken);
-    Completable insert (AutoLogin autoLogin);
+    Completable insertAutoLogin(AutoLogin autoLogin);
 
     /* Photo */
-    Single<Long> save(Photo photo);
-    Completable update(Photo photo);
+    Single<Long> savePhoto(Photo photo);
+    Completable updatePhoto(Photo photo);
 
     /* Pet */
-    Single<Long> save(Pet pet);
-    Completable update(Pet pet);
+    Single<Long> savePet(Pet pet);
+    Completable updatePet(Pet pet);
     Single<Pet> getPetById(Long petId);
     Single<Photo> getPetPhoto(Pet pet);
     Single<Feeder> getFeederByEmail(String feederEmail);
     Flowable<List<Pet>> getAllUserPetsByUserId(Long userId);
-    Single<Long> insert(PetFeeders petFeeders);
-    Completable insert(List<PetFeeders> petFeedersList);
+    Single<Long> insertPetFeeder(PetFeeder petFeeder);
+    Completable insertPetFeeders(List<PetFeeder> petFeederList);
 
     /* Fooding */
-    Flowable<List<Fooding>> getFoodingsForPet (Long petId);
-    Completable insert(Fooding fooding);
+    Flowable<List<Fooding>> getFoodingsForPet(Long petId);
+    Flowable<List<Fooding>> getDailyFoodingsForPet(Long petId);
+    Completable insertFooding(Fooding fooding);
+
+    /* Weighing */
+    Flowable<List<Weighing>> get2LastWeighings(Long petId);
+    Completable insertWeighing(Weighing weighing);
 }

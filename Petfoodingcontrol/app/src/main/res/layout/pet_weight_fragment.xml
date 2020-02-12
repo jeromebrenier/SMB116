@@ -1,14 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.fragments.petfooding.weight.PetWeightFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+
+        <import type="android.view.View" />
+        <import type="java.time.OffsetDateTime"/>
+
+        <variable
+            name="petfoodfragmentviewmodel"
+            type="fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingViewModel" />
+
+        <variable
+            name="petfoodingactivity"
+            type="fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingActivity" />
+
+    </data>
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="TOTO" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    tools:context=".android.fragments.petfooding.weight.PetWeightFragment">
 
-</FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/txt_title_fooding_last_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/petfoodind_last_weight_recorded"
+            android:textSize="@dimen/title_police_size" />
+
+        <TextView
+            android:id="@+id/txt_petffoding_last_weight"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:set_integer_text="@{petfoodfragmentviewmodel.twoLastPetWeighings.size() == 0 || petfoodfragmentviewmodel.twoLastPetWeighings.get(0) == null ? 0 : petfoodfragmentviewmodel.twoLastPetWeighings.get(0).getWeightInGrams()}" />
+
+        <TextView
+            android:id="@+id/txt_petfooding_last_weight_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+             />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/btn_fooding_new_weight_mesure"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="@{v -> petfoodingactivity.createWeighingAddDialog()}"
+            android:src="@drawable/ic_update_black_24dp" />
+
+        <ImageButton
+            android:id="@+id/btn_fooding_show_weight_history"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:src="@drawable/ic_show_chart_black_24dp" />
+    </LinearLayout>
+</LinearLayout>
+    </ScrollView>
+</layout>

@@ -9,10 +9,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import fr.jbrenier.petfoodingcontrol.androidextras.SingleLiveEvent;
+import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
-import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeders;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeder;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.Fooding;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.weight.Weighing;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
@@ -33,7 +34,7 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     @Override
     public SingleLiveEvent<Pet> save(Object object, Pet pet) {
         SingleLiveEvent<Pet> savePetResult = new SingleLiveEvent<>();
-        Disposable disposable = pfcRepository.save(pet).subscribe(
+        Disposable disposable = pfcRepository.savePet(pet).subscribe(
                 (petId) -> {
                     pet.setPetId(petId);
                     savePetResult.setValue(pet);
@@ -50,7 +51,7 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     @Override
     public SingleLiveEvent<Integer> update(Object object, Pet pet) {
         SingleLiveEvent<Integer> updatePetResult = new SingleLiveEvent<>();
-        Disposable disposable = pfcRepository.update(pet).subscribe(
+        Disposable disposable = pfcRepository.updatePet(pet).subscribe(
                 () -> {
                     updatePetResult.setValue(0);
                     Log.i(TAG,"Pet updated");
@@ -87,16 +88,16 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     }
 
     @Override
-    public SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeders> petFeedersList) {
+    public SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeder> petFeederList) {
         SingleLiveEvent<Integer> savePetFeedersResult = new SingleLiveEvent<>();
-        Disposable disposable = pfcRepository.insert(petFeedersList).subscribe(
+        Disposable disposable = pfcRepository.insertPetFeeders(petFeederList).subscribe(
                 () -> {
                     savePetFeedersResult.setValue(0);
-                    Log.i(TAG,"PetFeeders saved successfully");
+                    Log.i(TAG,"PetFeeder saved successfully");
                 },
                 throwable -> {
                     savePetFeedersResult.setValue(1);
-                    Log.e(TAG, "PetFeeders saving failure : ", throwable);
+                    Log.e(TAG, "PetFeeder saving failure : ", throwable);
                 });
         addToCompositeDisposable(object, disposable);
         return savePetFeedersResult;
@@ -114,9 +115,15 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     }
 
     @Override
+    public LiveData<List<Fooding>> getDailyPetFoodings(Pet pet) {
+        return LiveDataReactiveStreams.fromPublisher(
+                pfcRepository.getDailyFoodingsForPet(pet.getPetId()));
+    }
+
+    @Override
     public SingleLiveEvent<Boolean> savePetFooding(Object object, Fooding fooding) {
         SingleLiveEvent<Boolean> savePetFoodingResult = new SingleLiveEvent<>();
-        Disposable disposable = pfcRepository.insert(fooding).subscribe(
+        Disposable disposable = pfcRepository.insertFooding(fooding).subscribe(
                 () -> {
                     savePetFoodingResult.setValue(true);
                     Log.d(TAG,"Pet Fooding saved successfully");
@@ -127,5 +134,27 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
                 });
         addToCompositeDisposable(object, disposable);
         return savePetFoodingResult;
+    }
+
+    @Override
+    public LiveData<List<Weighing>> get2LastWeighings(Pet pet) {
+        return LiveDataReactiveStreams.fromPublisher(
+                pfcRepository.get2LastWeighings(pet.getPetId()));
+    }
+
+    @Override
+    public SingleLiveEvent<Boolean> saveNewWeighing(Object object, Weighing weighing) {
+        SingleLiveEvent<Boolean> saveNewWeighingResult = new SingleLiveEvent<>();
+        Disposable disposable = pfcRepository.insertWeighing(weighing).subscribe(
+                () -> {
+                    saveNewWeighingResult.setValue(true);
+                    Log.d(TAG,"Pet Weighing saved successfully");
+                },
+                throwable -> {
+                    saveNewWeighingResult.setValue(false);
+                    Log.e(TAG, "Pet Weighing saving failure : ", throwable);
+                });
+        addToCompositeDisposable(object, disposable);
+        return saveNewWeighingResult;
     }
 }
