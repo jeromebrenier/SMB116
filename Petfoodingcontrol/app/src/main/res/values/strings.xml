@@ -124,6 +124,7 @@
     <!-- Pet fooding weight -->
     <string name="petfoodind_last_weight_recorded">Last weight recorded</string>
     <string name="title_dialog_new_weighing">Enter new weight</string>
+    <string name="hint_new_weighing">new weighing (g)</string>
     <string name="new_weighing_success">New weighing successfully added</string>
     <string name="new_weighing_error_empty">Please enter a new weight for the pet</string>
     <string name="new_weighing_error_unknown">Error : weighing not added</string>

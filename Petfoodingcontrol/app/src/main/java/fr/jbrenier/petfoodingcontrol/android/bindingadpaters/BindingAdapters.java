@@ -26,7 +26,7 @@ public final class BindingAdapters {
     public static void setText(TextView view, List<Weighing> weighing) {
                 weighing.stream()
                 .max(Comparator.comparing(Weighing::getWeighingDate))
-                .ifPresent(w3 -> {view.setText(String.valueOf(w3.getWeightInGrams()));});
+                .ifPresent(w3 -> view.setText(String.valueOf(w3.getWeightInGrams())));
     }
 
     @BindingAdapter(value = "set_weighing_date_text")
@@ -34,7 +34,8 @@ public final class BindingAdapters {
         weighing.stream()
                 .max(Comparator.comparing(Weighing::getWeighingDate))
                 .ifPresent(w3 -> {
-                    view.setText(String.valueOf(w3.getWeightInGrams()));
+                    view.setText(
+                            DateTimeUtils.getStringDateFromOffsetDateTime(w3.getWeighingDate()));
                 });
     }
 

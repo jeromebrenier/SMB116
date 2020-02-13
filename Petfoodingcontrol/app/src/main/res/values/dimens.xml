@@ -29,4 +29,5 @@
     <dimen name="top_margin_message_edit_text">5dp</dimen>
     <dimen name="fooding_marging_daily_horiz">20dp</dimen>
     <dimen name="fooding_spacing_g">4dp</dimen>
+    <dimen name="weight_evolution_image">50dp</dimen>
 </resources>
