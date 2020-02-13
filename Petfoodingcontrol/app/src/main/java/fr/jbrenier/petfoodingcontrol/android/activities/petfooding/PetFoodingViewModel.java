@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -99,7 +100,19 @@ public class PetFoodingViewModel extends ViewModel {
     }
 
     private void updateWeightTrend(List<Weighing> list) {
-        list.stream().peek(w -> Log.d(TAG, w.getWeightInGrams() + " " + w.getWeighingDate())).close();
+        List<Weighing> twoLastWaighings = list.stream()
+                .sorted(Comparator.comparing(Weighing::getWeighingDate).reversed())
+                .limit(2).collect(Collectors.toList());
+        int lastWeighing = twoLastWaighings.get(0).getWeightInGrams();
+        int beforeLastWeighing = twoLastWaighings.get(1).getWeightInGrams();
+        if (lastWeighing > beforeLastWeighing) {
+            weightTrend.setValue(2);
+        } else if (lastWeighing < beforeLastWeighing){
+            weightTrend.setValue(0);
+        } else {
+            weightTrend.setValue(1);
+        }
+        Log.i(TAG, " LIST SIZE --------> " + list.size());
     }
 
     void saveFooding(Integer value, User userLogged) {
