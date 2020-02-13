@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +42,7 @@ public class PetFoodingViewModel extends ViewModel {
     private final MutableLiveData<String> strPetDailyFooding = new MutableLiveData<>("No data");
     private final MutableLiveData<List<Weighing>> petWeighings =
             new MutableLiveData<>(new ArrayList<>());
+    private final MutableLiveData<Integer> weightTrend = new MutableLiveData<>(1);
     private Map<LiveData<?>, Observer> mapObservableObserver = new HashMap<>();
 
     public PetFoodingViewModel() {
@@ -88,9 +90,16 @@ public class PetFoodingViewModel extends ViewModel {
 
     private void updateWeighing(Pet pet) {
         LiveData<List<Weighing>> petWeighings = petService.getWeighingsForPet(pet);
-        Observer<List<Weighing>> obsPetWeighing = this.petWeighings::setValue;
+        Observer<List<Weighing>> obsPetWeighing = list -> {
+            this.petWeighings.setValue(list);
+            updateWeightTrend(list);
+        };
         petWeighings.observeForever(obsPetWeighing);
         mapObservableObserver.put(petWeighings, obsPetWeighing);
+    }
+
+    private void updateWeightTrend(List<Weighing> list) {
+        list.stream().peek(w -> Log.d(TAG, w.getWeightInGrams() + " " + w.getWeighingDate())).close();
     }
 
     void saveFooding(Integer value, User userLogged) {
@@ -140,5 +149,9 @@ public class PetFoodingViewModel extends ViewModel {
 
     public MutableLiveData<List<Weighing>> getPetWeighings() {
         return petWeighings;
+    }
+
+    public MutableLiveData<Integer> getWeightTrend() {
+        return weightTrend;
     }
 }
