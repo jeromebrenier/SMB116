@@ -43,6 +43,15 @@
                 android:value="fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivity" />
         </activity>
         <activity
+            android:name=".android.activities.petmanagement.PetModificationActivity"
+            android:label="@string/title_pet_modifcation_activity"
+            android:parentActivityName=".android.activities.petfooding.PetFoodingActivity"
+            android:theme="@style/AppThemeNoAppBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingActivity" />
+        </activity>
+        <activity
             android:name=".android.activities.main.MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar">

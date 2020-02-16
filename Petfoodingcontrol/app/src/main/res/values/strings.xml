@@ -7,6 +7,7 @@
     <string name="btn_OK">OK</string>
     <string name="btn_add">Add</string>
     <string name="btn_cancel">Cancel</string>
+    <string name="btn_delete">Delete</string>
     <string name="error_email">Email format should match ****@****</string>
     <string name="error_date">Invalid date, it does not match the dd/MM/yy format</string>
 
@@ -40,6 +41,10 @@
     <string name="imv_card_pet_desc">Pet image</string>
     <string name="pet_status_unknown">Unknown status</string>
     <string name="txt_pet_card_is_owner">Owner</string>
+    <string name="title_pet_deletion">Pet deletion</string>
+    <string name="pet_deletion_text">Are you sure you want to delete this pet ?</string>
+    <string name="pet_deletion_success">Pet deleted successfully</string>
+    <string name="pet_deletion_failure">Pet deletion failure</string>
 
     <!-- Account Management -->
     <string name="title_activity_account_management">AccountManagementActivity</string>
@@ -128,4 +133,11 @@
     <string name="new_weighing_success">New weighing successfully added</string>
     <string name="new_weighing_error_empty">Please enter a new weight for the pet</string>
     <string name="new_weighing_error_unknown">Error : weighing not added</string>
+    <string name="weight_le">le</string>
+    <string name="weight_g">g</string>
+    <string name="weight_new_weight_button">New weight</string>
+    <string name="weight_history_button">History</string>
+    <string name="title_dialog_weighing_history">Weighing history</string>
+    <string name="btn_weight_history_close">Close</string>
+    <string name="error_weighings_empty">No weighing done, impossible to show history</string>
 </resources>

@@ -18,12 +18,6 @@ import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.android.fragments.petmanagement.PetManagementFragment;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
 public class PetFeedersFragment extends PetManagementFragment implements PetData {
 
     /** LOGGING */
@@ -62,7 +56,7 @@ public class PetFeedersFragment extends PetManagementFragment implements PetData
     }
 
     private void setAdapter(RecyclerView recyclerView) {
-        adapter = new MyPetFeedersRecyclerViewAdapter(this,
+        adapter = new MyPetFeedersRecyclerViewAdapter(
                 petManagementActivity.getPetManagementViewModel(), mListener);
         recyclerView.setAdapter(adapter);
     }

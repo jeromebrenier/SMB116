@@ -16,14 +16,11 @@ public class MyPetFeedersRecyclerViewAdapter extends
         RecyclerView.Adapter<MyPetFeedersRecyclerViewAdapter.ViewHolder> {
 
     private final PetFeedersFragment.onRemoveFeederButtonClickListener mListener;
-    private PetFeedersFragment petFeedersFragment;
     private PetManagementViewModel petManagementViewModel;
 
-    public MyPetFeedersRecyclerViewAdapter(PetFeedersFragment petFeedersFragment,
-                                           PetManagementViewModel petManagementViewModel,
+    public MyPetFeedersRecyclerViewAdapter(PetManagementViewModel petManagementViewModel,
                                            PetFeedersFragment.onRemoveFeederButtonClickListener
                                                    listener) {
-        this.petFeedersFragment = petFeedersFragment;
         this.petManagementViewModel = petManagementViewModel;
         mListener = listener;
     }

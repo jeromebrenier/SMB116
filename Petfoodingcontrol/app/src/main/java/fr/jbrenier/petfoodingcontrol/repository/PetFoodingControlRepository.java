@@ -33,6 +33,7 @@ public interface PetFoodingControlRepository {
 
     /* Pet */
     Single<Long> savePet(Pet pet);
+    Completable deletePet(Pet pet);
     Completable updatePet(Pet pet);
     Single<Pet> getPetById(Long petId);
     Single<Photo> getPetPhoto(Pet pet);

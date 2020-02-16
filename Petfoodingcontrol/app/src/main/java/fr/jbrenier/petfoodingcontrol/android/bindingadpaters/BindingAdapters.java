@@ -1,7 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.android.bindingadpaters;
 
 import android.graphics.Bitmap;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,10 +32,8 @@ public final class BindingAdapters {
     public static void setDateText(TextView view, List<Weighing> weighing) {
         weighing.stream()
                 .max(Comparator.comparing(Weighing::getWeighingDate))
-                .ifPresent(w3 -> {
-                    view.setText(
-                            DateTimeUtils.getStringDateFromOffsetDateTime(w3.getWeighingDate()));
-                });
+                .ifPresent(w3 -> view.setText(
+                            DateTimeUtils.getStringDateFromOffsetDateTime(w3.getWeighingDate())));
     }
 
     @BindingAdapter(value = "set_date_text")

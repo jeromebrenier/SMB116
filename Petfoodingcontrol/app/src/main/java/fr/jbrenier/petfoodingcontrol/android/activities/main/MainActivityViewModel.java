@@ -83,6 +83,10 @@ public class MainActivityViewModel extends ViewModel {
         return photoService.update(this, petFoodingControl.getUserLogged().getValue(), userData);
     }
 
+    SingleLiveEvent<Boolean> deletePet(Pet pet) {
+        return petService.delete(this, pet);
+    }
+
     /**
      * Invoke the userService logout.
      */

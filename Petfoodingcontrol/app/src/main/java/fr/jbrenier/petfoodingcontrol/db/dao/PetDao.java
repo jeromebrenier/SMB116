@@ -63,7 +63,7 @@ public interface PetDao {
     Single<List<Long>> insertFooding(List<Fooding> foodingList);
     @Query("SELECT * FROM Fooding WHERE pet_Id = :petId")
     Flowable<List<Fooding>> getFoodingsForPet (Long petId);
-    @Query("SELECT * FROM Fooding WHERE pet_Id = :petId AND date(fooding_date) = date(current_timestamp)")
+    @Query("SELECT * FROM Fooding WHERE pet_Id = :petId AND date(fooding_date) = date('now')")
     Flowable<List<Fooding>> getDailyFoodingsForPet (Long petId);
     @Update
     Completable updateFooding(Fooding fooding);

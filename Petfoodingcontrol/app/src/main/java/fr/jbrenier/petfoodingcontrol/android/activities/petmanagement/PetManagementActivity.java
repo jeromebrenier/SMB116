@@ -36,7 +36,7 @@ import static android.view.View.VISIBLE;
  */
 public abstract class PetManagementActivity extends AppCompatActivity
         implements PetFeedersFragment.onRemoveFeederButtonClickListener,
-        PetGeneralFragment.OnSaveButtonClickListener{
+        PetGeneralFragment.OnSaveButtonClickListener {
 
     /** LOGGING */
     private static final String TAG = "PetManagementActivity";
@@ -214,8 +214,7 @@ public abstract class PetManagementActivity extends AppCompatActivity
     }
 
     @Override
-    public void onSaveButtonClick() {
-    }
+    public void onSaveButtonClick() {}
 
     public PetManagementViewModel getPetManagementViewModel() {
         return petManagementViewModel;

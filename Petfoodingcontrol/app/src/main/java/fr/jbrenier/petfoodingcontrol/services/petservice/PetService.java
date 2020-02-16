@@ -15,6 +15,7 @@ import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 
 public interface PetService {
     SingleLiveEvent<Pet> save(Object object, Pet pet);
+    SingleLiveEvent<Boolean> delete(Object object, Pet pet);
     SingleLiveEvent<Integer> update(Object object, Pet pet);
     LiveData<List<Pet>> getUserPets(User user);
     SingleLiveEvent<Feeder> checkFeederExistance(Object object, String email);

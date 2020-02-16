@@ -123,6 +123,14 @@ public class PetFoodingControlRepositoryDaoImpl implements PetFoodingControlRepo
     }
 
     @Override
+    public Completable deletePet(Pet pet) {
+        Log.d(TAG, "deletePet(" + pet + ")");
+        return petFoodingControlDatabase.getPetDao().deletePet(pet)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
     public Completable updatePet(Pet pet) {
         Log.d(TAG, "updatePet(" + pet + ")");
         return petFoodingControlDatabase.getPetDao().updatePet(pet)

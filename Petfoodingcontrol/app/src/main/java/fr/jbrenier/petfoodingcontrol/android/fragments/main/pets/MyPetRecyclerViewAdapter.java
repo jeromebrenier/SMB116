@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -50,13 +51,17 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
            // setPetOwnedTxtVisibility(holder, holder.pet.getAuthorizedFeeders());
         }*/
 
-
         holder.mView.setOnClickListener(view -> {
-                if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.pet);
-                }
+            if (null != mListener) {
+                mListener.onListFragmentInteraction(holder.pet);
+            }
+        });
+
+        holder.mDeleteButton.setOnLongClickListener(view -> {
+            if (null != mListener) {
+                mListener.onDeletePetButtonClick(holder.pet);
+            }
+            return true;
         });
     }
 
@@ -92,6 +97,7 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
         public final TextView mPetNameView;
         public final TextView mPetStatusView;
         public final TextView mPetOwnedView;
+        public final ImageButton mDeleteButton;
 
         public Pet pet;
 
@@ -102,6 +108,7 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
             mPetNameView = view.findViewById(R.id.txt_pet_name);
             mPetStatusView = view.findViewById(R.id.txt_pet_fooding_status);
             mPetOwnedView = view.findViewById(R.id.txt_pet_is_owner);
+            mDeleteButton = view.findViewById(R.id.btn_delete_pet);
         }
 
         @Override

@@ -41,7 +41,7 @@ public class PetManagementViewModel extends ViewModel {
     @Inject
     PetService petService;
 
-    private Pet petToAdd;
+    private Pet petInvolved;
     private Photo petPhoto;
     private LiveData<List<Feeder>> petFeeders;
     private SingleLiveEvent<Boolean> petSavingStatus = new SingleLiveEvent<>();
@@ -60,9 +60,9 @@ public class PetManagementViewModel extends ViewModel {
      * Save in the DB a new pet present in the viewModel.
      */
     private SingleLiveEvent<Pet> saveNewPet() {
-        if (petToAdd != null) {
+        if (petInvolved != null) {
             addFoodSettingsToPet();
-            return petService.save(this, petToAdd);
+            return petService.save(this, petInvolved);
         }
         return null;
     }
@@ -72,7 +72,7 @@ public class PetManagementViewModel extends ViewModel {
      */
     private void addFoodSettingsToPet() {
         if (foodSettings != null) {
-            petToAdd.setFoodSettings(foodSettings);
+            petInvolved.setFoodSettings(foodSettings);
         }
     }
 
@@ -199,6 +199,13 @@ public class PetManagementViewModel extends ViewModel {
         petFeedersArrayList.remove(feeder);
     }
 
+    SingleLiveEvent<Boolean> deletePet() {
+        if (petInvolved != null) {
+            return petService.delete(this, petInvolved);
+        }
+        return null;
+    }
+
     @Override
     public void onCleared() {
         saveNewPetMap.entrySet().forEach(getConsumer());
@@ -211,12 +218,12 @@ public class PetManagementViewModel extends ViewModel {
         return entrySet -> entrySet.getKey().removeObserver(entrySet.getValue());
     }
 
-    public Pet getPetToAdd() {
-        return petToAdd;
+    public Pet getPetInvolved() {
+        return petInvolved;
     }
 
-    public void setPetToAdd(Pet petToAdd) {
-        this.petToAdd = petToAdd;
+    public void setPetInvolved(Pet petInvolved) {
+        this.petInvolved = petInvolved;
     }
 
     public Photo getPetPhoto() {

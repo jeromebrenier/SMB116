@@ -323,8 +323,25 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onListFragmentInteraction(Pet pet) {
-        launchPetFoodingActivity(pet);
+    public void onListFragmentInteraction(Pet pet) {launchPetFoodingActivity(pet);}
+
+    @Override
+    public void onDeletePetButtonClick(Pet pet) {launchPetDeletionDialog(pet);}
+
+    private void launchPetDeletionDialog(Pet pet) {
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.title_pet_deletion))
+                .setMessage(getResources().getString(R.string.pet_deletion_text))
+                .setPositiveButton(android.R.string.yes, (dialog, which) ->
+                    mainActivityViewModel.deletePet(pet).observe(this, bool -> {
+                        if (bool) {
+                            showToast(getResources().getString(R.string.pet_deletion_success));
+                        } else {
+                            showToast(getResources().getString(R.string.pet_deletion_failure));
+                        }
+                    }))
+                .setNegativeButton(android.R.string.no, null)
+                .show();
     }
 
     /**

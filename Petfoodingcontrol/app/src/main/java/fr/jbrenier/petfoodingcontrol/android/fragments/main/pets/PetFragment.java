@@ -119,5 +119,6 @@ public class PetFragment extends Fragment {
      */
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Pet pet);
+        void onDeletePetButtonClick(Pet pet);
     }
 }

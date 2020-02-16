@@ -7,7 +7,7 @@
     android:layout_marginLeft="@dimen/mtrl_card_spacing"
     android:layout_marginTop="@dimen/mtrl_card_spacing"
     android:layout_marginRight="@dimen/mtrl_card_spacing"
-    android:minHeight="80dp"
+    android:minHeight="@dimen/height_pet_card"
     app:cardBackgroundColor="@color/card_background">
 
     <TextView
@@ -15,7 +15,7 @@
         android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_margin="@dimen/text_margin_card_pet"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -25,7 +25,7 @@
         android:layout_width="140dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_margin="@dimen/text_margin_card_pet"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textSize="14sp"
         android:textStyle="italic" />
@@ -35,17 +35,29 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="start|center_vertical"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="20dp"
         android:contentDescription="@string/imv_card_pet_desc"
         android:src="@drawable/ic_launcher_foreground_2"
         app:civ_border_color="@android:color/transparent" />
+
+    <ImageButton
+        android:id="@+id/btn_delete_pet"
+        style="@android:style/Widget.Material.Light.ImageButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="@dimen/card_buttons_margin_vertical"
+        android:layout_marginEnd="10dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/ic_highlight_off_black_24dp" />
 
     <TextView
         android:id="@+id/txt_pet_is_owner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|center_vertical"
+        android:layout_gravity="bottom|right"
         android:layout_marginEnd="10dp"
+        android:layout_marginBottom="@dimen/card_buttons_margin_vertical"
         android:text="@string/txt_pet_card_is_owner"
         android:textColor="@color/colorAccent"
         android:visibility="invisible" />

@@ -170,10 +170,10 @@ public class PetGeneralFragment extends PetManagementFragment
         Pet pet;
         Photo photo;
         PetManagementViewModel viewModel = pMA.getPetManagementViewModel();
-        if (viewModel == null || viewModel.getPetToAdd() == null) {
+        if (viewModel == null || viewModel.getPetInvolved() == null) {
             return;
         } else {
-            pet = viewModel.getPetToAdd();
+            pet = viewModel.getPetInvolved();
         }
         String name = pet.getName();
         if (name != null && !name.equals("")) {
@@ -212,8 +212,8 @@ public class PetGeneralFragment extends PetManagementFragment
         if (viewModel == null) {
             return;
         }
-        if (viewModel.getPetToAdd() != null) {
-            pet = viewModel.getPetToAdd();
+        if (viewModel.getPetInvolved() != null) {
+            pet = viewModel.getPetInvolved();
         } else {
             pet = new Pet(null, null, null, null, null, null);
         }
@@ -236,7 +236,7 @@ public class PetGeneralFragment extends PetManagementFragment
             OffsetDateTime date = DateTimeUtils.getOffsetDateTimeFromDate(birthDate);
             pet.setBirthDate(date);
         }
-        viewModel.setPetToAdd(pet);
+        viewModel.setPetInvolved(pet);
         if (viewModel.getPetPhoto() != null) {
             photo = viewModel.getPetPhoto();
         } else {

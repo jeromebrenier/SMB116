@@ -20,59 +20,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    tools:context=".android.fragments.petfooding.weight.PetWeightFragment">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/txt_title_fooding_last_weight"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/petfoodind_last_weight_recorded"
-            android:textSize="@dimen/title_police_size" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:orientation="horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/imw_weight_evolution_decrease"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="@dimen/weight_evolution_image"
-                android:maxHeight="@dimen/weight_evolution_image"
-                android:minWidth="@dimen/weight_evolution_image"
-                android:minHeight="@dimen/weight_evolution_image"
-                app:srcCompat="@drawable/ic_arrow_downward_black_24dp" />
-
-            <ImageView
-                android:id="@+id/imw_weight_evolution_stable"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="@dimen/weight_evolution_image"
-                android:maxHeight="@dimen/weight_evolution_image"
-                android:minWidth="@dimen/weight_evolution_image"
-                android:minHeight="@dimen/weight_evolution_image"
-                app:srcCompat="@drawable/ic_arrow_forward_black_24dp" />
-
-            <ImageView
-                android:id="@+id/imw_weight_evolution_increase"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxWidth="@dimen/weight_evolution_image"
-                android:maxHeight="@dimen/weight_evolution_image"
-                android:minWidth="@dimen/weight_evolution_image"
-                android:minHeight="@dimen/weight_evolution_image"
-                app:srcCompat="@drawable/ic_arrow_upward_black_24dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -80,41 +33,122 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/txt_petffoding_last_weight"
+                    android:id="@+id/txt_title_fooding_last_weight"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:set_weighing_text="@{petweightfragmentviewmodel.petWeighings}" />
+                    android:layout_marginBottom="@dimen/title_margin_bottom"
+                    android:text="@string/petfoodind_last_weight_recorded"
+                    android:textSize="@dimen/title_police_size" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imw_weight_evolution_decrease"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="@dimen/weight_evolution_image"
+                        android:maxHeight="@dimen/weight_evolution_image"
+                        android:minWidth="@dimen/weight_evolution_image"
+                        android:minHeight="@dimen/weight_evolution_image"
+                        android:visibility="@{petweightfragmentviewmodel.weightTrend != 0 ? View.GONE : View.VISIBLE}"
+                        app:srcCompat="@drawable/ic_arrow_downward_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/imw_weight_evolution_stable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="@dimen/weight_evolution_image"
+                        android:maxHeight="@dimen/weight_evolution_image"
+                        android:minWidth="@dimen/weight_evolution_image"
+                        android:minHeight="@dimen/weight_evolution_image"
+                        android:visibility="@{petweightfragmentviewmodel.weightTrend != 1 ? View.GONE : View.VISIBLE}"
+                        app:srcCompat="@drawable/ic_arrow_forward_black_24dp" />
+
+                    <ImageView
+                        android:id="@+id/imw_weight_evolution_increase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxWidth="@dimen/weight_evolution_image"
+                        android:maxHeight="@dimen/weight_evolution_image"
+                        android:minWidth="@dimen/weight_evolution_image"
+                        android:minHeight="@dimen/weight_evolution_image"
+                        android:visibility="@{petweightfragmentviewmodel.weightTrend != 2 ? View.GONE : View.VISIBLE}"
+                        app:srcCompat="@drawable/ic_arrow_upward_black_24dp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <TextView
+                            android:id="@+id/txt_petffoding_last_weight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="24sp"
+                            app:set_weighing_text="@{petweightfragmentviewmodel.petWeighings}" />
+
+                        <TextView
+                            android:id="@+id/txt_weight_g"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toEndOf="@id/txt_petffoding_last_weight"
+                            android:text="@string/weight_g"
+                            android:textSize="24sp" />
+
+                        <TextView
+                            android:id="@+id/txt_weight_le"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/txt_petffoding_last_weight"
+                            android:text="@string/weight_le"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/txt_petfooding_last_weight_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignTop="@id/txt_weight_le"
+                            android:layout_toEndOf="@id/txt_weight_le"
+                            android:textSize="14sp"
+                            app:set_weighing_date_text="@{petweightfragmentviewmodel.petWeighings}" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/weight_buttons_top_margin"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/txt_petfooding_last_weight_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    app:set_weighing_date_text="@{petweightfragmentviewmodel.petWeighings}" />
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/ic_update_black_24dp"
+                    android:onClick="@{view -> petfoodingactivity.createWeighingAddDialog()}"
+                    android:text="@string/weight_new_weight_button"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:drawableTop="@drawable/ic_show_chart_black_24dp"
+                    android:onClick="@{view -> petfoodingactivity.createShowHistoryDialog()}"
+                    android:text="@string/weight_history_button"
+                    android:textAlignment="center"
+                    android:textSize="18sp" />
+
             </LinearLayout>
+
         </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btn_fooding_new_weight_mesure"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="@{v -> petfoodingactivity.createWeighingAddDialog()}"
-            android:src="@drawable/ic_update_black_24dp" />
-
-        <ImageButton
-            android:id="@+id/btn_fooding_show_weight_history"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@drawable/ic_show_chart_black_24dp" />
-    </LinearLayout>
-</LinearLayout>
     </ScrollView>
 </layout>

@@ -49,6 +49,22 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     }
 
     @Override
+    public SingleLiveEvent<Boolean> delete(Object object, Pet pet) {
+        SingleLiveEvent<Boolean> deletePetResult = new SingleLiveEvent<>();
+        Disposable disposable = pfcRepository.deletePet(pet).subscribe(
+                () -> {
+                    deletePetResult.setValue(true);
+                    Log.i(TAG, "Pet with id : " + pet.getPetId() + " deleted");
+                },
+                throwable -> {
+                    deletePetResult.setValue(false);
+                    Log.e(TAG, "Pet saving failure", throwable);
+                });
+        addToCompositeDisposable(object, disposable);
+        return deletePetResult;
+    }
+
+    @Override
     public SingleLiveEvent<Integer> update(Object object, Pet pet) {
         SingleLiveEvent<Integer> updatePetResult = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.updatePet(pet).subscribe(
