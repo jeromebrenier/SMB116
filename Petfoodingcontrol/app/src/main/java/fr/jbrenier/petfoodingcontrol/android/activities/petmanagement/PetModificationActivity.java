@@ -13,10 +13,15 @@ public class PetModificationActivity extends PetManagementActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Pet petExtra = getIntent().getParcelableExtra(PetFoodingActivity.PET_MOD_EXTRA);
-        petManagementViewModel.setPetInvolved(petExtra);
-        petManagementViewModel.setFoodSettings();
         super.onCreate(savedInstanceState);
+        Pet petExtra = getIntent().getParcelableExtra(PetFoodingActivity.PET_MOD_EXTRA);
+        if (petExtra != null) {
+            petManagementViewModel.setPetInvolved(petExtra);
+            if (petExtra.getFoodSettings() != null) {
+                petManagementViewModel.setFoodSettings(petExtra.getFoodSettings());
+            }
+            petManagementViewModel.populateFeedersArraylist();
+        }
     }
 
     @Override

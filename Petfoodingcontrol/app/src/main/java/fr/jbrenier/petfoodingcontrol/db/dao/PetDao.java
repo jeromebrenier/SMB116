@@ -48,7 +48,7 @@ public interface PetDao {
     Flowable<List<Pet>> getPetsforFeeder(Long userId);
     @Query("SELECT * FROM PetFeeder INNER JOIN User ON PetFeeder.user_Id = User.user_Id " +
             "WHERE pet_Id = :petId")
-    Flowable<List<Feeder>> getFeedersForPet (Long petId);
+    Single<List<Feeder>> getFeedersForPet (Long petId);
     @Query("SELECT User.user_Id,User.displayedName,User.email FROM User WHERE email = :feederEmail")
     Single<Feeder> getFeederByEmail(String feederEmail);
     @Update

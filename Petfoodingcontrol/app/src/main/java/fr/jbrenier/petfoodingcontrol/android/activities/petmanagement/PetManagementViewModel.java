@@ -55,6 +55,8 @@ public class PetManagementViewModel extends ViewModel {
     private Map<SingleLiveEvent<Feeder>, Observer<Feeder>> checkFeederExistanceMap =
             new HashMap<>();
     private Map<SingleLiveEvent<Integer>, Observer<Integer>> savePetFeedersMap = new HashMap<>();
+    private Map<SingleLiveEvent<List<Feeder>>, Observer<List<Feeder>>> populateFeedersMap =
+            new HashMap<>();
 
     /**
      * Save in the DB a new pet present in the viewModel.
@@ -74,6 +76,17 @@ public class PetManagementViewModel extends ViewModel {
         if (foodSettings != null) {
             petInvolved.setFoodSettings(foodSettings);
         }
+    }
+
+    void populateFeedersArraylist() {
+        Observer<List<Feeder>> observer = list -> {
+            if (!list.isEmpty()) {
+                petFeedersArrayList.addAll(list);
+            }
+        };
+        SingleLiveEvent<List<Feeder>> populate = petService.getFeeders(this, petInvolved);
+        populate.observeForever(observer);
+        populateFeedersMap.put(populate, observer);
     }
 
     /**
@@ -212,6 +225,7 @@ public class PetManagementViewModel extends ViewModel {
         saveNewPetPhotoMap.entrySet().forEach(getConsumer());
         checkFeederExistanceMap.entrySet().forEach(getConsumer());
         savePetFeedersMap.entrySet().forEach(getConsumer());
+        populateFeedersMap.entrySet().forEach(getConsumer());
     }
 
     private <T> Consumer<Map.Entry<SingleLiveEvent<T>, Observer<T>>> getConsumer() {

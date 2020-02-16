@@ -92,8 +92,10 @@ public class PetFoodingViewModel extends ViewModel {
     private void updateWeighing(Pet pet) {
         LiveData<List<Weighing>> petWeighings = petService.getWeighingsForPet(pet);
         Observer<List<Weighing>> obsPetWeighing = list -> {
-            this.petWeighings.setValue(list);
-            updateWeightTrend(list);
+            if (list != null && !list.isEmpty()) {
+                this.petWeighings.setValue(list);
+                updateWeightTrend(list);
+            }
         };
         petWeighings.observeForever(obsPetWeighing);
         mapObservableObserver.put(petWeighings, obsPetWeighing);
@@ -103,16 +105,17 @@ public class PetFoodingViewModel extends ViewModel {
         List<Weighing> twoLastWaighings = list.stream()
                 .sorted(Comparator.comparing(Weighing::getWeighingDate).reversed())
                 .limit(2).collect(Collectors.toList());
-        int lastWeighing = twoLastWaighings.get(0).getWeightInGrams();
-        int beforeLastWeighing = twoLastWaighings.get(1).getWeightInGrams();
-        if (lastWeighing > beforeLastWeighing) {
-            weightTrend.setValue(2);
-        } else if (lastWeighing < beforeLastWeighing){
-            weightTrend.setValue(0);
-        } else {
-            weightTrend.setValue(1);
+        if (twoLastWaighings.size() > 1) {
+            int lastWeighing = twoLastWaighings.get(0).getWeightInGrams();
+            int beforeLastWeighing = twoLastWaighings.get(1).getWeightInGrams();
+            if (lastWeighing > beforeLastWeighing) {
+                weightTrend.setValue(2);
+            } else if (lastWeighing < beforeLastWeighing) {
+                weightTrend.setValue(0);
+            } else {
+                weightTrend.setValue(1);
+            }
         }
-        Log.i(TAG, " LIST SIZE --------> " + list.size());
     }
 
     void saveFooding(Integer value, User userLogged) {

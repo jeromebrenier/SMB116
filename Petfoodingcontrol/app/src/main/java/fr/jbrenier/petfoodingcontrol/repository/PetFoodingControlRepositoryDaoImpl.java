@@ -163,6 +163,14 @@ public class PetFoodingControlRepositoryDaoImpl implements PetFoodingControlRepo
     }
 
     @Override
+    public Single<List<Feeder>> getFeedersForPet(Long petId) {
+        Log.d(TAG, "getFeedersForPet(" + petId + ")");
+        return petFoodingControlDatabase.getPetDao().getFeedersForPet(petId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
     public Flowable<List<Pet>> getAllUserPetsByUserId(Long userId) {
         Log.d(TAG, "getAllUserPetsByUserId(" + userId + ")");
         return petFoodingControlDatabase.getPetDao().getAllUserPetsByUserId(userId)

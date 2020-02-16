@@ -19,6 +19,7 @@ public interface PetService {
     SingleLiveEvent<Integer> update(Object object, Pet pet);
     LiveData<List<Pet>> getUserPets(User user);
     SingleLiveEvent<Feeder> checkFeederExistance(Object object, String email);
+    SingleLiveEvent<List<Feeder>> getFeeders(Object object, Pet pet);
     SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeder> petFeederList);
     PetFoodingControlRepository getPfcRepository();
     LiveData<List<Fooding>> getPetFoodings(Pet pet);

@@ -104,6 +104,15 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     }
 
     @Override
+    public SingleLiveEvent<List<Feeder>> getFeeders(Object object, Pet pet) {
+        SingleLiveEvent<List<Feeder>> getFeeders = new SingleLiveEvent<>();
+        Disposable disposable = pfcRepository.getFeedersForPet(pet.getPetId()).subscribe(
+                getFeeders::setValue, throwable -> getFeeders.setValue(null));
+        addToCompositeDisposable(object, disposable);
+        return getFeeders;
+    }
+
+    @Override
     public SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeder> petFeederList) {
         SingleLiveEvent<Integer> savePetFeedersResult = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.insertPetFeeders(petFeederList).subscribe(

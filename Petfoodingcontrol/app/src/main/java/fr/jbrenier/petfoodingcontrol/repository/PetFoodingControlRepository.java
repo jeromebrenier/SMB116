@@ -38,6 +38,7 @@ public interface PetFoodingControlRepository {
     Single<Pet> getPetById(Long petId);
     Single<Photo> getPetPhoto(Pet pet);
     Single<Feeder> getFeederByEmail(String feederEmail);
+    Single<List<Feeder>> getFeedersForPet (Long petId);
     Flowable<List<Pet>> getAllUserPetsByUserId(Long userId);
     Single<Long> insertPetFeeder(PetFeeder petFeeder);
     Completable insertPetFeeders(List<PetFeeder> petFeederList);
