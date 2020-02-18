@@ -3,6 +3,7 @@ package fr.jbrenier.petfoodingcontrol.db.dao;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -20,9 +21,9 @@ import io.reactivex.Single;
 @Dao
 public interface PetDao {
     /* PET */
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     Single<Long> insertPet(Pet pet);
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     Single<List<Long>> insertPet(List<Pet> petList);
     @Query("SELECT * FROM Pet WHERE pet_Id = :petId")
     Single<Pet> getPetbyId (Long petId);
@@ -59,12 +60,13 @@ public interface PetDao {
     /* FOODING */
     @Insert
     Completable insertFooding(Fooding fooding);
-    @Insert
-    Single<List<Long>> insertFooding(List<Fooding> foodingList);
     @Query("SELECT * FROM Fooding WHERE pet_Id = :petId")
-    Flowable<List<Fooding>> getFoodingsForPet (Long petId);
+    Flowable<List<Fooding>> getFoodingsForPet(Long petId);
     @Query("SELECT * FROM Fooding WHERE pet_Id = :petId AND date(fooding_date) = date('now')")
-    Flowable<List<Fooding>> getDailyFoodingsForPet (Long petId);
+    Flowable<List<Fooding>> getDailyFoodingsForPet(Long petId);
+    @Query("SELECT dailyQuantity - (SELECT SUM(quantity) FROM Fooding WHERE pet_Id = :petId " +
+            "AND date(fooding_date) = date('now')) FROM Pet WHERE pet_Id = :petId")
+    Flowable<Integer> getPetFoodingStatus(Long petId);
     @Update
     Completable updateFooding(Fooding fooding);
     @Delete

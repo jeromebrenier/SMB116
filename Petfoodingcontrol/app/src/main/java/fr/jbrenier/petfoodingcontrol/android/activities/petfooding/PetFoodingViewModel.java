@@ -40,7 +40,6 @@ public class PetFoodingViewModel extends ViewModel {
     private final MutableLiveData<Pet> pet = new MutableLiveData<>();
     private MutableLiveData<Bitmap> petPhoto;
     private final MutableLiveData<Integer> petDailyFooding = new MutableLiveData<>();
-    private final MutableLiveData<String> strPetDailyFooding = new MutableLiveData<>("No data");
     private final MutableLiveData<List<Weighing>> petWeighings =
             new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Integer> weightTrend = new MutableLiveData<>(1);
@@ -65,8 +64,12 @@ public class PetFoodingViewModel extends ViewModel {
         updateWeighing(pet);
     }
 
+    void refreshObsData() {
+        updateObsData(pet.getValue());
+    }
+
     private void updatePhoto(Pet pet) {
-        petPhoto = photoService.get(PetFoodingViewModel.this, pet);
+        petPhoto = photoService.getPetBitmap(PetFoodingViewModel.this, pet);
     }
 
     private void updateFooding(Pet pet) {
@@ -78,15 +81,6 @@ public class PetFoodingViewModel extends ViewModel {
                         .ifPresent(PetFoodingViewModel.this.petDailyFooding::setValue);
         petFoodings.observeForever(obsPetFoodings);
         mapObservableObserver.put(petFoodings, obsPetFoodings);
-        Observer<Integer> petDailyObs = PetFoodingViewModel.this::updateStrPetDailyFooding;
-        PetFoodingViewModel.this.petDailyFooding.observeForever(petDailyObs);
-        mapObservableObserver.put(PetFoodingViewModel.this.petDailyFooding, petDailyObs);
-    }
-
-    private void updateStrPetDailyFooding(Integer integer) {
-        String daily = pet.getValue() == null ? "" :
-                pet.getValue().getFoodSettings().getDailyQuantity().toString();
-        strPetDailyFooding.setValue(integer + " g out of " + daily + " g");
     }
 
     private void updateWeighing(Pet pet) {
@@ -157,10 +151,6 @@ public class PetFoodingViewModel extends ViewModel {
 
     public MutableLiveData<Integer> getPetDailyFooding() {
         return petDailyFooding;
-    }
-
-    public MutableLiveData<String> getStrPetDailyFooding() {
-        return strPetDailyFooding;
     }
 
     public MutableLiveData<List<Weighing>> getPetWeighings() {

@@ -26,7 +26,8 @@ public class FoodSettings implements Parcelable {
 
     protected FoodSettings(Parcel in) {
         dailyQuantity = in.readInt();
-        preSetPortionList = in.readArrayList(null);
+        preSetPortionList = new ArrayList<>();
+        in.readList(preSetPortionList, Integer.class.getClassLoader());
     }
 
     @Override

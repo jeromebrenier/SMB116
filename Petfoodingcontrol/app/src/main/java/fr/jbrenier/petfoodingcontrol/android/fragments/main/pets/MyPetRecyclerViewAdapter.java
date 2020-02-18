@@ -1,7 +1,9 @@
 package fr.jbrenier.petfoodingcontrol.android.fragments.main.pets;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +12,10 @@ import android.widget.TextView;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivityViewModel;
+import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Pet} and makes a call to the
@@ -21,6 +25,7 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
 
     private PetFragment petFragment;
     private MainActivityViewModel mainActivityViewModel;
+    private RecyclerView recyclerView;
 
     private final PetFragment.OnListFragmentInteractionListener mListener;
 
@@ -40,16 +45,42 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     }
 
     @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView = recyclerView;
+    }
+
+    @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.pet = mainActivityViewModel.getUserPetsArrayList().get(position);
         mainActivityViewModel.getPetPhoto(holder.pet).observe(
                 petFragment.getViewLifecycleOwner(), holder.mPetImageView::setImageBitmap);
         holder.mPetNameView.setText(
                 mainActivityViewModel.getUserPetsArrayList().get(position).getName());
-        holder.mPetStatusView.setText(R.string.pet_status_unknown);
-/*        if (petFragment.getPetFragmentViewModel().getUserLogged() != null) {
-           // setPetOwnedTxtVisibility(holder, holder.pet.getAuthorizedFeeders());
-        }*/
+        mainActivityViewModel.getPetStatus(holder.pet).observe(
+                petFragment.getViewLifecycleOwner(), status -> {
+                    String statusToShow;
+                    int textColor;
+                    if (status > 0) {
+                        statusToShow = recyclerView.getResources()
+                                .getString(R.string.pet_status_can_be_fed);
+                        textColor = Color.GREEN;
+                    } else {
+                        statusToShow = recyclerView.getResources()
+                                .getString(R.string.pet_status_fed);
+                        textColor = Color.RED;
+                    }
+                    holder.mPetStatusView.setText(statusToShow);
+                    holder.mPetStatusView.setTextColor(textColor);
+                }
+        );
+        PetFoodingControl pfc = (PetFoodingControl) petFragment.getActivity().getApplication();
+        User userLogged = pfc.getUserLogged().getValue();
+        if (userLogged != null) {
+            if (holder.pet.getUserId().equals(userLogged.getUserId())) {
+                holder.mPetOwnedView.setVisibility(View.VISIBLE);
+            }
+        }
 
         holder.mView.setOnClickListener(view -> {
             if (null != mListener) {
@@ -66,24 +97,9 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     }
 
     @Override
-    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
         super.onDetachedFromRecyclerView(recyclerView);
     }
-
-    /**
-     * Set the visibility of the TextView containing the indication of the ownership for the pet
-     * to VISIBLE if the authorized feeders of the pet does not contains the user's email.
-     * @param holder
-     * @param authorizedFeeders
-     */
-/*    private void setPetOwnedTxtVisibility(ViewHolder holder, List<String> authorizedFeeders) {
-        boolean isAuthorizedFeeder = authorizedFeeders.stream().anyMatch(
-                authorizedFeeder -> authorizedFeeder.equals(
-                        petFragment.getPetFragmentViewModel().getUserLogged().getEmail()));
-        if (!isAuthorizedFeeder) {
-            holder.mPetOwnedView.setVisibility(View.VISIBLE);
-        }
-    }*/
 
     @Override
     public int getItemCount() {

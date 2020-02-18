@@ -3,6 +3,7 @@ package fr.jbrenier.petfoodingcontrol.android.activities.petmanagement;
 import android.util.Log;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
@@ -42,7 +43,7 @@ public class PetManagementViewModel extends ViewModel {
     PetService petService;
 
     private Pet petInvolved;
-    private Photo petPhoto;
+    private MutableLiveData<Photo> petPhoto = new MutableLiveData<>();
     private LiveData<List<Feeder>> petFeeders;
     private SingleLiveEvent<Boolean> petSavingStatus = new SingleLiveEvent<>();
     /* Needed for the feeders list fragment */
@@ -123,14 +124,22 @@ public class PetManagementViewModel extends ViewModel {
      * @param pet Pet the photo belongs to
      */
     private SingleLiveEvent<Boolean> savePetPhoto(Pet pet) {
-        if (petPhoto != null) {
-            if (petPhoto.getPhotoId() == null) {
-                return photoService.save(this, petPhoto, pet);
+        if (petPhoto != null && petPhoto.getValue() != null) {
+            if (petPhoto.getValue().getPhotoId() == null) {
+                return photoService.save(this, petPhoto.getValue(), pet);
             } else {
-                return photoService.update(this, petPhoto);
+                return photoService.update(this, petPhoto.getValue());
             }
         }
         return null;
+    }
+
+    /**
+     * Load the photo for the pet present in the viewModel;
+     * @param pet Pet the photo belongs to
+     */
+    void loadPetPhoto(Pet pet) {
+        petPhoto = photoService.getPetPhoto(this, pet);
     }
 
     private SingleLiveEvent<Boolean> savePetFeeders(Pet pet) {
@@ -240,11 +249,11 @@ public class PetManagementViewModel extends ViewModel {
         this.petInvolved = petInvolved;
     }
 
-    public Photo getPetPhoto() {
+    public MutableLiveData<Photo> getPetPhoto() {
         return petPhoto;
     }
 
-    public void setPetPhoto(Photo petPhoto) {
+    public void setPetPhoto(MutableLiveData<Photo> petPhoto) {
         this.petPhoto = petPhoto;
     }
 

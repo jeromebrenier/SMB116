@@ -17,9 +17,8 @@ public class PetModificationActivity extends PetManagementActivity {
         Pet petExtra = getIntent().getParcelableExtra(PetFoodingActivity.PET_MOD_EXTRA);
         if (petExtra != null) {
             petManagementViewModel.setPetInvolved(petExtra);
-            if (petExtra.getFoodSettings() != null) {
-                petManagementViewModel.setFoodSettings(petExtra.getFoodSettings());
-            }
+            petManagementViewModel.loadPetPhoto(petExtra);
+            petManagementViewModel.setFoodSettings(petExtra.getFoodSettings());
             petManagementViewModel.populateFeedersArraylist();
         }
     }

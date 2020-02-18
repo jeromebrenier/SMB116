@@ -40,6 +40,8 @@
     <string name="menu_pets">My pets</string>
     <string name="imv_card_pet_desc">Pet image</string>
     <string name="pet_status_unknown">Unknown status</string>
+    <string name="pet_status_fed">Completely fed</string>
+    <string name="pet_status_can_be_fed">Can be fed</string>
     <string name="txt_pet_card_is_owner">Owner</string>
     <string name="title_pet_deletion">Pet deletion</string>
     <string name="pet_deletion_text">Are you sure you want to delete this pet ?</string>

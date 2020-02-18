@@ -1,6 +1,7 @@
 package fr.jbrenier.petfoodingcontrol.services.petservice;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
@@ -23,6 +24,7 @@ public interface PetService {
     SingleLiveEvent<Integer> savePetFeeders(Object object, List<PetFeeder> petFeederList);
     PetFoodingControlRepository getPfcRepository();
     LiveData<List<Fooding>> getPetFoodings(Pet pet);
+    LiveData<Integer> getPetStatus(Pet pet);
     LiveData<List<Fooding>> getDailyPetFoodings(Pet pet);
     SingleLiveEvent<Boolean> savePetFooding(Object object, Fooding fooding);
     LiveData<List<Weighing>> getWeighingsForPet(Pet pet);

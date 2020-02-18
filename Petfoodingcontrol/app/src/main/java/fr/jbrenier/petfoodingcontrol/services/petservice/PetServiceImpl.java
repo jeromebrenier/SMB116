@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.LiveDataReactiveStreams;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
@@ -137,6 +138,12 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     public LiveData<List<Fooding>> getPetFoodings(Pet pet) {
         return LiveDataReactiveStreams.fromPublisher(
                 pfcRepository.getFoodingsForPet(pet.getPetId()));
+    }
+
+    @Override
+    public LiveData<Integer> getPetStatus(Pet pet) {
+        return LiveDataReactiveStreams.fromPublisher(
+                pfcRepository.getPetFoodingStatus(pet.getPetId()));
     }
 
     @Override

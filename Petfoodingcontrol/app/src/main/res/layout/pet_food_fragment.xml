@@ -45,7 +45,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginBottom="@dimen/fieldset_fields_spacing">
 
-                    <ProgressBar
+                    <fr.jbrenier.petfoodingcontrol.android.customviews.FoodingProgressBar
                         android:id="@+id/pet_food_progress_bar"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="wrap_content"
@@ -73,6 +73,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/fooding_spacing_g"
+                        android:layout_marginEnd="@dimen/fooding_spacing_g"
                         android:layout_toEndOf="@id/txt_daily_weight_food_given"
                         android:text="@string/daily_weight_food_given_out_of"
                         android:textSize="18sp"

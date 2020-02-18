@@ -3,6 +3,7 @@ package fr.jbrenier.petfoodingcontrol.db.dao;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -14,7 +15,7 @@ import io.reactivex.Single;
 @Dao
 public interface UserDao {
     /* USER */
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     Single<Long> insert(User user);
     @Query("SELECT * FROM User WHERE user_Id = :userId")
     Single<User> getUserById(Long userId);
@@ -28,7 +29,7 @@ public interface UserDao {
     Completable delete(User user);
 
     /* AUTOLOGIN */
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     Completable insertAutoLogin(AutoLogin autoLogin);
     @Query("SELECT * FROM User INNER JOIN AutoLogin ON User.user_Id = AutoLogin.user_Id AND " +
             "AutoLogin.token_Id = :autoLoginToken " +

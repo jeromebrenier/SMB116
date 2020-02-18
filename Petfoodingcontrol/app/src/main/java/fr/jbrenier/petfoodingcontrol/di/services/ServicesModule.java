@@ -35,9 +35,8 @@ public class ServicesModule {
     @Singleton
     @Provides
     public PhotoService getPhotoService(PetFoodingControlRepository pfcRepository,
-                                        SharedPreferences sharedPreferences,
                                         UserService userService,
                                         PetService petService) {
-        return new PhotoServiceImpl(pfcRepository, sharedPreferences, userService, petService);
+        return new PhotoServiceImpl(pfcRepository, userService, petService);
     }
 }

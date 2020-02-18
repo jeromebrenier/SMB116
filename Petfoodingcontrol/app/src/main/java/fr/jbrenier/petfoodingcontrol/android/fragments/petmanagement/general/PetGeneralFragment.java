@@ -121,6 +121,13 @@ public class PetGeneralFragment extends PetManagementFragment
         Log.d(TAG, "onActivityCreated");
         if (petManagementActivity instanceof PetCreationActivity) {
             setDefaultPhoto();
+        } else if (petManagementViewModel.getPetPhoto().getValue() == null){
+            setDefaultPhoto();
+            petManagementViewModel.getPetPhoto().observe(getViewLifecycleOwner(), photo -> {
+                if (photo == null) {
+                    setDefaultPhoto();
+                }
+            });
         }
         setupButtonOnClickListeners();
         dateInputEditText = InputValidatedHelper.getWithValidationControlDateEditText(
@@ -183,10 +190,10 @@ public class PetGeneralFragment extends PetManagementFragment
             ((EditText) pMA.findViewById(R.id.txt_pet_birthdate))
                     .setText(DateTimeUtils.getStringDateFromOffsetDateTime(pet.getBirthDate()));
         }
-        if (viewModel.getPetPhoto() == null) {
+        if (viewModel.getPetPhoto() == null || viewModel.getPetPhoto().getValue() == null) {
             return;
         } else {
-            photo = viewModel.getPetPhoto();
+            photo = viewModel.getPetPhoto().getValue();
         }
         String image = photo.getImage();
         if (image != null && !image.isEmpty()) {
@@ -237,8 +244,8 @@ public class PetGeneralFragment extends PetManagementFragment
             pet.setBirthDate(date);
         }
         viewModel.setPetInvolved(pet);
-        if (viewModel.getPetPhoto() != null) {
-            photo = viewModel.getPetPhoto();
+        if (viewModel.getPetPhoto() != null && viewModel.getPetPhoto().getValue() != null) {
+            photo = viewModel.getPetPhoto().getValue();
         } else {
             photo = new Photo(null, null);
         }
@@ -246,7 +253,7 @@ public class PetGeneralFragment extends PetManagementFragment
                 ((ImageView) pMA.findViewById(R.id.imv_pet_photo)).getDrawable();
         Bitmap petPhotoBitmap = ((BitmapDrawable) userPhotoDrawable).getBitmap();
         photo.setImage(ImageUtils.getBase64StringFromBitmap(petPhotoBitmap));
-        viewModel.setPetPhoto(photo);
+        viewModel.getPetPhoto().setValue(photo);
     }
 
     @Override

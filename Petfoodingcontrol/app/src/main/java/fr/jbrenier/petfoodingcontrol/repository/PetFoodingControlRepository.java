@@ -46,6 +46,7 @@ public interface PetFoodingControlRepository {
     /* Fooding */
     Flowable<List<Fooding>> getFoodingsForPet(Long petId);
     Flowable<List<Fooding>> getDailyFoodingsForPet(Long petId);
+    Flowable<Integer> getPetFoodingStatus(Long petId);
     Completable insertFooding(Fooding fooding);
 
     /* Weighing */

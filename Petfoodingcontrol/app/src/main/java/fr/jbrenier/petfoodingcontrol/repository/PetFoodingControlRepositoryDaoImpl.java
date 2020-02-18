@@ -212,6 +212,14 @@ public class PetFoodingControlRepositoryDaoImpl implements PetFoodingControlRepo
     }
 
     @Override
+    public Flowable<Integer> getPetFoodingStatus(Long petId) {
+        Log.d(TAG, "getPetFoodingStatus(" + petId + ")");
+        return petFoodingControlDatabase.getPetDao().getPetFoodingStatus(petId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
     public Completable insertFooding(Fooding fooding) {
         Log.d(TAG, "insert fooding of " + fooding.getQuantity() + " for pet id ("
                 + fooding.getPetId() + ") and user id (" + fooding.getUserId() + ")");

@@ -23,6 +23,7 @@ import com.github.mikephil.charting.utils.EntryXComparator;
 import com.github.mikephil.charting.utils.Utils;
 import com.google.android.material.tabs.TabLayout;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -55,6 +56,9 @@ public class PetFoodingActivity extends AppCompatActivity
 
     /** Logging */
     private static final String TAG = "PetFoodingActivity";
+
+    /** Request code for pet modification */
+    public static final int PET_MOD_REQUEST = 77;
 
     /** Intent extras key for pet transmission to a Pet Modification Activity */
     public static final String PET_MOD_EXTRA = "petModExtra";
@@ -114,7 +118,14 @@ public class PetFoodingActivity extends AppCompatActivity
         Intent petModificationActivityIntent = new Intent(this, PetModificationActivity.class);
         petModificationActivityIntent.putExtra(PET_MOD_EXTRA,
                 petFoodingViewModel.getPet().getValue());
-        startActivity(petModificationActivityIntent);
+        startActivityForResult(petModificationActivityIntent, PET_MOD_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == PET_MOD_REQUEST && resultCode == RESULT_OK) {
+            petFoodingViewModel.refreshObsData();
+        }
     }
 
     @Override

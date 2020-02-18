@@ -120,6 +120,19 @@ public class PetFoodSettingsFragment extends PetManagementFragment implements Pe
                 foodSettings.getPreSetPortionList().add(Integer.valueOf(portion));
             }
         }
-        pMVM.setFoodSettings(foodSettings);
+        if (pMVM.getFoodSettings() != null) {
+            updateFoodSettings(pMVM.getFoodSettings(), foodSettings);
+        } else {
+            pMVM.setFoodSettings(foodSettings);
+        }
+    }
+
+    private void updateFoodSettings(FoodSettings viewModelSettings, FoodSettings newSettings) {
+        if (newSettings.getDailyQuantity() != 0) {
+            viewModelSettings.setDailyQuantity(newSettings.getDailyQuantity());
+        }
+        if (newSettings.getPreSetPortionList().size() != 0) {
+            viewModelSettings.setPreSetPortionList(newSettings.getPreSetPortionList());
+        }
     }
 }

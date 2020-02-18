@@ -81,6 +81,11 @@ public abstract class PetManagementActivity extends AppCompatActivity
             public void onPageScrolled(int position, float positionOffset,
                                        int positionOffsetPixels) {
                 Log.d(TAG, "onPageScrolled " + position);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                Log.d(TAG, "onPageSelected" + position);
                 for (int pageNumber = 0 ; pageNumber < nbPages ; pageNumber++) {
                     if (pageNumber == position) {
                         ((PetData) sectionsPagerAdapter.getItem(pageNumber))
@@ -91,10 +96,6 @@ public abstract class PetManagementActivity extends AppCompatActivity
                     }
                 }
                 showOrHideNewFeederFloatingButton(position);
-            }
-
-            @Override
-            public void onPageSelected(int position) {
             }
 
             @Override

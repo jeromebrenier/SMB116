@@ -34,15 +34,13 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
     private static final String TAG = "PhotoService";
 
     private PetFoodingControlRepository pfcRepository;
-    private SharedPreferences sharedPreferences;
     private UserService userService;
     private PetService petService;
 
     @Inject
-    public PhotoServiceImpl(PetFoodingControlRepository pfcRepository, SharedPreferences
-            sharedPreferences, UserService userService, PetService petService) {
+    public PhotoServiceImpl(PetFoodingControlRepository pfcRepository, UserService userService,
+                            PetService petService) {
         this.pfcRepository = pfcRepository;
-        this.sharedPreferences = sharedPreferences;
         this.userService = userService;
         this.petService = petService;
     }
@@ -182,7 +180,7 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
      * @return the bitmap corresponding to the pet's photo
      */
     @Override
-    public MutableLiveData<Bitmap> get(Object object, Pet pet) {
+    public MutableLiveData<Bitmap> getPetBitmap(Object object, Pet pet) {
         MutableLiveData<Bitmap> bitmapRetrieved = new MutableLiveData<>(null);
         Disposable disposable = pfcRepository.getPetPhoto(pet).subscribe(
                 photo -> {
@@ -195,5 +193,22 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                         Log.e(TAG, "Pet's photo not loaded."));
         addToCompositeDisposable(object, disposable);
         return bitmapRetrieved;
+    }
+
+    /**
+     * Get the pet's photo.
+     * @param pet the pet whose photo is to be retrieved
+     * @return the pet's photo
+     */
+    @Override
+    public MutableLiveData<Photo> getPetPhoto(Object object, Pet pet) {
+        MutableLiveData<Photo> photoRetrieved = new MutableLiveData<>(null);
+        Disposable disposable = pfcRepository.getPetPhoto(pet).subscribe(
+                photo -> {
+                    Log.i(TAG, "Pet's photo retrieved.");
+                    photoRetrieved.setValue(photo);
+                }, throwable -> Log.e(TAG, "Pet's photo not retrieved."));
+        addToCompositeDisposable(object, disposable);
+        return photoRetrieved;
     }
 }

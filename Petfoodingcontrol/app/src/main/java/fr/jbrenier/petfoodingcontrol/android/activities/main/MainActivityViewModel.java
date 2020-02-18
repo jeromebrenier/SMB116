@@ -107,7 +107,11 @@ public class MainActivityViewModel extends ViewModel {
     }
 
     public MutableLiveData<Bitmap> getPetPhoto(Pet pet) {
-        return photoService.get(this, pet);
+        return photoService.getPetBitmap(this, pet);
+    }
+
+    public LiveData<Integer> getPetStatus(Pet pet) {
+        return petService.getPetStatus(pet);
     }
 
     public MutableLiveData<Bitmap> getUserPhoto() {

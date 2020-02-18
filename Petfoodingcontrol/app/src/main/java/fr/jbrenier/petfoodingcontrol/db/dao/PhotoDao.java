@@ -3,6 +3,7 @@ package fr.jbrenier.petfoodingcontrol.db.dao;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Update;
 
@@ -12,7 +13,7 @@ import io.reactivex.Single;
 
 @Dao
 public interface PhotoDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     Single<Long> insert(Photo photo);
     @Query("SELECT * FROM Photo WHERE photo_Id = :photoId")
     Single<Photo> getPhotoById (Long photoId);
