@@ -281,6 +281,7 @@ public class MainActivity extends AppCompatActivity implements
      * Log out.
      */
     public void logout() {
+        Log.d(TAG, "logout");
         mainActivityViewModel.logout();
         mDrawerLayout.closeDrawers();
         navigationView.getMenu().getItem(0).setChecked(true);
@@ -321,8 +322,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        mainActivityViewModel.clear();
-        mainActivityViewModel.leave();
+        Log.d(TAG, "onDestroy()");
+        if (isFinishing()) {
+            mainActivityViewModel.clear();
+            mainActivityViewModel.leave();
+        }
         super.onDestroy();
     }
 

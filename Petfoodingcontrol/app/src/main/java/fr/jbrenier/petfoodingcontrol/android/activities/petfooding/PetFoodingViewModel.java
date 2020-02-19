@@ -22,6 +22,7 @@ import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.Fooding;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.weight.Weighing;
+import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
@@ -38,7 +39,8 @@ public class PetFoodingViewModel extends ViewModel {
     private static final String TAG = "PetFoodingViewModel";
 
     private final MutableLiveData<Pet> pet = new MutableLiveData<>();
-    private MutableLiveData<Bitmap> petPhoto;
+    private final MutableLiveData<Bitmap> petPhoto = new MutableLiveData<>();
+    private final MutableLiveData<List<Integer>> preSets = new MutableLiveData<>();
     private final MutableLiveData<Integer> petDailyFooding = new MutableLiveData<>();
     private final MutableLiveData<List<Weighing>> petWeighings =
             new MutableLiveData<>(new ArrayList<>());
@@ -69,7 +71,14 @@ public class PetFoodingViewModel extends ViewModel {
     }
 
     private void updatePhoto(Pet pet) {
-        petPhoto = photoService.getPetBitmap(PetFoodingViewModel.this, pet);
+        Observer<Bitmap> observer = this::setPhoto;
+        LiveData<Bitmap> updatePhoto = photoService.getPetBitmap(PetFoodingViewModel.this, pet);
+        updatePhoto.observeForever(observer);
+        mapObservableObserver.put(updatePhoto, observer);
+    }
+
+    private void setPhoto(Bitmap bitmap) {
+        this.petPhoto.setValue(bitmap);
     }
 
     private void updateFooding(Pet pet) {
