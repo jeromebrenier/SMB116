@@ -22,5 +22,5 @@ public interface PhotoService {
     void clearDisposables(Object object);
     MutableLiveData<Bitmap> get(Object object, User user);
     MutableLiveData<Bitmap> getPetBitmap(Object object, Pet pet);
-    MutableLiveData<Photo> getPetPhoto(Object object, Pet pet);
+    SingleLiveEvent<Photo> getPetPhoto(Object object, Pet pet);
 }

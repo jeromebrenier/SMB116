@@ -121,6 +121,7 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
             return;
         }
         if (petFoodingControl.isCameraPermissionGranted.getValue()) {
+            Log.d(TAG, "set Btn Camera visible");
             setBtnVisibility(R.id.btn_take_user_photo, true);
         } else {
             petFoodingControl.isCameraPermissionGranted
@@ -152,11 +153,15 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
             return;
         }
         if (petFoodingControl.isReadExternalStoragePermissionGranted.getValue()) {
+            Log.d(TAG, "set Btn Disk visible");
             setBtnVisibility(R.id.btn_pick_user_photo_on_disk, true);
         } else {
             petFoodingControl.isReadExternalStoragePermissionGranted
                     .observe(getViewLifecycleOwner(),
-                            bool -> setBtnVisibility(R.id.btn_pick_user_photo_on_disk, bool));
+                            bool -> {
+                                setBtnVisibility(R.id.btn_pick_user_photo_on_disk, bool);
+                                Log.d(TAG, "lambda set Btn Disk visible");
+                            });
         }
     }
 

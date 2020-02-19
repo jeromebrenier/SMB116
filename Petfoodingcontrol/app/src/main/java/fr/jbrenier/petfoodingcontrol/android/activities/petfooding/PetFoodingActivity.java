@@ -123,6 +123,7 @@ public class PetFoodingActivity extends AppCompatActivity
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PET_MOD_REQUEST && resultCode == RESULT_OK) {
             petFoodingViewModel.refreshObsData();
         }

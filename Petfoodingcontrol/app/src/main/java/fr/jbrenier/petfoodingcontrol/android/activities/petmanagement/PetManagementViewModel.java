@@ -58,6 +58,7 @@ public class PetManagementViewModel extends ViewModel {
     private Map<SingleLiveEvent<Integer>, Observer<Integer>> savePetFeedersMap = new HashMap<>();
     private Map<SingleLiveEvent<List<Feeder>>, Observer<List<Feeder>>> populateFeedersMap =
             new HashMap<>();
+    private Map<SingleLiveEvent<Photo>, Observer<Photo>> loadPetPhotoMap = new HashMap<>();
 
     /**
      * Save in the DB a new pet present in the viewModel.
@@ -139,7 +140,14 @@ public class PetManagementViewModel extends ViewModel {
      * @param pet Pet the photo belongs to
      */
     void loadPetPhoto(Pet pet) {
-        petPhoto = photoService.getPetPhoto(this, pet);
+        Observer<Photo> observer = this::setPetPhoto;
+        SingleLiveEvent<Photo> loadPetPhoto = photoService.getPetPhoto(this, pet);
+        loadPetPhoto.observeForever(observer);
+        loadPetPhotoMap.put(loadPetPhoto, observer);
+    }
+
+    private void setPetPhoto(Photo photo) {
+        this.petPhoto.setValue(photo);
     }
 
     private SingleLiveEvent<Boolean> savePetFeeders(Pet pet) {

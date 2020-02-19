@@ -142,9 +142,9 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
         Log.i(TAG,"All required permissions are already granted.");
-        permissionProcessDone.setValue(true);
         petFoodingControl.isCameraPermissionGranted.setValue(true);
         petFoodingControl.isReadExternalStoragePermissionGranted.setValue(true);
+        permissionProcessDone.setValue(true);
     }
 
     private boolean addPermission(List<String> permissionsList, String permission) {
@@ -182,12 +182,16 @@ public class MainActivity extends AppCompatActivity implements
                 perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
                 perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
 
-                for (int i = 0; i < permissions.length; i++)
+                for (int i = 0; i < permissions.length; i++) {
                     perms.put(permissions[i], grantResults[i]);
+                }
 
                 if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "isCameraPermissionGranted.setValue(true)");
                     petFoodingControl.isCameraPermissionGranted.setValue(true);
-                } else if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                }
+                if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "isReadExternalStoragePermissionGranted.setValue(true)");
                     petFoodingControl.isReadExternalStoragePermissionGranted.setValue(true);
                 }
                 permissionProcessDone.setValue(true);

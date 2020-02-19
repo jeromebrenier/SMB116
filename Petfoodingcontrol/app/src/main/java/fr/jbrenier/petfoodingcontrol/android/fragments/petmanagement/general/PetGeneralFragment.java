@@ -119,16 +119,7 @@ public class PetGeneralFragment extends PetManagementFragment
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d(TAG, "onActivityCreated");
-        if (petManagementActivity instanceof PetCreationActivity) {
-            setDefaultPhoto();
-        } else if (petManagementViewModel.getPetPhoto().getValue() == null){
-            setDefaultPhoto();
-            petManagementViewModel.getPetPhoto().observe(getViewLifecycleOwner(), photo -> {
-                if (photo == null) {
-                    setDefaultPhoto();
-                }
-            });
-        }
+        loadAndBindPhotoFromViewModel();
         setupButtonOnClickListeners();
         dateInputEditText = InputValidatedHelper.getWithValidationControlDateEditText(
                 petManagementActivity.findViewById(R.id.txt_pet_birthdate),
@@ -139,11 +130,24 @@ public class PetGeneralFragment extends PetManagementFragment
         hideAddAFeederButtonIfVisible();
     }
 
-    private void setupButtonOnClickListeners() {
-        petManagementActivity.findViewById(R.id.btn_take_pet_photo).setOnClickListener(this);
-        petManagementActivity.findViewById(R.id.btn_pick_pet_photo_on_disk)
-                .setOnClickListener(this);
-        petManagementActivity.findViewById(R.id.btn_pet_save).setOnClickListener(this);
+    private void loadAndBindPhotoFromViewModel() {
+        if (petManagementViewModel.getPetPhoto() == null ||
+                petManagementViewModel.getPetPhoto().getValue() == null) {
+            setDefaultPhoto();
+        } else {
+            setPhoto(petManagementViewModel.getPetPhoto().getValue());
+        }
+        petManagementViewModel.getPetPhoto().observe(getViewLifecycleOwner(), this::setPhoto);
+    }
+
+    void setPhoto(Photo photo) {
+        String image = photo.getImage();
+        if (image != null && !image.isEmpty()) {
+            ((ImageView) petManagementActivity.findViewById(R.id.imv_pet_photo))
+                    .setImageBitmap(ImageUtils.getBitmapFromBase64String(image));
+        } else {
+            setDefaultPhoto();
+        }
     }
 
     /**
@@ -154,6 +158,15 @@ public class PetGeneralFragment extends PetManagementFragment
         ((ImageView) petGeneralFragmentView.findViewById(R.id.imv_pet_photo))
                 .setImageDrawable(getResources().getDrawable(R.drawable.default_pet, null));
     }
+
+    private void setupButtonOnClickListeners() {
+        petManagementActivity.findViewById(R.id.btn_take_pet_photo).setOnClickListener(this);
+        petManagementActivity.findViewById(R.id.btn_pick_pet_photo_on_disk)
+                .setOnClickListener(this);
+        petManagementActivity.findViewById(R.id.btn_pet_save).setOnClickListener(this);
+    }
+
+
 
     /**
      * Hide the add a feeder floating button if visible.
@@ -175,7 +188,6 @@ public class PetGeneralFragment extends PetManagementFragment
     private void loadPetInfoInInputFromViewModel(PetManagementActivity pMA) {
         Log.i(TAG,"loadFoodPetInfoInInputFromViewModel");
         Pet pet;
-        Photo photo;
         PetManagementViewModel viewModel = pMA.getPetManagementViewModel();
         if (viewModel == null || viewModel.getPetInvolved() == null) {
             return;
@@ -189,16 +201,6 @@ public class PetGeneralFragment extends PetManagementFragment
         if (pet.getBirthDate() != null) {
             ((EditText) pMA.findViewById(R.id.txt_pet_birthdate))
                     .setText(DateTimeUtils.getStringDateFromOffsetDateTime(pet.getBirthDate()));
-        }
-        if (viewModel.getPetPhoto() == null || viewModel.getPetPhoto().getValue() == null) {
-            return;
-        } else {
-            photo = viewModel.getPetPhoto().getValue();
-        }
-        String image = photo.getImage();
-        if (image != null && !image.isEmpty()) {
-            ((ImageView) pMA.findViewById(R.id.imv_pet_photo))
-                    .setImageBitmap(ImageUtils.getBitmapFromBase64String(image));
         }
     }
 

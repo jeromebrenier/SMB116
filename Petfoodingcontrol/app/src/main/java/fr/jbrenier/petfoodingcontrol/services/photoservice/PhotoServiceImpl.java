@@ -23,6 +23,7 @@ import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 import io.reactivex.Completable;
+import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -201,8 +202,8 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
      * @return the pet's photo
      */
     @Override
-    public MutableLiveData<Photo> getPetPhoto(Object object, Pet pet) {
-        MutableLiveData<Photo> photoRetrieved = new MutableLiveData<>(null);
+    public SingleLiveEvent<Photo> getPetPhoto(Object object, Pet pet) {
+        SingleLiveEvent<Photo> photoRetrieved = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.getPetPhoto(pet).subscribe(
                 photo -> {
                     Log.i(TAG, "Pet's photo retrieved.");
