@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.Map;
@@ -88,6 +89,7 @@ public class AccountCreationActivity extends AppCompatActivity
 
     @Override
     public void onSaveButtonClick(Map<UserServiceKeysEnum, String> userData) {
+        Log.d(TAG, "onSaveButtonClick");
         // USER
         String hashedUserPassword = CryptographyUtils.hashPassword(
                 userData.get(UserServiceKeysEnum.PASSWORD_KEY));

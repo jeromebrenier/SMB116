@@ -1,9 +1,7 @@
 package fr.jbrenier.petfoodingcontrol.android.activities.main;
 
-import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -27,9 +25,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
@@ -58,11 +53,10 @@ public class MainActivity extends AppCompatActivity implements
     /** Intent extras key for pet transmission to a Pet Fooding Activity */
     public static final String PET_EXTRA = "petExtra";
 
-    /* PERMISSIONS */
-    private static final int PERMISSIONS_REQUEST = 3;
+    /** Permissions process status */
     private final SingleLiveEvent<Boolean> permissionProcessDone = new SingleLiveEvent<>();
 
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "MainActivity";
 
     private TextView user_name;
@@ -75,12 +69,30 @@ public class MainActivity extends AppCompatActivity implements
 
     private MainActivityViewModel mainActivityViewModel;
     private PetFoodingControl petFoodingControl;
+    private MainActivityPermissionsHelper permissionsHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         petFoodingControl = (PetFoodingControl) getApplication();
         mainActivityViewModel = new MainActivityViewModel(petFoodingControl);
+        contentInitAndSetup();
+
+        // Permissions Management
+        permissionProcessDone.observe(this, bool -> {
+            if (petFoodingControl.getUserLogged().getValue() == null) {
+                Log.i(TAG, "Launching login activity.");
+                launchLoginActivity();
+            }
+        });
+        permissionsHelper = new MainActivityPermissionsHelper(this);
+        permissionsHelper.checkApplicationPermissions();
+    }
+
+    /**
+     * Initialize, define and setup the content elements.
+     */
+    private void contentInitAndSetup() {
         setContentView(R.layout.main_activity);
         toolbar = findViewById(R.id.main_toolbar);
         setSupportActionBar(toolbar);
@@ -98,147 +110,6 @@ public class MainActivity extends AppCompatActivity implements
         getUserDataView();
         setupLogoutListener(navigationView);
         setupUserLoggedListener();
-        permissionProcessDone.observe(this, bool -> {
-            if (petFoodingControl.getUserLogged().getValue() == null) {
-                Log.i(TAG, "Launching login activity.");
-                launchLoginActivity();
-            }
-        });
-        checkApplicationPermissions();
-    }
-
-    /**
-     * Check if the required permissions to use the application have been accepted and are already
-     * granted. If not, launch a dialog to inform the user of the permission need for the missing
-     * ones.
-     */
-    private void checkApplicationPermissions() {
-        Log.i(TAG, "Checking permissions.");
-        final List<String> permissionsNeeded = new ArrayList<String>();
-        final List<String> permissionsList = new ArrayList<String>();
-
-        if (!addPermission(permissionsList, Manifest.permission.CAMERA))
-            permissionsNeeded.add(getResources().getString(R.string.permission_camera));
-        if (!addPermission(permissionsList, Manifest.permission.READ_EXTERNAL_STORAGE))
-            permissionsNeeded.add(getResources().
-                    getString(R.string.permission_read_external_storage));
-
-        if (permissionsList.size() > 0) {
-            Log.i(TAG,"permissionsList.size()");
-            if (permissionsNeeded.size() > 0) {
-                Log.i(TAG,"permissionsNeeded.size()");
-                String message = getResources().getString(R.string.permission_grant_access_needed)
-                        + " " + permissionsNeeded.get(0);
-                for (int i = 1; i < permissionsNeeded.size(); i++)
-                    message = message + ", " + permissionsNeeded.get(i);
-                showMessageOKCancel(message,
-                        (dialog, which) -> requestPermissions(permissionsList.toArray(
-                                new String[permissionsList.size()]), PERMISSIONS_REQUEST),
-                        (dialog, which) -> permissionProcessDone.setValue(true));
-                return;
-            }
-            requestPermissions(permissionsList.toArray(new String[permissionsList.size()]),
-                    PERMISSIONS_REQUEST);
-            return;
-        }
-        Log.i(TAG,"All required permissions are already granted.");
-        petFoodingControl.isCameraPermissionGranted.setValue(true);
-        petFoodingControl.isReadExternalStoragePermissionGranted.setValue(true);
-        permissionProcessDone.setValue(true);
-    }
-
-    private boolean addPermission(List<String> permissionsList, String permission) {
-        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-            permissionsList.add(permission);
-            return shouldShowRequestPermissionRationale(permission);
-        }
-        return true;
-    }
-
-    /**
-     * Show an OK/Cancel dialog message to inform that a permission is needed and ask for a
-     * reaction.
-     * @param message the message to display
-     * @param okListener the listener triggered by the OK button
-     */
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener,
-                                     DialogInterface.OnClickListener cancelListener) {
-        new AlertDialog.Builder(MainActivity.this)
-                .setMessage(message)
-                .setPositiveButton(getResources().getString(R.string.btn_OK), okListener)
-                .setNegativeButton(getResources().getString(R.string.btn_cancel), cancelListener)
-                .create()
-                .show();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                           int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSIONS_REQUEST:
-                Log.i(TAG,"RequestPermissionResult");
-                Map<String, Integer> perms = new HashMap<String, Integer>();
-
-                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
-                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-
-                for (int i = 0; i < permissions.length; i++) {
-                    perms.put(permissions[i], grantResults[i]);
-                }
-
-                if (perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "isCameraPermissionGranted.setValue(true)");
-                    petFoodingControl.isCameraPermissionGranted.setValue(true);
-                }
-                if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Log.d(TAG, "isReadExternalStoragePermissionGranted.setValue(true)");
-                    petFoodingControl.isReadExternalStoragePermissionGranted.setValue(true);
-                }
-                permissionProcessDone.setValue(true);
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    /**
-     * Setup user logged listener to display its data in the header.
-     */
-    private void setupUserLoggedListener() {
-        petFoodingControl.getUserLogged().observe(this, user -> {
-            if (user != null) {
-                mainActivityViewModel.updateUserPetsAndPhoto(user);
-                setupUserPetsListener();
-                setUserDataInNavBar(user);
-            }
-        });
-    }
-
-    /**
-     * Setup a listener on user's pet to launch an update on the corresponding ArrayList.
-     */
-    private void setupUserPetsListener() {
-        mainActivityViewModel.getUserPets().observe(this,
-                this.mainActivityViewModel::updateUserPetsArrayList);
-        if (mainActivityViewModel.getUserPets() != null &&
-                mainActivityViewModel.getUserPets().getValue() != null ) {
-            mainActivityViewModel.updateUserPetsArrayList(
-                    mainActivityViewModel.getUserPets().getValue());
-        }
-    }
-
-    /**
-     * Set the User elements (name and photo) in the navigation bar dedicated area according to
-     * the User data.
-     * @param user : the logged User
-     */
-    private void setUserDataInNavBar(User user) {
-        user_name.setText(user == null ? "********" : user.getDisplayedName());
-        mainActivityViewModel.getUserPhoto().observe(this, bitmap -> {
-            if (bitmap != null) {
-                user_photo.setImageBitmap(bitmap);
-            }
-        });
     }
 
     /**
@@ -288,14 +159,6 @@ public class MainActivity extends AppCompatActivity implements
         launchLoginActivity();
     }
 
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
-
     /**
      * Launch login activity trough explicit intent.
      */
@@ -304,12 +167,71 @@ public class MainActivity extends AppCompatActivity implements
         startActivityForResult(loginActivityIntent, LOGIN_REQUEST);
     }
 
+    /**
+     * Setup user logged listener to display its data in the header.
+     */
+    private void setupUserLoggedListener() {
+        petFoodingControl.getUserLogged().observe(this, user -> {
+            if (user != null) {
+                mainActivityViewModel.updateUserPetsAndPhoto(user);
+                setupUserPetsListener();
+                setUserDataInNavBar(user);
+            }
+        });
+    }
+
+    /**
+     * Setup a listener on user's pet to launch an update on the corresponding ArrayList.
+     */
+    private void setupUserPetsListener() {
+        mainActivityViewModel.getUserPets().observe(this,
+                this.mainActivityViewModel::updateUserPetsArrayList);
+        if (mainActivityViewModel.getUserPets() != null &&
+                mainActivityViewModel.getUserPets().getValue() != null ) {
+            mainActivityViewModel.updateUserPetsArrayList(
+                    mainActivityViewModel.getUserPets().getValue());
+        }
+    }
+
+    /**
+     * Set the User elements (name and photo) in the navigation bar dedicated area according to
+     * the User data.
+     * @param user : the logged User
+     */
+    private void setUserDataInNavBar(User user) {
+        user_name.setText(user == null ? "********" : user.getDisplayedName());
+        mainActivityViewModel.getUserPhoto().observe(this, bitmap -> {
+            if (bitmap != null) {
+                user_photo.setImageBitmap(bitmap);
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == MainActivityPermissionsHelper.PERMISSIONS_REQUEST) {
+            permissionsHelper.onRequestPermissionsResult(requestCode, permissions,
+                    grantResults);
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == LOGIN_REQUEST && resultCode != RESULT_OK) {
             finishAndRemoveTask();
-            checkApplicationPermissions();
+            permissionsHelper.checkApplicationPermissions();
         }
     }
 
@@ -324,8 +246,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onDestroy() {
         Log.d(TAG, "onDestroy()");
         if (isFinishing()) {
-            mainActivityViewModel.clear();
-            mainActivityViewModel.leave();
+            mainActivityViewModel.finish();
         }
         super.onDestroy();
     }
@@ -333,9 +254,23 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onListFragmentInteraction(Pet pet) {launchPetFoodingActivity(pet);}
 
+    /**
+     * Launch a pet fooding acivity for a pet.
+     * @param pet the pet to launch a fooding activity for
+     */
+    private void launchPetFoodingActivity(Pet pet) {
+        Intent petFoodingActivityIntent = new Intent(this, PetFoodingActivity.class);
+        petFoodingActivityIntent.putExtra(PET_EXTRA, pet);
+        startActivity(petFoodingActivityIntent);
+    }
+
     @Override
     public void onDeletePetButtonClick(Pet pet) {launchPetDeletionDialog(pet);}
 
+    /**
+     * Launch a dialog to require a confirmation before effective deletion of a pet.
+     * @param pet the pet to delete
+     */
     private void launchPetDeletionDialog(Pet pet) {
         new AlertDialog.Builder(this)
                 .setTitle(getResources().getString(R.string.title_pet_deletion))
@@ -350,16 +285,6 @@ public class MainActivity extends AppCompatActivity implements
                     }))
                 .setNegativeButton(android.R.string.no, null)
                 .show();
-    }
-
-    /**
-     * Launch a pet fooding acivity for a pet.
-     * @param pet the pet to launch a fooding activity for
-     */
-    private void launchPetFoodingActivity(Pet pet) {
-        Intent petFoodingActivityIntent = new Intent(this, PetFoodingActivity.class);
-        petFoodingActivityIntent.putExtra(PET_EXTRA, pet);
-        startActivity(petFoodingActivityIntent);
     }
 
     @Override
@@ -399,5 +324,9 @@ public class MainActivity extends AppCompatActivity implements
 
     public MainActivityViewModel getMainActivityViewModel() {
         return mainActivityViewModel;
+    }
+
+    public SingleLiveEvent<Boolean> getPermissionProcessDone() {
+        return permissionProcessDone;
     }
 }

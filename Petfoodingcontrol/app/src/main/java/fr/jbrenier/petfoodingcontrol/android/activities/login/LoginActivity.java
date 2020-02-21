@@ -25,7 +25,7 @@ import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "LoginActivity";
 
     @Inject
@@ -43,6 +43,20 @@ public class LoginActivity extends AppCompatActivity {
             setupUserLoggedListener();
         }
         userService.initLogin(this);
+    }
+
+    /**
+     * Setup a listener to load the login fields if no user is logged or the welcome fragment
+     * in the contrary.
+     */
+    private void setupUserLoggedListener() {
+        petFoodingControl.getUserLogged().observe(this, user -> {
+            if (user == null) {
+                loadFragment(new LoginFieldsFragment());
+            } else {
+                loadFragment(new LoginWelcomeFragment());
+            }
+        });
     }
 
     /**
@@ -95,20 +109,6 @@ public class LoginActivity extends AppCompatActivity {
                         showToast(R.string.toast_failed_login_user_unknown);
                     }
                 });
-    }
-
-    /**
-     * Setup a listener to load the login fields if no user is logged or the welcome fragment
-     * in the contrary.
-     */
-    private void setupUserLoggedListener() {
-        petFoodingControl.getUserLogged().observe(this, user -> {
-            if (user == null) {
-                loadFragment(new LoginFieldsFragment());
-            } else {
-                loadFragment(new LoginWelcomeFragment());
-            }
-        });
     }
 
     /**

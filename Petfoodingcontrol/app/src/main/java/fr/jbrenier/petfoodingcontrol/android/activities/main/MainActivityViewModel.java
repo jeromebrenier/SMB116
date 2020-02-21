@@ -22,8 +22,12 @@ import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 
+/**
+ * The main activity view model.
+ * @author Jérôme Brenier
+ */
 public class MainActivityViewModel extends ViewModel {
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "MainActivityViewModel";
 
     @Inject
@@ -75,14 +79,29 @@ public class MainActivityViewModel extends ViewModel {
         userPetsArrayListChanged.setValue(currentValue);
     }
 
+    /**
+     * Update the user with the data given in parameter.
+     * @param userData the updated data
+     * @return 0 if update process successful, 1 otherwise
+     */
     SingleLiveEvent<Integer> updateUser(Map<UserServiceKeysEnum, String> userData) {
         return userService.update(this, userData);
     }
 
+    /**
+     * Update the user'photo with the data given in parameter.
+     * @param userData the updated data
+     * @return 0 if update process successful, 1 otherwise
+     */
     SingleLiveEvent<Integer> updateUserPhoto(Map<UserServiceKeysEnum, String> userData) {
         return photoService.update(this, petFoodingControl.getUserLogged().getValue(), userData);
     }
 
+    /**
+     * Delete the pet given in parameter.
+     * @param pet the pet to delete
+     * @return true if delete process successful, false otherwise
+     */
     SingleLiveEvent<Boolean> deletePet(Pet pet) {
         return petService.delete(this, pet);
     }
@@ -91,19 +110,24 @@ public class MainActivityViewModel extends ViewModel {
      * Invoke the userService logout.
      */
     void logout() {
-        userService.logout();
+        userService.leave();
+        userService.clearKeepMeLogged();
+    }
+
+    /**
+     * Invoked when Main Activity is finishing to clear the disposables and log out.
+     */
+    void finish() {
+        clear();
+        userService.leave();
     }
 
     /**
      * Clear the disposables linked.
      */
-    void clear() {
+    private void clear() {
         userService.clearDisposables(this);
         photoService.clearDisposables(this);
-    }
-
-    void leave() {
-        userService.leave();
     }
 
     public MutableLiveData<Bitmap> getPetPhoto(Pet pet) {
@@ -114,11 +138,11 @@ public class MainActivityViewModel extends ViewModel {
         return petService.getPetStatus(pet);
     }
 
-    public MutableLiveData<Bitmap> getUserPhoto() {
+    MutableLiveData<Bitmap> getUserPhoto() {
         return userPhoto;
     }
 
-    public LiveData<List<Pet>> getUserPets() {
+    LiveData<List<Pet>> getUserPets() {
         return userPets;
     }
 

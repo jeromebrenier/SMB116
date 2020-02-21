@@ -280,11 +280,10 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
     }
 
     /**
-     * Logout.
+     * Clear the keep me logged data in the preferences.
      */
     @Override
-    public void logout() {
-        petFoodingControl.getUserLogged().setValue(null);
+    public void clearKeepMeLogged() {
         if (sharedPreferences.contains(AUTO_LOGIN_TOKEN)) {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.remove(AUTO_LOGIN_TOKEN);

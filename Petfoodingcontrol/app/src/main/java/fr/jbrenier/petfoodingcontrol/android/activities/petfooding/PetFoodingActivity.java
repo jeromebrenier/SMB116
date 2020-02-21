@@ -51,6 +51,10 @@ import fr.jbrenier.petfoodingcontrol.android.fragments.petfooding.weight.PetWeig
 
 import static fr.jbrenier.petfoodingcontrol.BR.petfoodingviewmodel;
 
+/**
+ * The Pet Fooding activity.
+ * @author Jérôme Brenier
+ */
 public class PetFoodingActivity extends AppCompatActivity
                                 implements PetFoodFragment.OnFragmentInteractionListener,
                                            PetWeightFragment.OnFragmentInteractionListener {
@@ -88,6 +92,9 @@ public class PetFoodingActivity extends AppCompatActivity
         tabs.setupWithViewPager(viewPager);
     }
 
+    /**
+     * Set the toolbar correct title.
+     */
     private void setToolBarTitle() {
         Toolbar petFoodingToolbar = findViewById(R.id.pet_fooding_toolbar);
         petFoodingToolbar.setTitle("");
