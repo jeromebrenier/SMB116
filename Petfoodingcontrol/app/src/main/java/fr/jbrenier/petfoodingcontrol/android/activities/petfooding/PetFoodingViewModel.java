@@ -22,7 +22,6 @@ import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.Fooding;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.weight.Weighing;
-import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
@@ -40,11 +39,10 @@ public class PetFoodingViewModel extends ViewModel {
 
     private final MutableLiveData<Pet> pet = new MutableLiveData<>();
     private final MutableLiveData<Bitmap> petPhoto = new MutableLiveData<>();
-    private final MutableLiveData<List<Integer>> preSets = new MutableLiveData<>();
     private final MutableLiveData<Integer> petDailyFooding = new MutableLiveData<>();
     private final MutableLiveData<List<Weighing>> petWeighings =
             new MutableLiveData<>(new ArrayList<>());
-    private final MutableLiveData<Integer> weightTrend = new MutableLiveData<>(1);
+    private final MutableLiveData<Integer> weightTrend = new MutableLiveData<>(99);
     private Map<LiveData<?>, Observer> mapObservableObserver = new HashMap<>();
 
     public PetFoodingViewModel() {
@@ -67,7 +65,11 @@ public class PetFoodingViewModel extends ViewModel {
     }
 
     void refreshObsData() {
-        updateObsData(pet.getValue());
+        Observer<Pet> observer = this.pet::setValue;
+        SingleLiveEvent<Pet> petRetrieved =
+                petService.getPetById(this, pet.getValue().getPetId());
+        petRetrieved.observeForever(observer);
+        mapObservableObserver.put(petRetrieved, observer);
     }
 
     private void updatePhoto(Pet pet) {
@@ -118,6 +120,8 @@ public class PetFoodingViewModel extends ViewModel {
             } else {
                 weightTrend.setValue(1);
             }
+        } else {
+            weightTrend.setValue(1);
         }
     }
 

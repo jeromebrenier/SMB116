@@ -88,6 +88,22 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     }
 
     @Override
+    public SingleLiveEvent<Pet> getPetById(Object object, Long petId) {
+        SingleLiveEvent<Pet> resultGetPetById = new SingleLiveEvent<>();
+        Disposable disposable = pfcRepository.getPetById(petId).subscribe(
+                pet -> {
+                    resultGetPetById.setValue(pet);
+                    Log.i(TAG,"Pet retrieved by id : " + petId);
+                },
+                throwable -> {
+                    resultGetPetById.setValue(null);
+                    Log.e(TAG, "Pet with id " + petId + " retrieval failure : ");
+                });
+        addToCompositeDisposable(object, disposable);
+        return resultGetPetById;
+    }
+
+    @Override
     public SingleLiveEvent<Feeder> checkFeederExistance(Object object, String email) {
         SingleLiveEvent<Feeder> checkFeederExistanceResult = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.getFeederByEmail(email).subscribe(

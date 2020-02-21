@@ -79,19 +79,23 @@ public class PetFoodingActivity extends AppCompatActivity
                 DataBindingUtil.setContentView(this, R.layout.pet_fooding_activity);
         petFoodingBinding.setLifecycleOwner(this);
         petFoodingBinding.setVariable(petfoodingviewmodel, petFoodingViewModel);
-
-        // Toolbar title display
-        Toolbar petFoodingToolbar = findViewById(R.id.pet_fooding_toolbar);
-        petFoodingToolbar.setTitle("");
-        setSupportActionBar(petFoodingToolbar);
-        petFoodingToolbar.setTitle(petExtra.getName());
-
+        setToolBarTitle();
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
                 this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.pet_fooding_view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
         TabLayout tabs = findViewById(R.id.pet_fooding_tabs);
         tabs.setupWithViewPager(viewPager);
+    }
+
+    private void setToolBarTitle() {
+        Toolbar petFoodingToolbar = findViewById(R.id.pet_fooding_toolbar);
+        petFoodingToolbar.setTitle("");
+        setSupportActionBar(petFoodingToolbar);
+        petFoodingToolbar.setTitle(petFoodingViewModel.getPet().getValue().getName());
+        Observer<Pet> observer =
+                pet -> {if (pet != null) petFoodingToolbar.setTitle(pet.getName());};
+        petFoodingViewModel.getPet().observe(this, observer);
     }
 
     @Override

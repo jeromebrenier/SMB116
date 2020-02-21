@@ -57,21 +57,17 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
                 petFragment.getViewLifecycleOwner(), holder.mPetImageView::setImageBitmap);
         holder.mPetNameView.setText(
                 mainActivityViewModel.getUserPetsArrayList().get(position).getName());
+        if (holder.pet.getFoodSettings() != null && holder.pet.getFoodSettings().getDailyQuantity() != null) {
+            holder.mPetStatusView.setText(recyclerView.getResources().getString(R.string.pet_status_can_be_fed));
+            holder.mPetStatusView.setTextColor(Color.rgb(58, 147, 135));
+        }
         mainActivityViewModel.getPetStatus(holder.pet).observe(
                 petFragment.getViewLifecycleOwner(), status -> {
-                    String statusToShow;
-                    int textColor;
-                    if (status > 0) {
-                        statusToShow = recyclerView.getResources()
-                                .getString(R.string.pet_status_can_be_fed);
-                        textColor = Color.GREEN;
-                    } else {
-                        statusToShow = recyclerView.getResources()
-                                .getString(R.string.pet_status_fed);
-                        textColor = Color.RED;
+                    if (status <= 0) {
+                        holder.mPetStatusView.setText(recyclerView.getResources()
+                                .getString(R.string.pet_status_fed));
+                        holder.mPetStatusView.setTextColor(Color.RED);
                     }
-                    holder.mPetStatusView.setText(statusToShow);
-                    holder.mPetStatusView.setTextColor(textColor);
                 }
         );
         PetFoodingControl pfc = (PetFoodingControl) petFragment.getActivity().getApplication();
