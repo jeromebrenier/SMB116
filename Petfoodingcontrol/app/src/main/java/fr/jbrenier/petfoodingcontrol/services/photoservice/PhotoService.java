@@ -13,6 +13,10 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 
+/**
+ * The Photo service contract.
+ * @author Jérôme Brenier
+ */
 public interface PhotoService {
     SingleLiveEvent<Integer> update(Object object, User currentUser,
                                     Map<UserServiceKeysEnum, String> userData);

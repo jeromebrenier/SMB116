@@ -16,7 +16,6 @@ import androidx.room.PrimaryKey;
  */
 @Entity
 public class Photo implements Parcelable {
-    @NonNull
     @ColumnInfo(name = "photo_Id")
     @PrimaryKey(autoGenerate = true)
     private Long photoId;

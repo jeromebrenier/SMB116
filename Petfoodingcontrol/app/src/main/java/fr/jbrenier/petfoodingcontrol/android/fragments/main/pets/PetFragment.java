@@ -3,6 +3,7 @@ package fr.jbrenier.petfoodingcontrol.android.fragments.main.pets;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -17,20 +18,13 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivity;
 
 /**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
+ * A fragment representing the list of Pets of the user.
  */
 public class PetFragment extends Fragment {
-
-    /** LOGGING */
-    private static final String TAG = "PetFragment";
 
     private MainActivity mainActivity;
     private Observer<Boolean> userPetsArrayListChangeObserver;
     private MyPetRecyclerViewAdapter adapter;
-    private OnListFragmentInteractionListener mListener;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -46,15 +40,20 @@ public class PetFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        userPetsArrayListChangeObserver = null;
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.pet_list_fragment, container, false);
-        mainActivity = (MainActivity)getActivity();
         // Toolbar title
         mainActivity.setToolBarTitle(R.string.menu_pets);
         //show the add a pet button
-        if (getActivity().findViewById(R.id.main_addPet).getVisibility() != View.VISIBLE) {
-            getActivity().findViewById(R.id.main_addPet).setVisibility(View.VISIBLE);
+        if (mainActivity.findViewById(R.id.main_addPet).getVisibility() != View.VISIBLE) {
+            mainActivity.findViewById(R.id.main_addPet).setVisibility(View.VISIBLE);
         }
          // Set the adapter
         if (view instanceof RecyclerView) {
@@ -64,27 +63,28 @@ public class PetFragment extends Fragment {
             setAdapter(recyclerView);
         }
         // show the add a pet button if invisible
-        if (getActivity().findViewById(R.id.main_addPet).getVisibility() == View.INVISIBLE) {
-            getActivity().findViewById(R.id.main_addPet).setVisibility(View.VISIBLE);
+        if (mainActivity.findViewById(R.id.main_addPet).getVisibility() == View.INVISIBLE) {
+            mainActivity.findViewById(R.id.main_addPet).setVisibility(View.VISIBLE);
         }
         return view;
     }
 
     private void setAdapter(RecyclerView recyclerView) {
         adapter = new MyPetRecyclerViewAdapter(this,
-                mainActivity.getMainActivityViewModel(), mListener);
+                mainActivity.getMainActivityViewModel(), mainActivity);
         recyclerView.setAdapter(adapter);
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        adapter = null;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
+        mainActivity = (MainActivity) context;
     }
 
     @Override
@@ -104,9 +104,12 @@ public class PetFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        mainActivity = null;
     }
 
+    /**
+     * Interface to be implemented for interactions with the Pet card.
+     */
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(Pet pet);
         void onDeletePetButtonClick(Pet pet);

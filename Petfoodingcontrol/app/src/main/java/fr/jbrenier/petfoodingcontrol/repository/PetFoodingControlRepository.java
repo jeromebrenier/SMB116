@@ -14,6 +14,10 @@ import io.reactivex.Completable;
 import io.reactivex.Flowable;
 import io.reactivex.Single;
 
+/**
+ * The Pet Fooding Control repository contract.
+ * @author Jérôme Brenier
+ */
 public interface PetFoodingControlRepository {
 
     /* User */
@@ -42,6 +46,7 @@ public interface PetFoodingControlRepository {
     Flowable<List<Pet>> getAllUserPetsByUserId(Long userId);
     Single<Long> insertPetFeeder(PetFeeder petFeeder);
     Completable insertPetFeeders(List<PetFeeder> petFeederList);
+    Completable deletePetFeeder(PetFeeder petFeeder);
 
     /* Fooding */
     Flowable<List<Fooding>> getFoodingsForPet(Long petId);

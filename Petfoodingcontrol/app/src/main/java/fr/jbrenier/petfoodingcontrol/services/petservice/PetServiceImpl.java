@@ -21,6 +21,10 @@ import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
 import io.reactivex.disposables.Disposable;
 
+/**
+ * The Pet service implementation.
+ * @author Jérôme Brenier
+ */
 public class PetServiceImpl extends PetFoodingControlService implements PetService {
     /** LOGGING */
     private static final String TAG = "PetService";
@@ -66,15 +70,15 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
     }
 
     @Override
-    public SingleLiveEvent<Integer> update(Object object, Pet pet) {
-        SingleLiveEvent<Integer> updatePetResult = new SingleLiveEvent<>();
+    public SingleLiveEvent<Pet> update(Object object, Pet pet) {
+        SingleLiveEvent<Pet> updatePetResult = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.updatePet(pet).subscribe(
                 () -> {
-                    updatePetResult.setValue(0);
+                    updatePetResult.setValue(pet);
                     Log.i(TAG,"Pet updated");
                 },
                 throwable -> {
-                    updatePetResult.setValue(1);
+                    updatePetResult.setValue(null);
                     Log.e(TAG, "Pet " + pet.getPetId() + " update failure : ", throwable);
                 });
         addToCompositeDisposable(object, disposable);
@@ -127,6 +131,22 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
                 getFeeders::setValue, throwable -> getFeeders.setValue(null));
         addToCompositeDisposable(object, disposable);
         return getFeeders;
+    }
+
+    @Override
+    public SingleLiveEvent<Boolean> removePetFeeder(Object object, PetFeeder petFeeder) {
+        SingleLiveEvent<Boolean> removePetFeederResult = new SingleLiveEvent<>();
+        Disposable disposable = pfcRepository.deletePetFeeder(petFeeder).subscribe(
+                () -> {
+                    removePetFeederResult.setValue(true);
+                    Log.i(TAG, "PetFeeder for pet : " + petFeeder.getPetId() + " deleted");
+                },
+                throwable -> {
+                    removePetFeederResult.setValue(false);
+                    Log.e(TAG, "PetFeeder delete failure", throwable);
+                });
+        addToCompositeDisposable(object, disposable);
+        return removePetFeederResult;
     }
 
     @Override
@@ -204,5 +224,10 @@ public class PetServiceImpl extends PetFoodingControlService implements PetServi
                 });
         addToCompositeDisposable(object, disposable);
         return saveNewWeighingResult;
+    }
+
+    @Override
+    public void clearDisposables(Object object) {
+        compositeDisposableClear(object);
     }
 }

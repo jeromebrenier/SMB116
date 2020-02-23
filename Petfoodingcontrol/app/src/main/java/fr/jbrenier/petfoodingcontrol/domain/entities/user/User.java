@@ -23,7 +23,6 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
         indices = {@Index("photo_Id")}
 )
 public class User implements Parcelable {
-    @NonNull
     @ColumnInfo(name = "user_Id")
     @PrimaryKey (autoGenerate = true)
     private Long userId;
@@ -41,7 +40,7 @@ public class User implements Parcelable {
     }
 
     @Ignore
-    public User(@NonNull Long userId, String displayedName, String email, String password, Long photoId) {
+    public User(Long userId, String displayedName, String email, String password, Long photoId) {
         this.userId = userId;
         this.displayedName = displayedName;
         this.email = email;

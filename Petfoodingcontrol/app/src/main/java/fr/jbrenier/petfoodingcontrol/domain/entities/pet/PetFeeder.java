@@ -38,38 +38,20 @@ public class PetFeeder implements Parcelable {
     @ColumnInfo(name = "user_Id")
     private Long userId; // The feeder
 
-    public PetFeeder(Long petId, Long userId) {
+    public PetFeeder(@NonNull Long petId, @NonNull Long userId) {
         this.petId = petId;
         this.userId = userId;
     }
 
     protected PetFeeder(Parcel in) {
-        if (in.readByte() == 0) {
-            petId = null;
-        } else {
-            petId = in.readLong();
-        }
-        if (in.readByte() == 0) {
-            userId = null;
-        } else {
-            userId = in.readLong();
-        }
+        petId = in.readLong();
+        userId = in.readLong();
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        if (petId == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(petId);
-        }
-        if (userId == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeLong(userId);
-        }
+        dest.writeLong(petId);
+        dest.writeLong(userId);
     }
 
     @Override
@@ -89,6 +71,7 @@ public class PetFeeder implements Parcelable {
         }
     };
 
+    @NonNull
     public Long getPetId() {
         return petId;
     }
@@ -97,6 +80,7 @@ public class PetFeeder implements Parcelable {
         this.petId = petId;
     }
 
+    @NonNull
     public Long getUserId() {
         return userId;
     }

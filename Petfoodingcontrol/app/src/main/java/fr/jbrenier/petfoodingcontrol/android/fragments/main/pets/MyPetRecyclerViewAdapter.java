@@ -21,7 +21,8 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
  * {@link RecyclerView.Adapter} that can display a {@link Pet} and makes a call to the
  * specified {@link PetFragment.OnListFragmentInteractionListener}.
  */
-public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecyclerViewAdapter.ViewHolder> {
+public class MyPetRecyclerViewAdapter
+        extends RecyclerView.Adapter<MyPetRecyclerViewAdapter.ViewHolder> {
 
     private PetFragment petFragment;
     private MainActivityViewModel mainActivityViewModel;
@@ -29,7 +30,7 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
 
     private final PetFragment.OnListFragmentInteractionListener mListener;
 
-    public MyPetRecyclerViewAdapter(PetFragment petFragment,
+    MyPetRecyclerViewAdapter(PetFragment petFragment,
                                     MainActivityViewModel mainActivityViewModel,
                                     PetFragment.OnListFragmentInteractionListener listener) {
         this.petFragment = petFragment;
@@ -38,6 +39,7 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     }
 
     @Override
+    @NonNull
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.pet_fragment, parent, false);
@@ -53,12 +55,40 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.pet = mainActivityViewModel.getUserPetsArrayList().get(position);
+        setPetPhoto(holder);
+        setPetName(holder);
+        setPetStatus(holder);
+        setPetOwnerIndicator(holder);
+        setPetCardOnClickListener(holder);
+        setPetCardOnDeleteButtonLongClickListener(holder);
+    }
+
+    /**
+     * Set the pet photo in the card ImageView.
+     * @param holder the view holder for the pet
+     */
+    private void setPetPhoto(ViewHolder holder) {
         mainActivityViewModel.getPetPhoto(holder.pet).observe(
                 petFragment.getViewLifecycleOwner(), holder.mPetImageView::setImageBitmap);
-        holder.mPetNameView.setText(
-                mainActivityViewModel.getUserPetsArrayList().get(position).getName());
-        if (holder.pet.getFoodSettings() != null && holder.pet.getFoodSettings().getDailyQuantity() != null) {
-            holder.mPetStatusView.setText(recyclerView.getResources().getString(R.string.pet_status_can_be_fed));
+    }
+
+    /**
+     * Set the pet name in the card corresponding TextView.
+     * @param holder the view holder for the pet
+     */
+    private void setPetName(ViewHolder holder) {
+        holder.mPetNameView.setText(holder.pet.getName());
+    }
+
+    /**
+     * Ste the pet status of fooding int the dedicated part of the card.
+     * @param holder the view holder for the pet
+     */
+    private void setPetStatus(ViewHolder holder) {
+        if (holder.pet.getFoodSettings() != null &&
+                holder.pet.getFoodSettings().getDailyQuantity() != null) {
+            holder.mPetStatusView.setText(
+                    recyclerView.getResources().getString(R.string.pet_status_can_be_fed));
             holder.mPetStatusView.setTextColor(Color.rgb(58, 147, 135));
         }
         mainActivityViewModel.getPetStatus(holder.pet).observe(
@@ -70,20 +100,45 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
                     }
                 }
         );
-        PetFoodingControl pfc = (PetFoodingControl) petFragment.getActivity().getApplication();
-        User userLogged = pfc.getUserLogged().getValue();
+    }
+
+    /**
+     * Set the pet ownership indicator in the corresponding TextView of the card.
+     * @param holder the view holder for the pet
+     */
+    private void setPetOwnerIndicator(ViewHolder holder) {
+        PetFoodingControl pfc = null;
+        if (petFragment.getActivity() != null) {
+            pfc = (PetFoodingControl) petFragment.getActivity().getApplication();
+        }
+        User userLogged = null;
+        if (pfc != null) {
+            userLogged = pfc.getUserLogged().getValue();
+        }
         if (userLogged != null) {
             if (holder.pet.getUserId().equals(userLogged.getUserId())) {
                 holder.mPetOwnedView.setVisibility(View.VISIBLE);
             }
         }
+    }
 
+    /**
+     * Set the onClick listener on the card.
+     * @param holder the view holder for the pet
+     */
+    private void setPetCardOnClickListener(ViewHolder holder) {
         holder.mView.setOnClickListener(view -> {
             if (null != mListener) {
                 mListener.onListFragmentInteraction(holder.pet);
             }
         });
+    }
 
+    /**
+     * Set the long click listener on the deletion (cross) button of card.
+     * @param holder the view holder for the pet
+     */
+    private void setPetCardOnDeleteButtonLongClickListener(ViewHolder holder) {
         holder.mDeleteButton.setOnLongClickListener(view -> {
             if (null != mListener) {
                 mListener.onDeletePetButtonClick(holder.pet);
@@ -103,17 +158,20 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
                 mainActivityViewModel.getUserPetsArrayList().size();
     }
 
+    /**
+     * The view holder for a pet.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final CircleImageView mPetImageView;
-        public final TextView mPetNameView;
-        public final TextView mPetStatusView;
-        public final TextView mPetOwnedView;
-        public final ImageButton mDeleteButton;
+        final View mView;
+        final CircleImageView mPetImageView;
+        final TextView mPetNameView;
+        final TextView mPetStatusView;
+        final TextView mPetOwnedView;
+        final ImageButton mDeleteButton;
 
         public Pet pet;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mPetImageView = view.findViewById(R.id.civ_pet_image);
@@ -124,6 +182,7 @@ public class MyPetRecyclerViewAdapter extends RecyclerView.Adapter<MyPetRecycler
         }
 
         @Override
+        @NonNull
         public String toString() {
             return super.toString() + " '" + mPetNameView.getText() + "'";
         }

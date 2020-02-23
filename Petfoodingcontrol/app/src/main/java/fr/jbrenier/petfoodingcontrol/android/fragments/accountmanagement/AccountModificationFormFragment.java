@@ -32,7 +32,9 @@ public class AccountModificationFormFragment extends AccountCreationFormFragment
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        petFoodingControl = (PetFoodingControl) getActivity().getApplication();
+        if (getActivity() != null) {
+            petFoodingControl = (PetFoodingControl) getActivity().getApplication();
+        }
         setUserDataInInput();
         switchPwdMod = activity.findViewById(R.id.switch_mod_pwd);
         setupPasswordModification();

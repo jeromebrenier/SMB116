@@ -1,5 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.android.fragments.login;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,8 +30,15 @@ public class LoginWelcomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.login_welcome_fragment, container, false);
-        ((PetFoodingControl) getActivity().getApplication()).getUserLogged().observe(
-                getViewLifecycleOwner(), user -> setWelcomeText(fragmentView, user));
+        Activity activity = getActivity();
+        PetFoodingControl pfc = null;
+        if (activity != null) {
+            pfc = ((PetFoodingControl) getActivity().getApplication());
+        }
+        if (pfc != null) {
+            pfc.getUserLogged().observe(
+                    getViewLifecycleOwner(), user -> setWelcomeText(fragmentView, user));
+        }
         return fragmentView;
     }
 

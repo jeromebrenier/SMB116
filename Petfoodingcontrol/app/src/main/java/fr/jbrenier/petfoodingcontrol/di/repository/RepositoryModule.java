@@ -7,11 +7,15 @@ import dagger.Provides;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepositoryDaoImpl;
 
+/**
+ * Dagger Dependency Injection :  Repository Module
+ * @author Jérôme Brenier
+ */
 @Module
 public class RepositoryModule {
 
     @Provides
-    public PetFoodingControlRepository getPetFoodingControlRepository(Application application) {
+    PetFoodingControlRepository getPetFoodingControlRepository(Application application) {
         return new PetFoodingControlRepositoryDaoImpl(application);
     }
 }

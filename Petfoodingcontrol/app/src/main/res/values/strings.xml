@@ -19,7 +19,6 @@
     <string name="btn_create_account">Create an account</string>
     <string name="toast_input_empty">Please complete all fields.</string>
     <string name="welcome">Welcome</string>
-    <string name="user_logged">user_logged</string>
     <string name="toast_failed_login_wrong_password">Login failed : wrong password !</string>
     <string name="toast_failed_login_user_unknown">Login failed : unknown user !</string>
 
@@ -42,11 +41,15 @@
     <string name="pet_status_unknown">Unknown status</string>
     <string name="pet_status_fed">Completely fed</string>
     <string name="pet_status_can_be_fed">Can be fed</string>
-    <string name="txt_pet_card_is_owner">Owner</string>
+    <string name="txt_pet_card_is_owner">P</string>
     <string name="title_pet_deletion">Pet deletion</string>
     <string name="pet_deletion_text">Are you sure you want to delete this pet ?</string>
     <string name="pet_deletion_success">Pet deleted successfully</string>
     <string name="pet_deletion_failure">Pet deletion failure</string>
+    <string name="title_pet_feeder_status_deletion">Pet Feeder deletion</string>
+    <string name="pet_feeder_status_deletion_text">Are you sure you want to stop being a feeder for this pet ?</string>
+    <string name="pet_feeder_status_deletion_success">Pet Feeder deleted successfully</string>
+    <string name="pet_feeder_status_deletion_failure">Pet Feeder deletion failure</string>
 
     <!-- Account Management -->
     <string name="title_activity_account_management">AccountManagementActivity</string>
@@ -135,7 +138,7 @@
     <string name="new_weighing_success">New weighing successfully added</string>
     <string name="new_weighing_error_empty">Please enter a new weight for the pet</string>
     <string name="new_weighing_error_unknown">Error : weighing not added</string>
-    <string name="weight_le">le</string>
+    <string name="weight_le">on</string>
     <string name="weight_g">g</string>
     <string name="weight_new_weight_button">New weight</string>
     <string name="weight_history_button">History</string>

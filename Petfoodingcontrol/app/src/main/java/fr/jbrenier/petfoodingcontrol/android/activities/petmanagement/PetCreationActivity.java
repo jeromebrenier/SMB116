@@ -9,7 +9,7 @@ import android.util.Log;
  * @author Jérôme Brenier
  */
 public class PetCreationActivity extends PetManagementActivity {
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "PetCreationActivity";
 
     @Override

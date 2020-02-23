@@ -11,6 +11,10 @@ import androidx.fragment.app.Fragment;
 import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetManagementViewModel;
 
+/**
+ * The pet management fragment.
+ * @author Jérôme Brenier
+ */
 public class PetManagementFragment extends Fragment {
 
     /** Logging */
@@ -18,7 +22,7 @@ public class PetManagementFragment extends Fragment {
 
     // Used by subclasses Protected visibility
     protected PetManagementViewModel petManagementViewModel;
-    protected PetManagementActivity petManagementActivity;
+    private PetManagementActivity petManagementActivity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

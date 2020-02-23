@@ -30,7 +30,7 @@ import io.reactivex.schedulers.Schedulers;
  */
 public class PetFoodingControlRepositoryDaoImpl implements PetFoodingControlRepository {
 
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "PetFoodingControlRepositoryDaoImpl";
 
     private static final String DB_NAME = "pfc_db";
@@ -191,6 +191,15 @@ public class PetFoodingControlRepositoryDaoImpl implements PetFoodingControlRepo
     public Completable insertPetFeeders(List<PetFeeder> petFeederList) {
         Log.d(TAG, "insert List of " + petFeederList.size() + " PetFeeder ");
         return petFoodingControlDatabase.getPetDao().insertPetFeeders(petFeederList)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+    }
+
+    @Override
+    public Completable deletePetFeeder(PetFeeder petFeeder) {
+        Log.d(TAG, "deletePetFeeder for pet " + petFeeder.getPetId() + " and user "
+                + petFeeder.getUserId());
+        return petFoodingControlDatabase.getPetDao().deletePetFeeder(petFeeder)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
     }

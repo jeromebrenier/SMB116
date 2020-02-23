@@ -1,9 +1,9 @@
 package fr.jbrenier.petfoodingcontrol.android.fragments.petfooding.weight;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
@@ -20,14 +20,16 @@ import fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingVie
 import static fr.jbrenier.petfoodingcontrol.BR.petfoodingactivity;
 import static fr.jbrenier.petfoodingcontrol.BR.petweightfragmentviewmodel;
 
+/**
+ * The Pet weight fragment.
+ * @author Jérôme Brenier
+ */
 public class PetWeightFragment extends Fragment {
 
+    private PetFoodingActivity petFoodingActivity;
     private ViewDataBinding binding;
-    private OnFragmentInteractionListener mListener;
 
-    public PetWeightFragment() {
-
-    }
+    public PetWeightFragment() {}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class PetWeightFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = DataBindingUtil.inflate(inflater, R.layout.pet_weight_fragment, container, false);
         binding.setLifecycleOwner(this);
@@ -45,35 +47,21 @@ public class PetWeightFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        PetFoodingViewModel pfcVM = ((PetFoodingActivity) getActivity()).getPetFoodingViewModel();
+        PetFoodingViewModel pfcVM = petFoodingActivity.getPetFoodingViewModel();
         binding.setVariable(petweightfragmentviewmodel, pfcVM);
         binding.setVariable(petfoodingactivity, getActivity());
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        petFoodingActivity = (PetFoodingActivity) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        petFoodingActivity = null;
     }
 
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
-    }
 }

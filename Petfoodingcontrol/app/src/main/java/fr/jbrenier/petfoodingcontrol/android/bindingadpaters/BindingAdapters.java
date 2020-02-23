@@ -11,9 +11,12 @@ import java.util.Comparator;
 import java.util.List;
 
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.weight.Weighing;
-import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.utils.DateTimeUtils;
 
+/**
+ * The custom binding adapters
+ * @author Jérôme Brenier
+ */
 public final class BindingAdapters {
     private BindingAdapters() {}
 

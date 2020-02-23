@@ -8,6 +8,7 @@
     android:layout_marginTop="@dimen/mtrl_card_spacing"
     android:layout_marginRight="@dimen/mtrl_card_spacing"
     android:minHeight="@dimen/height_pet_feeder_card"
+    android:focusableInTouchMode="true"
     app:cardBackgroundColor="@color/card_background">
 
     <TextView

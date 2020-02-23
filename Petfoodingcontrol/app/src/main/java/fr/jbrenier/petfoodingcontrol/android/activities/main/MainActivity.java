@@ -7,6 +7,8 @@ import android.os.Bundle;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -25,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Map;
 
 import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout mDrawerLayout;
     private NavigationView navigationView;
+    private NavController navController;
     private View headerView;
 
     private MainActivityViewModel mainActivityViewModel;
@@ -103,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements
                 R.id.nav_pets, R.id.nav_account_settings, R.id.nav_logout)
                 .setDrawerLayout(mDrawerLayout)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         headerView = navigationView.getHeaderView(0);
@@ -143,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setOnClickListener(view -> {
             if (view == findViewById(R.id.nav_logout)) {
                 logout();
-                mDrawerLayout.closeDrawers();
             }
         });
     }
@@ -155,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements
         Log.d(TAG, "logout");
         mainActivityViewModel.logout();
         mDrawerLayout.closeDrawers();
+        navController.navigate(R.id.nav_pets);
         navigationView.getMenu().getItem(0).setChecked(true);
         launchLoginActivity();
     }
@@ -184,8 +188,10 @@ public class MainActivity extends AppCompatActivity implements
      * Setup a listener on user's pet to launch an update on the corresponding ArrayList.
      */
     private void setupUserPetsListener() {
-        mainActivityViewModel.getUserPets().observe(this,
-                this.mainActivityViewModel::updateUserPetsArrayList);
+        Observer<List<Pet>> observer = this.mainActivityViewModel::updateUserPetsArrayList;
+        mainActivityViewModel.getUserPets().observe(this, observer);
+        mainActivityViewModel.getMapUserPetsListener()
+                .put(mainActivityViewModel.getUserPets(), observer);
         if (mainActivityViewModel.getUserPets() != null &&
                 mainActivityViewModel.getUserPets().getValue() != null ) {
             mainActivityViewModel.updateUserPetsArrayList(
@@ -265,7 +271,14 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onDeletePetButtonClick(Pet pet) {launchPetDeletionDialog(pet);}
+    public void onDeletePetButtonClick(Pet pet) {
+        if (petFoodingControl.getUserLogged().getValue() == null) {return;}
+        if (pet.getUserId().equals(petFoodingControl.getUserLogged().getValue().getUserId())) {
+            launchPetDeletionDialog(pet);
+        } else {
+            launchPetFeederStatusDeletionDialog(pet);
+        }
+    }
 
     /**
      * Launch a dialog to require a confirmation before effective deletion of a pet.
@@ -283,6 +296,28 @@ public class MainActivity extends AppCompatActivity implements
                             showToast(getResources().getString(R.string.pet_deletion_failure));
                         }
                     }))
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+    }
+
+    /**
+     * Launch a dialog to require a confirmation before effective deletion of a pet.
+     * @param pet the pet to delete
+     */
+    private void launchPetFeederStatusDeletionDialog(Pet pet) {
+        new AlertDialog.Builder(this)
+                .setTitle(getResources().getString(R.string.title_pet_feeder_status_deletion))
+                .setMessage(getResources().getString(R.string.pet_feeder_status_deletion_text))
+                .setPositiveButton(android.R.string.yes, (dialog, which) ->
+                        mainActivityViewModel.removeFeederForPet(pet).observe(this, bool -> {
+                            if (bool) {
+                                showToast(getResources()
+                                        .getString(R.string.pet_feeder_status_deletion_success));
+                            } else {
+                                showToast(getResources()
+                                        .getString(R.string.pet_feeder_status_deletion_failure));
+                            }
+                        }))
                 .setNegativeButton(android.R.string.no, null)
                 .show();
     }

@@ -26,6 +26,10 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 
+/**
+ * The pet fooding view model
+ * @author Jérôme Brenier
+ */
 public class PetFoodingViewModel extends ViewModel {
 
     @Inject
@@ -43,12 +47,15 @@ public class PetFoodingViewModel extends ViewModel {
     private final MutableLiveData<List<Weighing>> petWeighings =
             new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Integer> weightTrend = new MutableLiveData<>(99);
-    private Map<LiveData<?>, Observer> mapObservableObserver = new HashMap<>();
+    private final Map<LiveData<?>, Observer> mapObservableObserver = new HashMap<>();
 
     public PetFoodingViewModel() {
         updateObsDataOnPetChange();
     }
 
+    /**
+     * Update the observables when the pet change.
+     */
     private void updateObsDataOnPetChange() {
         Log.d(TAG, "updateObsDataOnPetChange");
         Observer<Pet> observer = PetFoodingViewModel.this::updateObsData;
@@ -56,6 +63,10 @@ public class PetFoodingViewModel extends ViewModel {
         mapObservableObserver.put(pet, observer);
     }
 
+    /**
+     * Update the observables for the pet given in parameter
+     * @param pet the pet new value
+     */
     private void updateObsData(Pet pet) {
         if (pet == null) { return; }
         Log.d(TAG, "updateObsData pet : " + pet.getPetId());
@@ -64,14 +75,23 @@ public class PetFoodingViewModel extends ViewModel {
         updateWeighing(pet);
     }
 
+    /**
+     * Refresh the observables data including the pet. This method is used when an attribute of the
+     * pet is changed, but not the pet itself.
+     */
     void refreshObsData() {
         Observer<Pet> observer = this.pet::setValue;
+        if (pet.getValue() == null) {return;}
         SingleLiveEvent<Pet> petRetrieved =
                 petService.getPetById(this, pet.getValue().getPetId());
         petRetrieved.observeForever(observer);
         mapObservableObserver.put(petRetrieved, observer);
     }
 
+    /**
+     * Update the photo observable for the pet given in parameter.
+     * @param pet the involved pet
+     */
     private void updatePhoto(Pet pet) {
         Observer<Bitmap> observer = this::setPhoto;
         LiveData<Bitmap> updatePhoto = photoService.getPetBitmap(PetFoodingViewModel.this, pet);
@@ -79,10 +99,18 @@ public class PetFoodingViewModel extends ViewModel {
         mapObservableObserver.put(updatePhoto, observer);
     }
 
+    /**
+     * Set the photo observable value.
+     * @param bitmap the bitmap value to set in the photo
+     */
     private void setPhoto(Bitmap bitmap) {
         this.petPhoto.setValue(bitmap);
     }
 
+    /**
+     * Update the fooding observable for the pet given in parameter.
+     * @param pet the pet involved
+     */
     private void updateFooding(Pet pet) {
         LiveData<List<Fooding>> petFoodings = petService.getDailyPetFoodings(pet);
         Observer<List<Fooding>> obsPetFoodings =
@@ -94,6 +122,10 @@ public class PetFoodingViewModel extends ViewModel {
         mapObservableObserver.put(petFoodings, obsPetFoodings);
     }
 
+    /**
+     * Update the weighing observable for the pet given in parameter.
+     * @param pet the pet involved
+     */
     private void updateWeighing(Pet pet) {
         LiveData<List<Weighing>> petWeighings = petService.getWeighingsForPet(pet);
         Observer<List<Weighing>> obsPetWeighing = list -> {
@@ -106,6 +138,10 @@ public class PetFoodingViewModel extends ViewModel {
         mapObservableObserver.put(petWeighings, obsPetWeighing);
     }
 
+    /**
+     * Update the weight trend observable.
+     * @param list the list of weighing used for updating
+     */
     private void updateWeightTrend(List<Weighing> list) {
         List<Weighing> twoLastWaighings = list.stream()
                 .sorted(Comparator.comparing(Weighing::getWeighingDate).reversed())
@@ -125,6 +161,11 @@ public class PetFoodingViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Save the fooding.
+     * @param value the value of the fooding
+     * @param userLogged the user having given the fooding
+     */
     void saveFooding(Integer value, User userLogged) {
         if (pet.getValue() == null) { return; }
         Fooding fooding = new Fooding(
@@ -134,6 +175,11 @@ public class PetFoodingViewModel extends ViewModel {
         petService.savePetFooding(this, fooding);
     }
 
+    /**
+     * Save a new weighing with a value given in parameter.
+     * @param newValue the new weight
+     * @return the result of the process
+     */
     SingleLiveEvent<Boolean>  saveNewWeighing(Integer newValue) {
         SingleLiveEvent<Boolean> saveNewWeighingResult = new SingleLiveEvent<>();
         Weighing newWeighing = new Weighing(

@@ -1,5 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.android.fragments.petmanagement.feeders;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
@@ -11,14 +12,17 @@ import android.widget.TextView;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
 import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetManagementViewModel;
-
+/**
+ * {@link RecyclerView.Adapter} that can display a {@link Feeder} and makes a call to the
+ * specified {@link PetFeedersFragment.onRemoveFeederButtonClickListener}.
+ */
 public class MyPetFeedersRecyclerViewAdapter extends
         RecyclerView.Adapter<MyPetFeedersRecyclerViewAdapter.ViewHolder> {
 
     private final PetFeedersFragment.onRemoveFeederButtonClickListener mListener;
     private PetManagementViewModel petManagementViewModel;
 
-    public MyPetFeedersRecyclerViewAdapter(PetManagementViewModel petManagementViewModel,
+    MyPetFeedersRecyclerViewAdapter(PetManagementViewModel petManagementViewModel,
                                            PetFeedersFragment.onRemoveFeederButtonClickListener
                                                    listener) {
         this.petManagementViewModel = petManagementViewModel;
@@ -26,6 +30,7 @@ public class MyPetFeedersRecyclerViewAdapter extends
     }
 
     @Override
+    @NonNull
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.pet_feeders_fragment, parent, false);
@@ -35,11 +40,8 @@ public class MyPetFeedersRecyclerViewAdapter extends
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.feeder = petManagementViewModel.getPetFeedersArrayList().get(position);
-        holder.mFeederNameView.setText(
-                petManagementViewModel.getPetFeedersArrayList().get(position).getDisplayedName());
-        holder.mFeederEmailView.setText(
-                petManagementViewModel.getPetFeedersArrayList().get(position).getEmail());
-
+        holder.mFeederNameView.setText(holder.feeder.getDisplayedName());
+        holder.mFeederEmailView.setText(holder.feeder.getEmail());
         holder.mRemoveFeederButton.setOnClickListener(view -> {
             if (null != mListener) {
                 mListener.onRemoveFeederButtonClick(holder.feeder, this);
@@ -53,14 +55,17 @@ public class MyPetFeedersRecyclerViewAdapter extends
                 petManagementViewModel.getPetFeedersArrayList().size();
     }
 
+    /**
+     * The view holder representing a pet feeder.
+     */
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mFeederNameView;
-        public final TextView mFeederEmailView;
-        public final ImageButton mRemoveFeederButton;
+        final View mView;
+        final TextView mFeederNameView;
+        final TextView mFeederEmailView;
+        final ImageButton mRemoveFeederButton;
         public Feeder feeder;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             mFeederNameView = view.findViewById(R.id.txt_pet_feeder_name);
@@ -69,6 +74,7 @@ public class MyPetFeedersRecyclerViewAdapter extends
         }
 
         @Override
+        @NonNull
         public String toString() {
             return super.toString() + " '" + mFeederEmailView.getText() + "'";
         }

@@ -22,14 +22,14 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 /**
- * Service to manage Users.
+ * The User service implementation.
  * @author Jérôme Brenier
  */
 public class UserServiceImpl extends PetFoodingControlService implements UserService {
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "UserService";
 
-    /** PREFERENCES AUTO LOGIN KEY */
+    /** Preferences AUTO LOGIN KEY */
     private static final String AUTO_LOGIN_TOKEN = "autoLoginToken";
 
     /** Disposable management */

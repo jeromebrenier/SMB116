@@ -32,12 +32,11 @@ import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
-import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetCreationActivity;
 import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetData;
 import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetManagementActivity;
 import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.android.fragments.petmanagement.PetManagementFragment;
-import fr.jbrenier.petfoodingcontrol.android.uihelpers.InputValidatedHelper;
+import fr.jbrenier.petfoodingcontrol.utils.InputValidatedUtils;
 import fr.jbrenier.petfoodingcontrol.utils.DateTimeUtils;
 import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
@@ -51,11 +50,12 @@ import static android.app.Activity.RESULT_OK;
 public class PetGeneralFragment extends PetManagementFragment
         implements PetData, View.OnClickListener {
 
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "PetGeneralFragment";
 
-    /** REQUESTS */
+    /** Pick an image request code */
     private static final int PICK_IMAGE_REQUEST = 10;
+    /** Take a photo request code */
     private static final int TAKE_PHOTO_REQUEST = 11;
 
     private final Calendar calendar = Calendar.getInstance();
@@ -121,7 +121,7 @@ public class PetGeneralFragment extends PetManagementFragment
         Log.d(TAG, "onActivityCreated");
         loadAndBindPhotoFromViewModel();
         setupButtonOnClickListeners();
-        dateInputEditText = InputValidatedHelper.getWithValidationControlDateEditText(
+        dateInputEditText = InputValidatedUtils.getWithValidationControlDateEditText(
                 petManagementActivity.findViewById(R.id.txt_pet_birthdate),
                 petManagementActivity.findViewById(R.id.txt_pet_birthdate_invalid)
         );
@@ -130,6 +130,9 @@ public class PetGeneralFragment extends PetManagementFragment
         hideAddAFeederButtonIfVisible();
     }
 
+    /**
+     * Load the pet photo from the view model and bind it to the ImageView.
+     */
     private void loadAndBindPhotoFromViewModel() {
         if (petManagementViewModel.getPetPhoto() == null ||
                 petManagementViewModel.getPetPhoto().getValue() == null) {
@@ -140,6 +143,10 @@ public class PetGeneralFragment extends PetManagementFragment
         petManagementViewModel.getPetPhoto().observe(getViewLifecycleOwner(), this::setPhoto);
     }
 
+    /**
+     * Set the photo to the ImageView hosting the pet's photo.
+     * @param photo the photo to set in the ImageView
+     */
     void setPhoto(Photo photo) {
         String image = photo.getImage();
         if (image != null && !image.isEmpty()) {
@@ -159,14 +166,20 @@ public class PetGeneralFragment extends PetManagementFragment
                 .setImageDrawable(getResources().getDrawable(R.drawable.default_pet, null));
     }
 
+    /**
+     * Setup the onClick listeners on the buttons :
+     * <ul>
+     *     <li>to take a photo</li>
+     *     <li>to pick a photo on the disk</li>
+     *     <li>yo save the pet</li>
+     * </ul>
+     */
     private void setupButtonOnClickListeners() {
         petManagementActivity.findViewById(R.id.btn_take_pet_photo).setOnClickListener(this);
         petManagementActivity.findViewById(R.id.btn_pick_pet_photo_on_disk)
                 .setOnClickListener(this);
         petManagementActivity.findViewById(R.id.btn_pet_save).setOnClickListener(this);
     }
-
-
 
     /**
      * Hide the add a feeder floating button if visible.
@@ -351,8 +364,8 @@ public class PetGeneralFragment extends PetManagementFragment
         Uri selectedImage = data.getData();
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-        if (getActivity().getContentResolver() != null) {
-            Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+        if (petManagementActivity.getContentResolver() != null && selectedImage != null) {
+            Cursor cursor = petManagementActivity.getContentResolver().query(selectedImage,
                     filePathColumn, null, null, null);
             if (cursor != null) {
                 cursor.moveToFirst();
@@ -372,7 +385,7 @@ public class PetGeneralFragment extends PetManagementFragment
      * Display the photo in the dedicated ImageView.
      * @param bitmapImage the bitmap image
      */
-    void setPhotoInImageView(Bitmap bitmapImage) {
+    private void setPhotoInImageView(Bitmap bitmapImage) {
         ((ImageView) petManagementActivity.findViewById(R.id.imv_pet_photo))
                 .setImageBitmap(bitmapImage);
     }
@@ -381,6 +394,10 @@ public class PetGeneralFragment extends PetManagementFragment
         this.callback = callback;
     }
 
+    /**
+     * Interface to be implemented by the classes in responsibility of the save button click
+     * interaction.
+     */
     public interface OnSaveButtonClickListener {
         void onSaveButtonClick();
     }

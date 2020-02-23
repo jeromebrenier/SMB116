@@ -15,12 +15,16 @@ import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoServiceImpl;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceImpl;
 
+/**
+ * Dagger Dependency Injection :  Services Module
+ * @author Jérôme Brenier
+ */
 @Module
 public class ServicesModule {
 
     @Singleton
     @Provides
-    public UserService getUserService(PetFoodingControl petFoodingControl,
+    UserService getUserService(PetFoodingControl petFoodingControl,
                                       PetFoodingControlRepository pfcRepository,
                                       SharedPreferences sharedPreferences) {
         return new UserServiceImpl(petFoodingControl, pfcRepository, sharedPreferences);
@@ -28,13 +32,13 @@ public class ServicesModule {
 
     @Singleton
     @Provides
-    public PetService getPetService(PetFoodingControlRepository pfcRepository) {
+    PetService getPetService(PetFoodingControlRepository pfcRepository) {
         return new PetServiceImpl(pfcRepository);
     }
 
     @Singleton
     @Provides
-    public PhotoService getPhotoService(PetFoodingControlRepository pfcRepository,
+    PhotoService getPhotoService(PetFoodingControlRepository pfcRepository,
                                         UserService userService,
                                         PetService petService) {
         return new PhotoServiceImpl(pfcRepository, userService, petService);

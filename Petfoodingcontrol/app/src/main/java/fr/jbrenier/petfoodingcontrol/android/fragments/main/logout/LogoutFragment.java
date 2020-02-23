@@ -1,7 +1,9 @@
 package fr.jbrenier.petfoodingcontrol.android.fragments.main.logout;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivity;
@@ -12,12 +14,20 @@ import fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivity;
  */
 public class LogoutFragment extends Fragment {
 
+    private MainActivity mainActivity;
+
     public LogoutFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ((MainActivity) getActivity()).logout();
+        mainActivity.logout();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mainActivity = (MainActivity) context;
     }
 }

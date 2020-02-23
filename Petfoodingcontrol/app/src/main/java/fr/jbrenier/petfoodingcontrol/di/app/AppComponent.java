@@ -1,7 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.di.app;
 
 import android.app.Application;
-import android.content.SharedPreferences;
 
 import javax.inject.Singleton;
 
@@ -9,7 +8,6 @@ import dagger.BindsInstance;
 import dagger.Component;
 import fr.jbrenier.petfoodingcontrol.di.repository.RepositoryModule;
 import fr.jbrenier.petfoodingcontrol.di.services.ServicesModule;
-import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
@@ -20,6 +18,10 @@ import fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingVie
 import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.android.fragments.accountmanagement.AccountCreationFormFragment;
 
+/**
+ * Dagger Dependency Injection :  App Component
+ * @author Jérôme Brenier
+ */
 @Singleton
 @Component(modules = {AppModule.class, RepositoryModule.class, ServicesModule.class})
 public interface AppComponent {
@@ -29,12 +31,6 @@ public interface AppComponent {
     void inject(AccountCreationFormFragment accountCreationFormFragment);
     void inject(PetManagementViewModel petManagementViewModel);
     void inject(PetFoodingViewModel petFoodingViewModel);
-
-    @Singleton
-    SharedPreferences sharedPreferences();
-
-    @Singleton
-    PetFoodingControlRepository petFoodingControlRepository();
 
     @Singleton
     UserService getUserService();

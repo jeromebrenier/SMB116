@@ -1,4 +1,4 @@
-package fr.jbrenier.petfoodingcontrol.android.uihelpers;
+package fr.jbrenier.petfoodingcontrol.utils;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -13,12 +13,12 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 /**
- * Helper class for email inputs with a validation message TextView associated.
+ * Utility class for email inputs with a validation message TextView associated.
  * @author Jérpome Brenier
  */
-public class InputValidatedHelper {
+public class InputValidatedUtils {
 
-    private InputValidatedHelper() {}
+    private InputValidatedUtils() {}
 
     /**
      * Returns a date input EditText with a validation listener that trigger the visibility of an

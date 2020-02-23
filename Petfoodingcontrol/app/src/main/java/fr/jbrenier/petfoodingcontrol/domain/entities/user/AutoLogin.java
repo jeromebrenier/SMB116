@@ -16,7 +16,7 @@ import java.time.OffsetDateTime;
 import fr.jbrenier.petfoodingcontrol.db.converters.DataTypeConverter;
 
 /**
- * Autologins storage.
+ * AutoLogin storage.
  */
 @Entity(foreignKeys =
         @ForeignKey(entity = User.class,

@@ -29,7 +29,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
     public SectionsPagerAdapter(Context context, PetGeneralFragment.OnSaveButtonClickListener
             listener, FragmentManager fm) {
-        super(fm);
+        super(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
         mContext = context;
         this.listener = listener;
     }

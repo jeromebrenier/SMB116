@@ -4,9 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -46,8 +44,6 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.pet.weight.Weighing;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivity;
 import fr.jbrenier.petfoodingcontrol.android.fragments.petfooding.SectionsPagerAdapter;
-import fr.jbrenier.petfoodingcontrol.android.fragments.petfooding.food.PetFoodFragment;
-import fr.jbrenier.petfoodingcontrol.android.fragments.petfooding.weight.PetWeightFragment;
 
 import static fr.jbrenier.petfoodingcontrol.BR.petfoodingviewmodel;
 
@@ -55,9 +51,7 @@ import static fr.jbrenier.petfoodingcontrol.BR.petfoodingviewmodel;
  * The Pet Fooding activity.
  * @author Jérôme Brenier
  */
-public class PetFoodingActivity extends AppCompatActivity
-                                implements PetFoodFragment.OnFragmentInteractionListener,
-                                           PetWeightFragment.OnFragmentInteractionListener {
+public class PetFoodingActivity extends AppCompatActivity {
 
     /** Logging */
     private static final String TAG = "PetFoodingActivity";
@@ -68,6 +62,7 @@ public class PetFoodingActivity extends AppCompatActivity
     /** Intent extras key for pet transmission to a Pet Modification Activity */
     public static final String PET_MOD_EXTRA = "petModExtra";
 
+    private PetFoodingControl petFoodingControl;
     private PetFoodingViewModel petFoodingViewModel;
     private View newWeighingView;
     private View weightHistoryView;
@@ -75,21 +70,14 @@ public class PetFoodingActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        petFoodingControl = (PetFoodingControl) getApplication();
         petFoodingViewModel = new PetFoodingViewModel();
-        ((PetFoodingControl) getApplication()).getAppComponent().inject(petFoodingViewModel);
+        petFoodingControl.getAppComponent().inject(petFoodingViewModel);
         Pet petExtra = getIntent().getParcelableExtra(MainActivity.PET_EXTRA);
         petFoodingViewModel.getPet().setValue(petExtra);
-        ViewDataBinding petFoodingBinding =
-                DataBindingUtil.setContentView(this, R.layout.pet_fooding_activity);
-        petFoodingBinding.setLifecycleOwner(this);
-        petFoodingBinding.setVariable(petfoodingviewmodel, petFoodingViewModel);
+        setupBinding();
         setToolBarTitle();
-        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
-                this, getSupportFragmentManager());
-        ViewPager viewPager = findViewById(R.id.pet_fooding_view_pager);
-        viewPager.setAdapter(sectionsPagerAdapter);
-        TabLayout tabs = findViewById(R.id.pet_fooding_tabs);
-        tabs.setupWithViewPager(viewPager);
+        setupContent();
     }
 
     /**
@@ -99,16 +87,48 @@ public class PetFoodingActivity extends AppCompatActivity
         Toolbar petFoodingToolbar = findViewById(R.id.pet_fooding_toolbar);
         petFoodingToolbar.setTitle("");
         setSupportActionBar(petFoodingToolbar);
-        petFoodingToolbar.setTitle(petFoodingViewModel.getPet().getValue().getName());
+        if (petFoodingViewModel.getPet().getValue() != null) {
+            petFoodingToolbar.setTitle(petFoodingViewModel.getPet().getValue().getName());
+        }
         Observer<Pet> observer =
                 pet -> {if (pet != null) petFoodingToolbar.setTitle(pet.getName());};
         petFoodingViewModel.getPet().observe(this, observer);
     }
 
+    /**
+     * Setup the viewmodel to view binding
+     */
+    private void setupBinding() {
+        ViewDataBinding petFoodingBinding =
+                DataBindingUtil.setContentView(this, R.layout.pet_fooding_activity);
+        petFoodingBinding.setLifecycleOwner(this);
+        petFoodingBinding.setVariable(petfoodingviewmodel, petFoodingViewModel);
+    }
+
+    /**
+     * Setup the activity content
+     */
+    private void setupContent() {
+        SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(
+                this, getSupportFragmentManager());
+        ViewPager viewPager = findViewById(R.id.pet_fooding_view_pager);
+        viewPager.setAdapter(sectionsPagerAdapter);
+        TabLayout tabs = findViewById(R.id.pet_fooding_tabs);
+        tabs.setupWithViewPager(viewPager);
+    }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.petfooding_menu, menu);
-        return true;
+        // show this menu only for the pet owner
+        if (petFoodingViewModel.getPet().getValue() != null &&
+                petFoodingControl.getUserLogged().getValue() != null &&
+                petFoodingViewModel.getPet().getValue().getUserId().equals(
+                        petFoodingControl.getUserLogged().getValue().getUserId())) {
+            getMenuInflater().inflate(R.menu.petfooding_menu, menu);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -124,10 +144,11 @@ public class PetFoodingActivity extends AppCompatActivity
     }
 
     /**
-     * Start a Pet Modiciation activity through an Intent.
+     * Start a Pet Modification activity through an Intent.
      */
     private void sendPetModificationActivityIntent() {
-        Intent petModificationActivityIntent = new Intent(this, PetModificationActivity.class);
+        Intent petModificationActivityIntent = new Intent(
+                this, PetModificationActivity.class);
         petModificationActivityIntent.putExtra(PET_MOD_EXTRA,
                 petFoodingViewModel.getPet().getValue());
         startActivityForResult(petModificationActivityIntent, PET_MOD_REQUEST);
@@ -141,11 +162,11 @@ public class PetFoodingActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
+    /**
+     * Save the Fooding. The value to save is brought by the view.
+     * This method is invoked through the binding.
+     * @param view the invoking view
+     */
     public void saveFooding(View view) {
         if (view.getId() == R.id.btn_free_portion) {
             saveFreePortionFooding();
@@ -159,6 +180,9 @@ public class PetFoodingActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Save a free portion, i.e the value of the portion has been defined by the user.
+     */
     private void saveFreePortionFooding() {
         String freePortionEntered = ((EditText) findViewById(R.id.txt_petfooding_free_portion))
                 .getText().toString();
@@ -183,7 +207,6 @@ public class PetFoodingActivity extends AppCompatActivity
         newWeighingDialog.setView(newWeighingView);
         newWeighingDialog.show();
     }
-
 
     /**
      * Setup the Add / Cancel button of the new weighing dialog.
@@ -224,6 +247,9 @@ public class PetFoodingActivity extends AppCompatActivity
         toast.show();
     }
 
+    /**
+     * Create a dialog hosting the chart representing the weight history of the pet.
+     */
     public void createShowHistoryDialog() {
         // weight_history_chart
         LayoutInflater layoutInflater = LayoutInflater.from(this);
@@ -237,6 +263,20 @@ public class PetFoodingActivity extends AppCompatActivity
         weightHistoryDialog.show();
     }
 
+    /**
+     * Setup the weight history dialog buttons.
+     * @param weightHistoryDialog the dialog hosting the buttons
+     */
+    private void setupWeightHistoryDialogButtons(AlertDialog weightHistoryDialog) {
+        Button weightHistoryCloseButton =
+                weightHistoryView.findViewById(R.id.btn_weigh_history_close);
+        weightHistoryCloseButton.setOnClickListener(view -> weightHistoryDialog.cancel());
+    }
+
+    /**
+     * Create a chart representing the weight history of the pet.
+     * @param weightHistoryView the view hosting the chart
+     */
     private void createWeightHistoryChart(View weightHistoryView) {
         if (petFoodingViewModel.getPetWeighings().getValue() == null ||
                 petFoodingViewModel.getPetWeighings().getValue().size() == 0) {
@@ -252,6 +292,11 @@ public class PetFoodingActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * get the set of data to build the chart.
+     * @param weightHostoryChart the chart to populate
+     * @return a ArrayList<ILineDataSet> dataset
+     */
     private ArrayList<ILineDataSet> getWeightHistoryChartDataSets(LineChart weightHostoryChart) {
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
@@ -293,8 +338,8 @@ public class PetFoodingActivity extends AppCompatActivity
 
         // set the filled area
         set.setDrawFilled(true);
-        set.setFillFormatter((dataSet, dataProvider) -> {
-            return weightHostoryChart.getAxisLeft().getAxisMinimum();});
+        set.setFillFormatter((dataSet, dataProvider) ->
+                weightHostoryChart.getAxisLeft().getAxisMinimum());
 
         if (Utils.getSDKInt() >= 18) {
             // drawables only supported on api level 18 and above
@@ -305,12 +350,6 @@ public class PetFoodingActivity extends AppCompatActivity
         }
         dataSets.add(set); // add the data sets
         return dataSets;
-    }
-
-    private void setupWeightHistoryDialogButtons(AlertDialog weightHistoryDialog) {
-        Button weightHistoryCloseButton =
-                weightHistoryView.findViewById(R.id.btn_weigh_history_close);
-        weightHistoryCloseButton.setOnClickListener(view -> weightHistoryDialog.cancel());
     }
 
     public PetFoodingViewModel getPetFoodingViewModel() {

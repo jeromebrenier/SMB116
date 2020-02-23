@@ -5,9 +5,11 @@ import android.util.Log;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ import javax.inject.Inject;
 import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
+import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeder;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
@@ -45,6 +48,8 @@ public class MainActivityViewModel extends ViewModel {
     /** Needed for the pet list fragment */
     private List<Pet> userPetsArrayList = new ArrayList<>();
     private MutableLiveData<Boolean> userPetsArrayListChanged = new MutableLiveData<>(false);
+
+    private Map<LiveData<List<Pet>>, Observer<List<Pet>>> mapUserPetsListener = new HashMap<>();
 
     MainActivityViewModel(PetFoodingControl petFoodingControl) {
         this.petFoodingControl = petFoodingControl;
@@ -98,6 +103,24 @@ public class MainActivityViewModel extends ViewModel {
     }
 
     /**
+     * Remove the current user logged as a feeder for the pet given in parameter.
+     * @param pet the pet for which the user logged has to be removed as a feeder
+     * @return true if removal process successful, false otherwise
+     */
+    SingleLiveEvent<Boolean> removeFeederForPet(Pet pet) {
+        if (petFoodingControl.getUserLogged().getValue() != null) {
+            PetFeeder petFeederToRemove = new PetFeeder(pet.getPetId(),
+                    petFoodingControl.getUserLogged().getValue().getUserId());
+            return petService.removePetFeeder(this, petFeederToRemove);
+        } else {
+            Log.e(TAG, "User logged null, cannot continue");
+            SingleLiveEvent<Boolean> failure = new SingleLiveEvent<>();
+            failure.setValue(false);
+            return failure;
+        }
+    }
+
+    /**
      * Delete the pet given in parameter.
      * @param pet the pet to delete
      * @return true if delete process successful, false otherwise
@@ -112,6 +135,8 @@ public class MainActivityViewModel extends ViewModel {
     void logout() {
         userService.leave();
         userService.clearKeepMeLogged();
+        clear();
+        mapUserPetsListener.forEach(LiveData::removeObserver);
     }
 
     /**
@@ -128,6 +153,7 @@ public class MainActivityViewModel extends ViewModel {
     private void clear() {
         userService.clearDisposables(this);
         photoService.clearDisposables(this);
+        petService.clearDisposables(this);
     }
 
     public MutableLiveData<Bitmap> getPetPhoto(Pet pet) {
@@ -152,5 +178,9 @@ public class MainActivityViewModel extends ViewModel {
 
     public MutableLiveData<Boolean> getUserPetsArrayListChanged() {
         return userPetsArrayListChanged;
+    }
+
+    public Map<LiveData<List<Pet>>, Observer<List<Pet>>> getMapUserPetsListener() {
+        return mapUserPetsListener;
     }
 }

@@ -1,7 +1,5 @@
 package fr.jbrenier.petfoodingcontrol.utils;
 
-import android.provider.Settings;
-
 import org.mindrot.jbcrypt.BCrypt;
 
 import io.reactivex.Completable;
@@ -11,14 +9,25 @@ import io.reactivex.Completable;
  */
 public final class CryptographyUtils {
 
-    private static final int rounds = 16;
+    private static final int rounds = 12;
 
     private CryptographyUtils() {}
 
+    /**
+     * Hash (with BCrypt) the string representing the password entered.
+     * @param typedPassword the password entered
+     * @return the hashed string
+     */
     public static String hashPassword(String typedPassword) {
-        return BCrypt.hashpw(typedPassword, BCrypt.gensalt(12));
+        return BCrypt.hashpw(typedPassword, BCrypt.gensalt(rounds));
     }
 
+    /**
+     * Check if the password entered and the stored hash value match.
+     * @param passwordToCheck the passvord entered
+     * @param hashedValue the hased password stored
+     * @return a Completable that complete in case of success
+     */
     public static Completable checkPassword(String passwordToCheck, String hashedValue) {
         if (BCrypt.checkpw(passwordToCheck, hashedValue)) {
             return Completable.complete();

@@ -24,7 +24,7 @@ import fr.jbrenier.petfoodingcontrol.android.fragments.petmanagement.SectionsPag
 import fr.jbrenier.petfoodingcontrol.android.fragments.petmanagement.feeders.MyPetFeedersRecyclerViewAdapter;
 import fr.jbrenier.petfoodingcontrol.android.fragments.petmanagement.feeders.PetFeedersFragment;
 import fr.jbrenier.petfoodingcontrol.android.fragments.petmanagement.general.PetGeneralFragment;
-import fr.jbrenier.petfoodingcontrol.android.uihelpers.InputValidatedHelper;
+import fr.jbrenier.petfoodingcontrol.utils.InputValidatedUtils;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -50,6 +50,13 @@ public abstract class PetManagementActivity extends AppCompatActivity
         PetFoodingControl petFoodingControl = (PetFoodingControl) getApplication();
         petManagementViewModel = new PetManagementViewModel();
         petFoodingControl.getAppComponent().inject(petManagementViewModel);
+        setupContent();
+    }
+
+    /**
+     * Setup the content of the pet management activity.
+     */
+    private void setupContent() {
         setContentView(R.layout.pet_management_activity);
 
         // Needed for title display
@@ -65,6 +72,7 @@ public abstract class PetManagementActivity extends AppCompatActivity
         tabs.setupWithViewPager(viewPager);
         setupAddFeederButton();
     }
+
 
     /**
      * Return an OnPageChangeListener for managing data loading / saving of pages and new pet feeder
@@ -152,7 +160,7 @@ public abstract class PetManagementActivity extends AppCompatActivity
      */
     private void setupDialogButtons(AlertDialog newFeederDialog) {
         Button addNewFeederButton = newFeederView.findViewById(R.id.btn_new_feeder_add);
-        EditText editFeeder = InputValidatedHelper.getWithValidationControlEmailEditText(
+        EditText editFeeder = InputValidatedUtils.getWithValidationControlEmailEditText(
                 newFeederView.findViewById(R.id.txt_feeder_email),
                 newFeederView.findViewById(R.id.txt_feeder_mail_invalid),
                 addNewFeederButton

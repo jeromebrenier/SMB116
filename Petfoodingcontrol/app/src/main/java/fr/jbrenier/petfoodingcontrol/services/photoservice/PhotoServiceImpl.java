@@ -27,7 +27,7 @@ import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
 
 /**
- * Service to manage Photos.
+ * The Photo service implementation.
  * @author Jérôme Brenier
  */
 public class PhotoServiceImpl extends PetFoodingControlService implements PhotoService {

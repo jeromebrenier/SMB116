@@ -35,23 +35,24 @@ import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
-import fr.jbrenier.petfoodingcontrol.android.uihelpers.InputValidatedHelper;
+import fr.jbrenier.petfoodingcontrol.utils.InputValidatedUtils;
 import fr.jbrenier.petfoodingcontrol.utils.ImageUtils;
 import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
 
 import static android.app.Activity.RESULT_OK;
 
 /**
- * The fragment for creating accounts.
+ * The fragment for creating user accounts.
  * @author Jérôme Brenier
  */
 public class AccountCreationFormFragment extends Fragment implements View.OnClickListener {
 
-    /** REQUESTS */
+    /** Pick image request code */
     private static final int PICK_IMAGE_REQUEST = 1;
+    /** Take photo request code */
     private static final int TAKE_PHOTO_REQUEST = 2;
 
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "AccountCreationFormFragment";
 
     @Inject
@@ -71,8 +72,12 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
         setRetainInstance(true);
         // set the parent activity
         activity = getActivity();
-        petFoodingControl = (PetFoodingControl) activity.getApplication();
-        petFoodingControl.getAppComponent().inject(this);
+        if (activity != null) {
+            petFoodingControl = (PetFoodingControl) activity.getApplication();
+            petFoodingControl.getAppComponent().inject(this);
+        } else {
+            Log.e(TAG, "Activity is null, cannot inject dependencies.");
+        }
     }
 
     /**
@@ -96,7 +101,7 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
         activity.findViewById(R.id.btn_account_save).setOnClickListener(this);
         activity.findViewById((R.id.btn_pick_user_photo_on_disk)).setOnClickListener(this);
         activity.findViewById((R.id.btn_take_user_photo)).setOnClickListener(this);
-        InputValidatedHelper.getWithValidationControlEmailEditText(
+        InputValidatedUtils.getWithValidationControlEmailEditText(
                 activity.findViewById(R.id.txt_account_email),
                 activity.findViewById(R.id.txt_account_email_invalid)
         );
@@ -110,12 +115,18 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
      */
     private void hideCameraButtonIfNoCameraOrNoPermission() {
         // check if a camera is present on the device
-        if (getContext().getPackageManager() != null && getContext()
+        if (getContext() != null && getContext().getPackageManager() != null && getContext()
                 .getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) {
             manageIsCameraPermissionGranted();
+        } else {
+            Log.e(TAG, "Cannot hide camera button if no camera or permission granted.");
         }
     }
 
+    /**
+     * Set the button proposing to take a photo visible if the camera permission has been granted,
+     * and invisible otherwise.
+     */
     private void manageIsCameraPermissionGranted() {
         if (petFoodingControl.isCameraPermissionGranted.getValue() == null) {
             return;
@@ -166,7 +177,7 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof OnSaveButtonClickListener) {
             callback = (OnSaveButtonClickListener) context;
@@ -263,21 +274,37 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
         Uri selectedImage = data.getData();
         String[] filePathColumn = { MediaStore.Images.Media.DATA };
 
-        if (getActivity().getContentResolver() != null) {
-            Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-                    filePathColumn, null, null, null);
-            if (cursor != null) {
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                Log.i(TAG, "column index : " + columnIndex);
-                String picturePath = cursor.getString(columnIndex);
-                Log.i(TAG, "picture path : " + picturePath);
-                cursor.close();
-
-                return BitmapFactory.decodeFile(picturePath);
+        if (getActivity() != null && getActivity().getContentResolver() != null) {
+            if (selectedImage != null) {
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage,
+                        filePathColumn, null, null, null);
+                if (cursor != null) {
+                    return getBuitmapFromCursor(cursor, filePathColumn);
+                }
+            } else {
+                Log.e(TAG, "Selected image from intent data null.");
             }
+        } else {
+            Log.e(TAG, "Impossible to get content resolver, or activity null");
         }
         return null;
+    }
+
+    /**
+     * Get the bitmap image from the cursor given in parameter.
+     * @param cursor the cursor containing the image
+     * @param filePathColumn the file path column
+     * @return the resulting bitmap image
+     */
+    private Bitmap getBuitmapFromCursor(Cursor cursor, String[] filePathColumn) {
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        Log.i(TAG, "column index : " + columnIndex);
+        String picturePath = cursor.getString(columnIndex);
+        Log.i(TAG, "picture path : " + picturePath);
+        cursor.close();
+
+        return BitmapFactory.decodeFile(picturePath);
     }
 
     /**
@@ -340,7 +367,9 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
         this.callback = callback;
     }
 
-
+    /**
+     * Interface to be implemented by the callback class to act on a save button click.
+     */
     public interface OnSaveButtonClickListener {
         void onSaveButtonClick(Map<UserServiceKeysEnum, String> userData);
     }

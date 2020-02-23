@@ -7,6 +7,10 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.ProgressBar;
 
+/**
+ * Custom progress bar with a varying color depending on the progress level.
+ * @author Jérôme Brenier
+ */
 public class FoodingProgressBar extends ProgressBar {
     public FoodingProgressBar(Context context) {
         super(context);
@@ -28,20 +32,24 @@ public class FoodingProgressBar extends ProgressBar {
         setProgressDrawable(progressDrawable);
     }
 
+    /**
+     * Return a PorterDuffColorFilter with a color value depending on tha progress level :
+     * <ul>
+     *     <li>green with a level <= 50% of the max level</li>
+     *     <li>orange between 50% and max excluded</li>
+     *     <li>red above max included</li>
+     * </ul>
+     * @param value the progress value
+     * @param max the max value
+     * @return the resulting PorterDuffColorFilter
+     */
     private PorterDuffColorFilter translateValueToColor(int value, int max) {
-        int R = 0;
-        int G = 255;
-        int B = 0;
+        int color = android.graphics.Color.argb(255, 0, 255, 0);
         if (value > max) {
-            R = 255;
-            G = 0;
-            B = 0;
+            color = android.graphics.Color.argb(255, 255, 0, 0);
         } else if (value > Math.round(max/2)) {
-            R = 255;
-            G = 171;
-            B = 0;
+            color = android.graphics.Color.argb(255, 255, 171, 0);
         }
-        int color = android.graphics.Color.argb(255, R, G, B);
         return new PorterDuffColorFilter(color, PorterDuff.Mode.MULTIPLY);
     }
 }

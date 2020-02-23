@@ -28,7 +28,6 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
                         childColumns = "pet_Id",
                         onDelete = ForeignKey.CASCADE)})
 public class Weighing implements Parcelable {
-    @NonNull
     @PrimaryKey(autoGenerate = true)
     private Long weighingId;
     @NonNull
@@ -46,7 +45,7 @@ public class Weighing implements Parcelable {
     }
 
     @Ignore
-    public Weighing(@NonNull Long weighingId, @NonNull Long petId, OffsetDateTime weighingDate, Integer weightInGrams) {
+    public Weighing(Long weighingId, @NonNull Long petId, OffsetDateTime weighingDate, Integer weightInGrams) {
         this.weighingId = weighingId;
         this.petId = petId;
         this.weighingDate = weighingDate;
@@ -60,7 +59,7 @@ public class Weighing implements Parcelable {
             weighingId = in.readLong();
         }
         if (in.readByte() == 0) {
-            petId = null;
+            petId = 0L;
         } else {
             petId = in.readLong();
         }
@@ -101,7 +100,7 @@ public class Weighing implements Parcelable {
             dest.writeByte((byte) 1);
             dest.writeLong(weighingId);
         }
-        if (petId == null) {
+        if (petId == 0L) {
             dest.writeByte((byte) 0);
         } else {
             dest.writeByte((byte) 1);

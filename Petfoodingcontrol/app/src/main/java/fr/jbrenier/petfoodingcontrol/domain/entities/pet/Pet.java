@@ -41,7 +41,6 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
         inheritSuperIndices = true
 )
 public class Pet implements Parcelable {
-    @NonNull
     @ColumnInfo(name = "pet_Id")
     @PrimaryKey(autoGenerate = true)
     private Long petId;

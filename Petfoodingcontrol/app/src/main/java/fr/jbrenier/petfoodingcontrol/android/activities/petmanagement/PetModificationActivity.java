@@ -7,6 +7,12 @@ import android.util.Log;
 import fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingActivity;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 
+/**
+ * The activity to modify pet within the Pet Fooding Control application. it subclasses the
+ * {@link PetManagementActivity} tho handle the specificity of the creation activity.
+ * @see PetManagementActivity
+ * @author Jérôme Brenier
+ */
 public class PetModificationActivity extends PetManagementActivity {
     /** LOGGING */
     private static final String TAG = "PetModificationActivity";
@@ -27,12 +33,15 @@ public class PetModificationActivity extends PetManagementActivity {
     public void onSaveButtonClick() {
         Log.d(TAG, "Saving pet modifications in DB...");
         petManagementViewModel.savePetData().observe(
-                this, bool -> finishPetModificationActivity(RESULT_OK));
+                this, bool -> finishPetModificationActivity());
     }
 
-    private void finishPetModificationActivity(int resultCode) {
+    /**
+     * Finishes the pet modification activity with a return intent.
+     */
+    private void finishPetModificationActivity() {
         Intent retIntent = new Intent();
-        setResult(resultCode, retIntent);
+        setResult(RESULT_OK, retIntent);
         finish();
     }
 }

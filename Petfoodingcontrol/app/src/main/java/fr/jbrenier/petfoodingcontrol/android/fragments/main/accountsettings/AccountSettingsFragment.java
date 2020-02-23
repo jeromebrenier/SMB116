@@ -1,5 +1,6 @@
 package fr.jbrenier.petfoodingcontrol.android.fragments.main.accountsettings;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,21 +31,28 @@ public class AccountSettingsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.account_settings_fragment, container, false);
-        mainActivity = (MainActivity)getActivity();
-        // Hide the add a pet button if visible
-        if (getActivity().findViewById(R.id.main_addPet).getVisibility() == View.VISIBLE) {
-            getActivity().findViewById(R.id.main_addPet).setVisibility(View.INVISIBLE);
+        if (mainActivity != null) {
+            // Hide the add a pet button if visible
+            if (mainActivity.findViewById(R.id.main_addPet).getVisibility() == View.VISIBLE) {
+                mainActivity.findViewById(R.id.main_addPet).setVisibility(View.INVISIBLE);
+            }
+            // Toolbar title
+            mainActivity.setToolBarTitle(R.string.menu_account_settings);
         }
-        // Toolbar title
-        mainActivity.setToolBarTitle(R.string.menu_account_settings);
         return root;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         Fragment accountModificationFormFragment = AccountModificationFormFragment.newInstance();
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         transaction.replace(R.id.nested_account_management_fragment_frameLayout,
                 accountModificationFormFragment).commit();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mainActivity = (MainActivity) context;
     }
 }

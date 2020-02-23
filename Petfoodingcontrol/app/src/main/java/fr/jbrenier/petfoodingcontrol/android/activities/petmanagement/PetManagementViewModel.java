@@ -2,7 +2,6 @@ package fr.jbrenier.petfoodingcontrol.android.activities.petmanagement;
 
 import android.util.Log;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
@@ -28,9 +27,13 @@ import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 
+/**
+ * Pet management view model.
+ * @author Jérôme Brenier
+ */
 public class PetManagementViewModel extends ViewModel {
 
-    /* LOGGING */
+    /** Logging */
     private static final String TAG = "PetManagementViewModel";
 
     @Inject
@@ -44,7 +47,6 @@ public class PetManagementViewModel extends ViewModel {
 
     private Pet petInvolved;
     private MutableLiveData<Photo> petPhoto = new MutableLiveData<>();
-    private LiveData<List<Feeder>> petFeeders;
     private SingleLiveEvent<Boolean> petSavingStatus = new SingleLiveEvent<>();
     /* Needed for the feeders list fragment */
     private List<Feeder> petFeedersArrayList = new ArrayList<>();
@@ -63,10 +65,16 @@ public class PetManagementViewModel extends ViewModel {
     /**
      * Save in the DB a new pet present in the viewModel.
      */
-    private SingleLiveEvent<Pet> saveNewPet() {
+    private SingleLiveEvent<Pet> savePet() {
         if (petInvolved != null) {
             addFoodSettingsToPet();
-            return petService.save(this, petInvolved);
+            if (petInvolved.getPetId() != null) {
+                Log.i(TAG, "Pet update");
+                return petService.update(this, petInvolved);
+            } else {
+                Log.i(TAG, "Pet save");
+                return petService.save(this, petInvolved);
+            }
         }
         return null;
     }
@@ -95,7 +103,7 @@ public class PetManagementViewModel extends ViewModel {
      * Save the pet data in the DB.
      */
     SingleLiveEvent<Boolean> savePetData() {
-        SingleLiveEvent<Pet> saveNewPet = saveNewPet();
+        SingleLiveEvent<Pet> saveNewPet = savePet();
         Observer<Pet> saveNewPetObserver = pet -> {
             if (pet != null) {
                 Log.i(TAG, "Pet saved.");
@@ -243,6 +251,7 @@ public class PetManagementViewModel extends ViewModel {
         checkFeederExistanceMap.entrySet().forEach(getConsumer());
         savePetFeedersMap.entrySet().forEach(getConsumer());
         populateFeedersMap.entrySet().forEach(getConsumer());
+        loadPetPhotoMap.entrySet().forEach(getConsumer());
     }
 
     private <T> Consumer<Map.Entry<SingleLiveEvent<T>, Observer<T>>> getConsumer() {
@@ -263,10 +272,6 @@ public class PetManagementViewModel extends ViewModel {
 
     public void setPetPhoto(MutableLiveData<Photo> petPhoto) {
         this.petPhoto = petPhoto;
-    }
-
-    public LiveData<List<Feeder>> getPetFeeders() {
-        return petFeeders;
     }
 
     public List<Feeder> getPetFeedersArrayList() {

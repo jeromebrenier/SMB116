@@ -54,6 +54,7 @@
         android:id="@+id/pet_general_fieldset"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
         android:layout_marginTop="@dimen/fieldset_top_margin"
         android:layout_marginBottom="@dimen/fieldset_bottom_margin"
         android:orientation="vertical">

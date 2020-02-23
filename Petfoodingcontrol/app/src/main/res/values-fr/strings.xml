@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_logo">logo principal de Pet Fooding Control</string>
+
+    <!-- Global -->
+    <string name="btn_save">Sauvegarder</string>
+    <string name="btn_OK">OK</string>
+    <string name="btn_add">Ajouter</string>
+    <string name="btn_cancel">Annuler</string>
+    <string name="btn_delete">Supprimer</string>
+    <string name="error_email">Le format de l\'email doit correspondre à ****@****</string>
+    <string name="error_date">Date invalide, elle ne correspond pas au format jj/MM/aa</string>
+
+    <!-- Login -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Mot de passe</string>
+    <string name="btn_login_action">Se connecter</string>
+    <string name="checkbox_keep_login">Rester connecté</string>
+    <string name="btn_create_account">Créer un compte</string>
+    <string name="toast_input_empty">Veuillez remplir tous les champs</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="toast_failed_login_wrong_password">Échec de la connexion : mauvais mot de passe !</string>
+    <string name="toast_failed_login_user_unknown">Échec de la connexion : utilisateur inconnu !</string>
+
+    <!-- Main Activity -->
+    <string name="title_activity_main">Pet Fooding Control</string>
+    <string name="navigation_drawer_open">Ouvrir la tableau de navigation</string>
+    <string name="navigation_drawer_close">Fermer le tableau navigation</string>
+    <string name="nav_header_title">Utilisateur de Pet Fooding Control</string>
+    <string name="nav_header_desc">En-tête de navigation</string>
+    <string name="action_settings">Réglages</string>
+    <string name="menu_logout">Se déconnecter</string>
+    <!-- Main activity permissions-->
+    <string name="permission_grant_access_needed">Vous devez autoriser l\'accès à </string>
+    <string name="permission_camera">l\'appareil photo</string>
+    <string name="permission_read_external_storage">la lecrure du stockage externe</string>
+
+    <!-- Pets -->
+    <string name="menu_pets">Mes animaux</string>
+    <string name="imv_card_pet_desc">Photo de l\'animal</string>
+    <string name="pet_status_unknown">Statut inconnu</string>
+    <string name="pet_status_fed">Ration quotidienne atteinte</string>
+    <string name="pet_status_can_be_fed">Ration quotidienne non atteinte</string>
+    <string name="txt_pet_card_is_owner">P</string>
+    <string name="title_pet_deletion">Suppression de l\'animal</string>
+    <string name="pet_deletion_text">Êtes-vous sûr(e) de vouloir supprimer cet animal ?</string>
+    <string name="pet_deletion_success">Animal supprimé avec succès</string>
+    <string name="pet_deletion_failure">Échec de la suppression de l\'animal</string>
+    <string name="title_pet_feeder_status_deletion">Suppression de nourrisseur</string>
+    <string name="pet_feeder_status_deletion_text">Êtes-vous sûr(e) de vouloir cesser d\'être un nourrisseur pour cet animal ?</string>
+    <string name="pet_feeder_status_deletion_success">Nourrisseur supprimé avec succès</string>
+    <string name="pet_feeder_status_deletion_failure">Échec de la suppression de nourrisseur </string>
+
+    <!-- Account Management -->
+    <string name="menu_account_settings">Gérer le compte</string>
+    <string name="title_account_creation">Créer un nouveau compte</string>
+    <string name="title_account_modification">Modifier le compte</string>
+    <string name="modify_password_switch">Modifier le mot de passe</string>
+    <string name="content_description_user_photo">Photo de l\'utilisateur</string>
+    <string name="content_description_btn_take_user_photo">Bouton prednre une photo</string>
+    <string name="content_description_btn_pick_user_photo_on_disk">Bouton choisir une photo sur le stockage</string>
+    <string name="hint_account_username">Identifiant</string>
+    <string name="hint_account_email">Email</string>
+    <string name="hint_account_password">Mot de passe</string>
+    <string name="hint_account_retype_password">Retapez le mot de passe</string>
+    <string name="toast_passwords_mismatch">Deux motd de passe différents ont été entré</string>
+    <string name="toast_email_invalid">L\'email entré n\'est pas valide</string>
+    <string name="toast_account_created">Compte créé !</string>
+    <string name="toast_account_not_created">Compte non créé !</string>
+    <string name="toast_account_update_success">Compte mis à jour avec succès !</string>
+    <string name="toast_account_update_failure">Compte non mis à jour !</string>
+    <string name="intent_title_select_picture">Choisir une image</string>
+
+    <!-- Pet management -->
+    <string name="tab_text_pet_general">Général</string>
+    <string name="tab_text_pet_food">Nourriture</string>
+    <string name="tab_text_pet_feeders">Nourisseurs</string>
+
+    <!-- Add a pet -->
+    <string name="title_add_a_pet_activity">Ajouter un animal</string>
+
+    <!-- Modify a pet -->
+    <string name="title_pet_modifcation_activity">Modifier un animal</string>
+
+    <!-- Pet management General-->
+    <string name="txt_pet_birthdate">Date de naissance</string>
+    <string name="content_description_pet_photo">Photo de l\'animal</string>
+    <string name="content_description_btn_pick_pet_photo_on_disk">Bouton choisir une photo sur le disque</string>
+    <string name="content_description_btn_take_pet_photo">Bouton prendre une photo</string>
+    <string name="hint_pet_name">Nom</string>
+    <string name="hint_pet_birthdate">Date de naissance de l\'animal</string>
+    <string name="error_empty_pet_name">Veuillez saisir un nom pour l\animal</string>
+    <string name="error_date_invalid_or_empty">Veuillez saisir une date de naissnace correcte</string>
+
+    <!-- Pet management Food -->
+    <string name="title_daily_food">Définir la ration quotidienne de nourriture</string>
+    <string name="title_standard_portions">Définir des portions habituelles</string>
+    <string name="hint_daily_food">Ration quotidienne (g)</string>
+    <string name="hint_food_portion1">Portion 1 (g)</string>
+    <string name="hint_food_portion2">Portion 2 (g)</string>
+    <string name="hint_food_portion3">Portion 3 (g)</string>
+    <string name="hint_food_portion4">Portion 4 (g)</string>
+    <string name="hint_food_portion5">Portion 5 (g)</string>
+    <string name="hint_food_portion6">Portion 6 (g)</string>
+
+    <!-- Pet management Feeders -->
+    <string name="title_dialog_new_pet">Ajouter un nouveau nourisseur</string>
+    <string name="new_feeder_success">Nouveau nourriseur ajouté avec succès</string>
+    <string name="error_user_mail_entered">Vous ne pouvez pas vous ajouter vous-même comme nourisseur</string>
+    <string name="error_feeder_mail">Ce nourriseur n\'existe pas</string>
+    <string name="error_feeder_mail_already_in_list">Nourriseur déja rattché à l\'animal</string>
+    <string name="btn_new_feeder">Ajouter</string>
+    <string name="new_feeder_confirm_delete">Supprimer</string>
+    <string name="new_feeder_confirm_delete_title">Suppression d\'un nourisseur</string>
+    <string name="new_feeder_confirm_delete_text">Êtes-vous sûr(e) de vouloir supprimer ce nourrriseur ?</string>
+
+    <!-- Pet fooding -->
+    <string name="title_activity_pet_fooding">Mon animal</string>
+    <string name="tab_text_pet_fooding_food">Nourriture</string>
+    <string name="tab_text_pet_fooding_weight">Poids</string>
+
+    <!-- Pet fooding food -->
+    <string name="petfooding_quantity_today">Quantité déjà donnée aujourd\'hui</string>
+    <string name="petfooding_feed_free_portion">Donner une portion libre (g)</string>
+    <string name="petfooding_feed_preset_portions">Donner une portion pré-définie</string>
+    <string name="hint_petfooding_free_portion">Portion libre</string>
+    <string name="petfooding_give_">Donner</string>
+    <string name="daily_weight_food_given_out_of"> g sur </string>
+    <string name="daily_weight_food_given_g">g</string>
+
+    <!-- Pet fooding weight -->
+    <string name="petfoodind_last_weight_recorded">Dernier poids enregistré</string>
+    <string name="title_dialog_new_weighing">Entrer un nouveau poids</string>
+    <string name="hint_new_weighing">Nouvelle pesée (g)</string>
+    <string name="new_weighing_success">Nouvelle pesée ajoutée avec succès</string>
+    <string name="new_weighing_error_empty">Veuillez entrer un nouveau poids pour l\'animal</string>
+    <string name="new_weighing_error_unknown">Erreur : pesée non ajoutée</string>
+    <string name="weight_le">le</string>
+    <string name="weight_g">g</string>
+    <string name="weight_new_weight_button">Nouvelle pesée</string>
+    <string name="weight_history_button">Historique</string>
+    <string name="title_dialog_weighing_history">Historique des pesées</string>
+    <string name="btn_weight_history_close">Fermer</string>
+    <string name="error_weighings_empty">Aucune pesée enregistrée, impossible d\afficher un historique</string>
+</resources>

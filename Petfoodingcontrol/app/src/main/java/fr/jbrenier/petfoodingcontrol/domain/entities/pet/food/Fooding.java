@@ -37,7 +37,6 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
                 childColumns = "pet_Id",
                 onDelete = ForeignKey.CASCADE)})
 public class Fooding implements Parcelable {
-    @NonNull
     @PrimaryKey(autoGenerate = true)
     private Long foodingId;
     @NonNull
@@ -51,7 +50,8 @@ public class Fooding implements Parcelable {
     private OffsetDateTime foodingDate;
     private Integer quantity;
 
-    public Fooding(Long userId, Long petId, OffsetDateTime foodingDate, Integer quantity) {
+    public Fooding(@NonNull Long userId,@NonNull Long petId, OffsetDateTime foodingDate,
+                   Integer quantity) {
         this.userId = userId;
         this.petId = petId;
         this.foodingDate = foodingDate;
@@ -108,6 +108,7 @@ public class Fooding implements Parcelable {
         this.foodingId = foodingId;
     }
 
+    @NonNull
     public Long getUserId() {
         return userId;
     }
@@ -116,6 +117,7 @@ public class Fooding implements Parcelable {
         this.userId = userId;
     }
 
+    @NonNull
     public Long getPetId() {
         return petId;
     }

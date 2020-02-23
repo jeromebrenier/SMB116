@@ -16,7 +16,7 @@ import android.widget.TextView;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.android.activities.accountcreation.AccountCreationActivity;
 import fr.jbrenier.petfoodingcontrol.android.activities.login.LoginActivity;
-import fr.jbrenier.petfoodingcontrol.android.uihelpers.InputValidatedHelper;
+import fr.jbrenier.petfoodingcontrol.utils.InputValidatedUtils;
 
 /**
  * The fragment that contains the form to complete with credentials in order to login.
@@ -49,11 +49,13 @@ public class LoginFieldsFragment extends Fragment {
     private void setLoginButtonOnClickListener() {
         final Button loginButton = loginFieldsView.findViewById(R.id.btn_login);
         loginButton.setOnClickListener(view -> {
-            String inputEmail =
-                    ((TextView) loginFieldsView.findViewById(R.id.txt_login_email)).getText().toString();
-            String inputPassword =
-                    ((TextView) loginFieldsView.findViewById(R.id.txt_login_password)).getText().toString();
-            ((LoginActivity) getActivity()).onLoginButtonClick(inputEmail, inputPassword);
+            String inputEmail = ((TextView) loginFieldsView
+                    .findViewById(R.id.txt_login_email)).getText().toString();
+            String inputPassword = ((TextView) loginFieldsView
+                    .findViewById(R.id.txt_login_password)).getText().toString();
+            if (loginActivity != null) {
+                loginActivity.onLoginButtonClick(inputEmail, inputPassword);
+            }
         });
     }
 
@@ -73,9 +75,11 @@ public class LoginFieldsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         loginActivity = (LoginActivity) getActivity();
-        InputValidatedHelper.getWithValidationControlEmailEditText(
-                loginActivity.findViewById(R.id.txt_login_email),
-                loginActivity.findViewById(R.id.txt_login_mail_invalid)
-        );
+        if (loginActivity != null) {
+            InputValidatedUtils.getWithValidationControlEmailEditText(
+                    loginActivity.findViewById(R.id.txt_login_email),
+                    loginActivity.findViewById(R.id.txt_login_mail_invalid)
+            );
+        }
     }
 }

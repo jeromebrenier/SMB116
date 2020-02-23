@@ -27,19 +27,13 @@ import fr.jbrenier.petfoodingcontrol.android.fragments.petmanagement.PetManageme
  */
 public class PetFoodSettingsFragment extends PetManagementFragment implements PetData {
 
-    /** LOGGING */
+    /** Logging */
     private static final String TAG = "PetGeneralFragment";
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.pet_food_settings_fragment, container, false);
-        return root;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
+        return inflater.inflate(R.layout.pet_food_settings_fragment, container, false);
     }
 
     @Override
@@ -127,6 +121,11 @@ public class PetFoodSettingsFragment extends PetManagementFragment implements Pe
         }
     }
 
+    /**
+     * Update the food settings in the view model accordingly to the data entered.
+     * @param viewModelSettings the view model settings
+     * @param newSettings the data entered
+     */
     private void updateFoodSettings(FoodSettings viewModelSettings, FoodSettings newSettings) {
         if (newSettings.getDailyQuantity() != 0) {
             viewModelSettings.setDailyQuantity(newSettings.getDailyQuantity());
