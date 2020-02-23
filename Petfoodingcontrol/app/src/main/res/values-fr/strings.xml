@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name">Pet Fooding Control</string>
     <string name="main_logo">logo principal de Pet Fooding Control</string>
 
     <!-- Global -->
@@ -52,6 +53,8 @@
     <string name="pet_feeder_status_deletion_failure">Échec de la suppression de nourrisseur </string>
 
     <!-- Account Management -->
+    <string name="title_activity_account_management">AccountManagementActivity</string>
+    <string name="account_activity_management_type">AccountActivityType</string>
     <string name="menu_account_settings">Gérer le compte</string>
     <string name="title_account_creation">Créer un nouveau compte</string>
     <string name="title_account_modification">Modifier le compte</string>
