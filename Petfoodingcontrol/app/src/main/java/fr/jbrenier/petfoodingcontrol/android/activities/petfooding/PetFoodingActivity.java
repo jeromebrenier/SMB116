@@ -184,12 +184,17 @@ public class PetFoodingActivity extends AppCompatActivity {
      * Save a free portion, i.e the value of the portion has been defined by the user.
      */
     private void saveFreePortionFooding() {
-        String freePortionEntered = ((EditText) findViewById(R.id.txt_petfooding_free_portion))
-                .getText().toString();
+        EditText freePortionEditText = findViewById(R.id.txt_petfooding_free_portion);
+        String freePortionEntered = freePortionEditText.getText().toString();
         if (!freePortionEntered.isEmpty()) {
             User userLogged = ((PetFoodingControl) getApplication()).getUserLogged().getValue();
             if (userLogged != null) {
-                petFoodingViewModel.saveFooding(Integer.valueOf(freePortionEntered), userLogged);
+                Observer<Boolean> observer =
+                        bool -> showToast(bool ? R.string.give_free_portion_success :
+                                R.string.give_free_portion_failure);
+                petFoodingViewModel.saveFooding(Integer.valueOf(freePortionEntered), userLogged)
+                        .observe(this, observer);
+                freePortionEditText.setText("");
             }
         }
     }

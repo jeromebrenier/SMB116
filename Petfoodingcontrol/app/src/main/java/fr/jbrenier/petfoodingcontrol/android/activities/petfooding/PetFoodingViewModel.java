@@ -166,13 +166,17 @@ public class PetFoodingViewModel extends ViewModel {
      * @param value the value of the fooding
      * @param userLogged the user having given the fooding
      */
-    void saveFooding(Integer value, User userLogged) {
-        if (pet.getValue() == null) { return; }
+    SingleLiveEvent<Boolean> saveFooding(Integer value, User userLogged) {
+        if (pet.getValue() == null) {
+            SingleLiveEvent<Boolean> returnFalse = new SingleLiveEvent<>();
+            returnFalse.setValue(false);
+            return returnFalse;
+        }
         Fooding fooding = new Fooding(
                 userLogged.getUserId(),
                 pet.getValue().getPetId(),
                 OffsetDateTime.now(), value);
-        petService.savePetFooding(this, fooding);
+        return petService.savePetFooding(this, fooding);
     }
 
     /**

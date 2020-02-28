@@ -130,6 +130,8 @@
     <string name="petfooding_give_">Donner</string>
     <string name="daily_weight_food_given_out_of"> g sur </string>
     <string name="daily_weight_food_given_g">g</string>
+    <string name="give_free_portion_success">Portion donnée avec succès !</string>
+    <string name="give_free_portion_failure">Échec du nourrissage !</string>
 
     <!-- Pet fooding weight -->
     <string name="petfoodind_last_weight_recorded">Dernier poids enregistré</string>
