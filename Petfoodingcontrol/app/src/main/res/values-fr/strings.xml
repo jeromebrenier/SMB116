@@ -34,7 +34,7 @@
     <!-- Main activity permissions-->
     <string name="permission_grant_access_needed">Vous devez autoriser l\'accès à </string>
     <string name="permission_camera">l\'appareil photo</string>
-    <string name="permission_read_external_storage">la lecrure du stockage externe</string>
+    <string name="permission_read_external_storage">la lecture du stockage externe</string>
 
     <!-- Pets -->
     <string name="menu_pets">Mes animaux</string>
