@@ -205,39 +205,45 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
     public SingleLiveEvent<Integer> update(Object object,
                                            Map<UserServiceKeysEnum, String> userData) {
         SingleLiveEvent<Integer> updateUserResult = new SingleLiveEvent<>();
-        userData = managePasswordData(userData);
-        userData = setOrigPwdIfNoPwdUpdate(userData);
+        managePasswordData(userData);
         if (!(compareDataToCurrentUserLogged(userData))) {
             User userLogged = petFoodingControl.getUserLogged().getValue();
-            User userUpdated = new User(
-                    userLogged.getUserId(),
-                    userData.get(UserServiceKeysEnum.USERNAME_KEY),
-                    userData.get(UserServiceKeysEnum.EMAIL_KEY),
-                    userData.get(UserServiceKeysEnum.PASSWORD_KEY),
-                    userLogged.getPhotoId()
-            );
-            Disposable disposable = pfcRepository.updateUser(userUpdated).subscribe(
-                    () -> {
-                        updateUserResult.setValue(0);
-                        petFoodingControl.getUserLogged().setValue(userUpdated);
-                        Log.i(TAG,"User updated");
-                    },
-                    throwable -> {
-                        updateUserResult.setValue(1);
-                        Log.e(TAG, "User update failure", throwable);
-                    });
-            addToCompositeDisposable(object, disposable);
+            if (userLogged != null) {
+                User userUpdated = new User(
+                        userLogged.getUserId(),
+                        userData.get(UserServiceKeysEnum.USERNAME_KEY),
+                        userData.get(UserServiceKeysEnum.EMAIL_KEY),
+                        userData.get(UserServiceKeysEnum.PASSWORD_KEY),
+                        userLogged.getPhotoId()
+                );
+                Disposable disposable = pfcRepository.updateUser(userUpdated).subscribe(
+                        () -> {
+                            updateUserResult.setValue(0);
+                            petFoodingControl.getUserLogged().setValue(userUpdated);
+                            Log.i(TAG, "User updated");
+                        },
+                        throwable -> {
+                            updateUserResult.setValue(1);
+                            Log.e(TAG, "User update failure", throwable);
+                        });
+                addToCompositeDisposable(object, disposable);
+            }
         } else {
-            updateUserResult.setValue(1);
+            updateUserResult.setValue(0);
+            Log.i(TAG,"No user update needed");
         }
         return updateUserResult;
     }
 
-    private Map<UserServiceKeysEnum, String> managePasswordData(
-            Map<UserServiceKeysEnum, String> userData) {
+    /**
+     * Replace an empty userData password (no update required) provided with the current
+     * user password. Else encrypt the password entered.
+     * @param userData the user data provided
+     */
+    private void managePasswordData(Map<UserServiceKeysEnum, String> userData) {
         User userLogged = petFoodingControl.getUserLogged().getValue();
         String passwordProvided = userData.get(UserServiceKeysEnum.PASSWORD_KEY);
-        if (passwordProvided.equals("")) {
+        if (passwordProvided != null && userLogged != null && passwordProvided.equals("")) {
             // No update we put the current user password in the map
             userData.replace(UserServiceKeysEnum.PASSWORD_KEY, passwordProvided,
                     userLogged.getPassword());
@@ -246,23 +252,6 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
             userData.replace(UserServiceKeysEnum.PASSWORD_KEY, passwordProvided,
                     CryptographyUtils.hashPassword(passwordProvided));
         }
-        return userData;
-    }
-
-    /**
-     * Replace an empty userData password (no update required) provided with the current
-     * user password.
-     * @param userData the user data provided
-     * @return the user data with password value modified if needed
-     */
-    private Map<UserServiceKeysEnum, String> setOrigPwdIfNoPwdUpdate(
-            Map<UserServiceKeysEnum, String> userData) {
-        User userLogged = petFoodingControl.getUserLogged().getValue();
-        if (userData.get(UserServiceKeysEnum.PASSWORD_KEY).equals("")) {
-            userData.replace(UserServiceKeysEnum.PASSWORD_KEY, "",
-                    userLogged.getPassword());
-        }
-        return userData;
     }
 
     /**
@@ -273,7 +262,8 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      */
     private boolean compareDataToCurrentUserLogged(Map<UserServiceKeysEnum, String> userData) {
         User userLogged = petFoodingControl.getUserLogged().getValue();
-        return (userLogged.getEmail().equals(userData.get(UserServiceKeysEnum.EMAIL_KEY)) &&
+        return (userLogged !=null &&
+                userLogged.getEmail().equals(userData.get(UserServiceKeysEnum.EMAIL_KEY)) &&
                 userLogged.getPassword().equals(userData.get(UserServiceKeysEnum.PASSWORD_KEY)) &&
                 userLogged.getDisplayedName()
                         .equals(userData.get(UserServiceKeysEnum.USERNAME_KEY)));
