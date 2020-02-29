@@ -24,7 +24,7 @@ public interface PhotoService {
     SingleLiveEvent<Boolean> save(Object object, Photo photo, Pet pet);
     SingleLiveEvent<Boolean> update(Object object, Photo photo);
     void clearDisposables(Object object);
-    MutableLiveData<Bitmap> get(Object object, User user);
+    SingleLiveEvent<Bitmap> get(Object object, User user);
     MutableLiveData<Bitmap> getPetBitmap(Object object, Pet pet);
     SingleLiveEvent<Photo> getPetPhoto(Object object, Pet pet);
 }

@@ -43,13 +43,15 @@ public class MainActivityViewModel extends ViewModel {
     PetService petService;
 
     private PetFoodingControl petFoodingControl;
-    private MutableLiveData<Bitmap> userPhoto;
+    private MutableLiveData<Bitmap> userPhoto = new MutableLiveData<>();
+    private Observer<Bitmap> userPhotoObserver = userPhoto::setValue;
+    private Map<SingleLiveEvent<Bitmap>, Observer<Bitmap>> userPhotoListenerMap = new HashMap<>();
     private LiveData<List<Pet>> userPets;
     /** Needed for the pet list fragment */
     private List<Pet> userPetsArrayList = new ArrayList<>();
     private MutableLiveData<Boolean> userPetsArrayListChanged = new MutableLiveData<>(false);
 
-    private Map<LiveData<List<Pet>>, Observer<List<Pet>>> mapUserPetsListener = new HashMap<>();
+    private Map<LiveData<List<Pet>>, Observer<List<Pet>>> userPetsListenerMap = new HashMap<>();
 
     MainActivityViewModel(PetFoodingControl petFoodingControl) {
         this.petFoodingControl = petFoodingControl;
@@ -63,10 +65,30 @@ public class MainActivityViewModel extends ViewModel {
     void updateUserPetsAndPhoto(User user) {
         if (user != null) {
             userPets = petService.getUserPets(user);
-            userPhoto = photoService.get(this, user);
+            userPhotoListenerMap.forEach(SingleLiveEvent::removeObserver);
+            SingleLiveEvent<Bitmap> userPhotoFromDb = photoService.get(this, user);
+            userPhotoFromDb.observeForever(userPhotoObserver);
+            userPhotoListenerMap.put(userPhotoFromDb, userPhotoObserver);
             Log.i(TAG, "User logged changed to " + user.getUserId().toString());
         } else {
             Log.i(TAG, "User logged changed to null");
+        }
+    }
+
+    /**
+     * Refresh the user's photo after update.
+     */
+    void refreshPhoto(User user) {
+        User userToUse = user;
+        if (userToUse == null && petFoodingControl.getUserLogged() != null) {
+            userToUse = petFoodingControl.getUserLogged().getValue();
+        }
+        if (userToUse != null) {
+            userPhotoListenerMap.forEach(SingleLiveEvent::removeObserver);
+            SingleLiveEvent<Bitmap> userPhotoFromDb = photoService.get(this, userToUse);
+            userPhotoFromDb.observeForever(userPhotoObserver);
+            userPhotoListenerMap.put(userPhotoFromDb, userPhotoObserver);
+            Log.d(TAG, "User's photo updated");
         }
     }
 
@@ -136,7 +158,7 @@ public class MainActivityViewModel extends ViewModel {
         userService.leave();
         userService.clearKeepMeLogged();
         clear();
-        mapUserPetsListener.forEach(LiveData::removeObserver);
+        userPetsListenerMap.forEach(LiveData::removeObserver);
     }
 
     /**
@@ -164,7 +186,7 @@ public class MainActivityViewModel extends ViewModel {
         return petService.getPetStatus(pet);
     }
 
-    MutableLiveData<Bitmap> getUserPhoto() {
+    public MutableLiveData<Bitmap> getUserPhoto() {
         return userPhoto;
     }
 
@@ -180,7 +202,7 @@ public class MainActivityViewModel extends ViewModel {
         return userPetsArrayListChanged;
     }
 
-    public Map<LiveData<List<Pet>>, Observer<List<Pet>>> getMapUserPetsListener() {
-        return mapUserPetsListener;
+    Map<LiveData<List<Pet>>, Observer<List<Pet>>> getUserPetsListenerMap() {
+        return userPetsListenerMap;
     }
 }

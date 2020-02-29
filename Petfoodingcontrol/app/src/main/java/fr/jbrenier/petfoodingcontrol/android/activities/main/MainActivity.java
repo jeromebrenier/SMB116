@@ -2,6 +2,7 @@ package fr.jbrenier.petfoodingcontrol.android.activities.main;
 
 import android.content.Intent;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,6 +42,7 @@ import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetCreatio
 import fr.jbrenier.petfoodingcontrol.android.fragments.accountmanagement.AccountCreationFormFragment;
 import fr.jbrenier.petfoodingcontrol.android.fragments.main.pets.PetFragment;
 
+
 /**
  * Main activity of the Pet Fooding Control application.
  * @author Jérôme Brenier
@@ -61,8 +63,8 @@ public class MainActivity extends AppCompatActivity implements
     /** Logging */
     private static final String TAG = "MainActivity";
 
-    private TextView user_name;
-    private ImageView user_photo;
+    //private TextView user_name;
+    //private ImageView user_photo;
     private Toolbar toolbar;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout mDrawerLayout;
@@ -80,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements
         petFoodingControl = (PetFoodingControl) getApplication();
         mainActivityViewModel = new MainActivityViewModel(petFoodingControl);
         contentInitAndSetup();
+        setupUserDisplayedNameListener();
+        setupUserPhotoListener();
 
         // Permissions Management
         permissionProcessDone.observe(this, bool -> {
@@ -110,9 +114,51 @@ public class MainActivity extends AppCompatActivity implements
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         headerView = navigationView.getHeaderView(0);
-        getUserDataView();
         setupLogoutListener(navigationView);
         setupUserLoggedListener();
+    }
+
+    /**
+     * Setup the binding between for displaying the correct user logged name in the header view.
+     */
+    private void setupUserDisplayedNameListener() {
+        petFoodingControl.getUserLogged().observe(this, this::setDisplayedName);
+    }
+
+    /**
+     * Set the user displayed name of the user given in parameter as the user name TextView value.
+     * @param user the user whose name to display
+     */
+    private void setDisplayedName(User user) {
+        if (user != null) {
+            TextView txtDisplayedName = headerView.findViewById(R.id.txt_user_name);
+            if (txtDisplayedName != null) {
+                Log.d(TAG, "setDisplayedName " + user.getDisplayedName());
+                txtDisplayedName.setText(user.getDisplayedName());
+            }
+        }
+    }
+
+    /**
+     * Setup a listener on the userPhoto MutableLiveData to trigger the display of the bitmap
+     * image in the corresponding ImageView.
+     */
+    private void setupUserPhotoListener() {
+        mainActivityViewModel.getUserPhoto().observe(this, this::setUserPhoto);
+    }
+
+    /**
+     * Set the bitmap iamge given in paramter as the user photo ImageView image.
+     * @param bitmap the bitmap image to set in the ImageView
+     */
+    private void setUserPhoto(Bitmap bitmap) {
+        if (bitmap != null) {
+            ImageView imv = headerView.findViewById(R.id.imv_user_photo);
+            if (imv != null) {
+                Log.d(TAG, "setImageBitmap " + bitmap.toString());
+                imv.setImageBitmap(bitmap);
+            }
+        }
     }
 
     /**
@@ -129,14 +175,6 @@ public class MainActivity extends AppCompatActivity implements
     private void sendPetCreationActivityIntent() {
         Intent petCreationActivityIntent = new Intent(this, PetCreationActivity.class);
         startActivity(petCreationActivityIntent);
-    }
-
-    /**
-     * Get views from the header used to display the User data.
-     */
-    private void getUserDataView() {
-        user_name = headerView.findViewById(R.id.txt_user_name);
-        user_photo = headerView.findViewById(R.id.imv_user_photo);
     }
 
     /**
@@ -178,7 +216,6 @@ public class MainActivity extends AppCompatActivity implements
             if (user != null) {
                 mainActivityViewModel.updateUserPetsAndPhoto(user);
                 setupUserPetsListener();
-                setUserDataInNavBar(user);
             }
         });
     }
@@ -189,27 +226,13 @@ public class MainActivity extends AppCompatActivity implements
     private void setupUserPetsListener() {
         Observer<List<Pet>> observer = this.mainActivityViewModel::updateUserPetsArrayList;
         mainActivityViewModel.getUserPets().observe(this, observer);
-        mainActivityViewModel.getMapUserPetsListener()
+        mainActivityViewModel.getUserPetsListenerMap()
                 .put(mainActivityViewModel.getUserPets(), observer);
         if (mainActivityViewModel.getUserPets() != null &&
                 mainActivityViewModel.getUserPets().getValue() != null ) {
             mainActivityViewModel.updateUserPetsArrayList(
                     mainActivityViewModel.getUserPets().getValue());
         }
-    }
-
-    /**
-     * Set the User elements (name and photo) in the navigation bar dedicated area according to
-     * the User data.
-     * @param user : the logged User
-     */
-    private void setUserDataInNavBar(User user) {
-        user_name.setText(user == null ? "********" : user.getDisplayedName());
-        mainActivityViewModel.getUserPhoto().observe(this, bitmap -> {
-            if (bitmap != null) {
-                user_photo.setImageBitmap(bitmap);
-            }
-        });
     }
 
     @Override
@@ -343,6 +366,7 @@ public class MainActivity extends AppCompatActivity implements
                 showToast(getResources().getString(R.string.toast_account_update_failure));
             } else if (updateResult == 0) {
                 showToast(getResources().getString(R.string.toast_account_update_success));
+                mainActivityViewModel.refreshPhoto(null);
             }
         });
     }

@@ -160,8 +160,8 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
      * @return the bitmap corresponding to the user's photo
      */
     @Override
-    public MutableLiveData<Bitmap> get(Object object, User user) {
-        MutableLiveData<Bitmap> bitmapRetrieved = new MutableLiveData<>(null);
+    public SingleLiveEvent<Bitmap> get(Object object, User user) {
+        SingleLiveEvent<Bitmap> bitmapRetrieved = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.getUserPhoto(user).subscribe(
                 photo -> {
                     Log.i(TAG, "User's photo loaded.");
@@ -169,8 +169,10 @@ public class PhotoServiceImpl extends PetFoodingControlService implements PhotoS
                     Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0,
                             decodedString.length);
                     bitmapRetrieved.setValue(decodedByte);
-                }, throwable ->
-                        Log.e(TAG, "User's photo not loaded."));
+                }, throwable -> {
+                        Log.e(TAG, "User's photo not loaded.");
+                        bitmapRetrieved.setValue(null);
+                });
         addToCompositeDisposable(object, disposable);
         return bitmapRetrieved;
     }
