@@ -8,8 +8,11 @@ import dagger.BindsInstance;
 import dagger.Component;
 import fr.jbrenier.petfoodingcontrol.di.repository.RepositoryModule;
 import fr.jbrenier.petfoodingcontrol.di.services.ServicesModule;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableManager;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
+import fr.jbrenier.petfoodingcontrol.services.petservice.PetServiceImpl;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
+import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoServiceImpl;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.android.activities.accountcreation.AccountCreationActivity;
 import fr.jbrenier.petfoodingcontrol.android.activities.login.LoginActivity;
@@ -17,6 +20,7 @@ import fr.jbrenier.petfoodingcontrol.android.activities.main.MainActivityViewMod
 import fr.jbrenier.petfoodingcontrol.android.activities.petfooding.PetFoodingViewModel;
 import fr.jbrenier.petfoodingcontrol.android.activities.petmanagement.PetManagementViewModel;
 import fr.jbrenier.petfoodingcontrol.android.fragments.accountmanagement.AccountCreationFormFragment;
+import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceImpl;
 
 /**
  * Dagger Dependency Injection :  App Component
@@ -31,6 +35,12 @@ public interface AppComponent {
     void inject(AccountCreationFormFragment accountCreationFormFragment);
     void inject(PetManagementViewModel petManagementViewModel);
     void inject(PetFoodingViewModel petFoodingViewModel);
+    void inject(UserServiceImpl userService);
+    void inject(PetServiceImpl petService);
+    void inject(PhotoServiceImpl photoService);
+
+    @Singleton
+    DisposableManager getDisposableManager();
 
     @Singleton
     UserService getUserService();

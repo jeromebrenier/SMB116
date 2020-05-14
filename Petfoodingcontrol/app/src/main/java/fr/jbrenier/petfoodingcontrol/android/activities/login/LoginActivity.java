@@ -14,6 +14,8 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableManager;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableOwner;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.android.fragments.login.LoginFieldsFragment;
 import fr.jbrenier.petfoodingcontrol.android.fragments.login.LoginWelcomeFragment;
@@ -23,10 +25,13 @@ import fr.jbrenier.petfoodingcontrol.utils.InputValidationUtils;
  * The Login activity of the Pet Fooding Control application.
  * @author Jérôme Brenier
  */
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements DisposableOwner {
 
     /** Logging */
     private static final String TAG = "LoginActivity";
+
+    @Inject
+    DisposableManager disposableManager;
 
     @Inject
     UserService userService;
@@ -122,11 +127,16 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        userService.clearDisposables(this);
+        clearDisposables();
         super.onDestroy();
     }
 
     public UserService getUserService() {
         return userService;
+    }
+
+    @Override
+    public void clearDisposables() {
+        disposableManager.clear(this);
     }
 }

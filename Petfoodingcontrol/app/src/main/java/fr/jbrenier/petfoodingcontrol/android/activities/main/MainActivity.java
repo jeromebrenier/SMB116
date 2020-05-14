@@ -63,8 +63,6 @@ public class MainActivity extends AppCompatActivity implements
     /** Logging */
     private static final String TAG = "MainActivity";
 
-    //private TextView user_name;
-    //private ImageView user_photo;
     private Toolbar toolbar;
     private AppBarConfiguration mAppBarConfiguration;
     private DrawerLayout mDrawerLayout;

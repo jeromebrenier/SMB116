@@ -23,6 +23,8 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeder;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.FoodSettings;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.model.Feeder;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableManager;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableOwner;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
@@ -31,10 +33,13 @@ import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
  * Pet management view model.
  * @author Jérôme Brenier
  */
-public class PetManagementViewModel extends ViewModel {
+public class PetManagementViewModel extends ViewModel implements DisposableOwner {
 
     /** Logging */
     private static final String TAG = "PetManagementViewModel";
+
+    @Inject
+    DisposableManager disposableManager;
 
     @Inject
     UserService userService;
@@ -284,5 +289,10 @@ public class PetManagementViewModel extends ViewModel {
 
     public void setFoodSettings(FoodSettings foodSettings) {
         this.foodSettings = foodSettings;
+    }
+
+    @Override
+    public void clearDisposables() {
+        disposableManager.clear(this);
     }
 }

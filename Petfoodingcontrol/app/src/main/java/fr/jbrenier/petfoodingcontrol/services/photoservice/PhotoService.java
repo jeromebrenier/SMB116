@@ -1,6 +1,5 @@
 package fr.jbrenier.petfoodingcontrol.services.photoservice;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 
 import androidx.lifecycle.MutableLiveData;
@@ -11,6 +10,7 @@ import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableOwner;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
 
 /**
@@ -18,13 +18,12 @@ import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
  * @author Jérôme Brenier
  */
 public interface PhotoService {
-    SingleLiveEvent<Integer> update(Object object, User currentUser,
+    SingleLiveEvent<Integer> update(DisposableOwner disposableOwner, User currentUser,
                                     Map<UserServiceKeysEnum, String> userData);
-    void save(Context context, Photo photo, User user);
-    SingleLiveEvent<Boolean> save(Object object, Photo photo, Pet pet);
-    SingleLiveEvent<Boolean> update(Object object, Photo photo);
-    void clearDisposables(Object object);
-    SingleLiveEvent<Bitmap> get(Object object, User user);
-    MutableLiveData<Bitmap> getPetBitmap(Object object, Pet pet);
-    SingleLiveEvent<Photo> getPetPhoto(Object object, Pet pet);
+    void save(DisposableOwner disposableOwner, Photo photo, User user);
+    SingleLiveEvent<Boolean> save(DisposableOwner disposableOwner, Photo photo, Pet pet);
+    SingleLiveEvent<Boolean> update(DisposableOwner disposableOwner, Photo photo);
+    SingleLiveEvent<Bitmap> get(DisposableOwner disposableOwner, User user);
+    MutableLiveData<Bitmap> getPetBitmap(DisposableOwner disposableOwner, Pet pet);
+    SingleLiveEvent<Photo> getPetPhoto(DisposableOwner disposableOwner, Pet pet);
 }

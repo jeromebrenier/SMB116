@@ -8,6 +8,7 @@ import dagger.Module;
 import dagger.Provides;
 import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableManager;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetServiceImpl;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
@@ -24,23 +25,31 @@ public class ServicesModule {
 
     @Singleton
     @Provides
+    DisposableManager getDisposableManager() {
+        return new DisposableManager();
+    }
+
+    @Singleton
+    @Provides
     UserService getUserService(PetFoodingControl petFoodingControl,
-                                      PetFoodingControlRepository pfcRepository,
-                                      SharedPreferences sharedPreferences) {
+                               PetFoodingControlRepository pfcRepository,
+                               SharedPreferences sharedPreferences) {
         return new UserServiceImpl(petFoodingControl, pfcRepository, sharedPreferences);
     }
 
     @Singleton
     @Provides
-    PetService getPetService(PetFoodingControlRepository pfcRepository) {
-        return new PetServiceImpl(pfcRepository);
+    PetService getPetService(PetFoodingControl petFoodingControl,
+                             PetFoodingControlRepository pfcRepository) {
+        return new PetServiceImpl(petFoodingControl, pfcRepository);
     }
 
     @Singleton
     @Provides
-    PhotoService getPhotoService(PetFoodingControlRepository pfcRepository,
-                                        UserService userService,
-                                        PetService petService) {
-        return new PhotoServiceImpl(pfcRepository, userService, petService);
+    PhotoService getPhotoService(PetFoodingControl petFoodingControl,
+                                 PetFoodingControlRepository pfcRepository,
+                                 UserService userService,
+                                 PetService petService) {
+        return new PhotoServiceImpl(petFoodingControl, pfcRepository, userService, petService);
     }
 }

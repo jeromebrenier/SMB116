@@ -20,6 +20,8 @@ import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.PetFeeder;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableManager;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableOwner;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
@@ -29,9 +31,12 @@ import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
  * The main activity view model.
  * @author Jérôme Brenier
  */
-public class MainActivityViewModel extends ViewModel {
+public class MainActivityViewModel extends ViewModel implements DisposableOwner {
     /** Logging */
     private static final String TAG = "MainActivityViewModel";
+
+    @Inject
+    DisposableManager disposableManager;
 
     @Inject
     UserService userService;
@@ -157,7 +162,7 @@ public class MainActivityViewModel extends ViewModel {
     void logout() {
         userService.leave();
         userService.clearKeepMeLogged();
-        clear();
+        clearDisposables();
         userPetsListenerMap.forEach(LiveData::removeObserver);
     }
 
@@ -165,17 +170,8 @@ public class MainActivityViewModel extends ViewModel {
      * Invoked when Main Activity is finishing to clear the disposables and log out.
      */
     void finish() {
-        clear();
+        clearDisposables();
         userService.leave();
-    }
-
-    /**
-     * Clear the disposables linked.
-     */
-    private void clear() {
-        userService.clearDisposables(this);
-        photoService.clearDisposables(this);
-        petService.clearDisposables(this);
     }
 
     public MutableLiveData<Bitmap> getPetPhoto(Pet pet) {
@@ -204,5 +200,10 @@ public class MainActivityViewModel extends ViewModel {
 
     Map<LiveData<List<Pet>>, Observer<List<Pet>>> getUserPetsListenerMap() {
         return userPetsListenerMap;
+    }
+
+    @Override
+    public void clearDisposables() {
+        disposableManager.clear(this);
     }
 }

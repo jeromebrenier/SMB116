@@ -32,6 +32,8 @@ import javax.inject.Inject;
 
 import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableManager;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableOwner;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
@@ -45,7 +47,8 @@ import static android.app.Activity.RESULT_OK;
  * The fragment for creating user accounts.
  * @author Jérôme Brenier
  */
-public class AccountCreationFormFragment extends Fragment implements View.OnClickListener {
+public class AccountCreationFormFragment extends Fragment implements View.OnClickListener,
+                                                                     DisposableOwner {
 
     /** Pick image request code */
     private static final int PICK_IMAGE_REQUEST = 1;
@@ -54,6 +57,9 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
 
     /** Logging */
     private static final String TAG = "AccountCreationFormFragment";
+
+    @Inject
+    DisposableManager disposableManager;
 
     @Inject
     UserService userService;
@@ -358,13 +364,17 @@ public class AccountCreationFormFragment extends Fragment implements View.OnClic
 
     @Override
     public void onDestroy() {
-        userService.clearDisposables(this.getContext());
-        photoService.clearDisposables(this.getContext());
+        clearDisposables();
         super.onDestroy();
     }
 
     public void setCallback(OnSaveButtonClickListener callback) {
         this.callback = callback;
+    }
+
+    @Override
+    public void clearDisposables() {
+        disposableManager.clear(this);
     }
 
     /**

@@ -53,7 +53,7 @@ public class AccountModificationFormFragment extends AccountCreationFormFragment
                 Log.i(TAG, "User logged changed to " + user.getUserId().toString());
                 // Image
                 Log.i(TAG, "User Photo id : " + user.getPhotoId().toString());
-                photoService.get(this.getContext(), user).observe(getViewLifecycleOwner(), bitmap -> {
+                photoService.get(this, user).observe(getViewLifecycleOwner(), bitmap -> {
                     if (bitmap != null) {
                         setPhotoInImageView(bitmap);
                         Log.i(TAG, "User image loaded.");

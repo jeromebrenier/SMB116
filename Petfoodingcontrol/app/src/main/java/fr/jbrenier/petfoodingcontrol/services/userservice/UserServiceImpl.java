@@ -1,11 +1,9 @@
 package fr.jbrenier.petfoodingcontrol.services.userservice;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.time.OffsetDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -15,49 +13,50 @@ import fr.jbrenier.petfoodingcontrol.android.extras.SingleLiveEvent;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.AutoLogin;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
 import fr.jbrenier.petfoodingcontrol.repository.PetFoodingControlRepository;
-import fr.jbrenier.petfoodingcontrol.services.PetFoodingControlService;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableManager;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableOwner;
 import fr.jbrenier.petfoodingcontrol.utils.AutoLoginUtils;
 import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 /**
  * The User service implementation.
  * @author Jérôme Brenier
  */
-public class UserServiceImpl extends PetFoodingControlService implements UserService {
+public class UserServiceImpl implements UserService {
     /** Logging */
     private static final String TAG = "UserService";
 
     /** Preferences AUTO LOGIN KEY */
     private static final String AUTO_LOGIN_TOKEN = "autoLoginToken";
 
-    /** Disposable management */
-    private Map<Context, CompositeDisposable> compositeDisposableMap = new HashMap<>();
-
     private PetFoodingControl petFoodingControl;
     private PetFoodingControlRepository pfcRepository;
     private SharedPreferences sharedPreferences;
+
+    @Inject
+    DisposableManager disposableManager;
 
     @Inject
     public UserServiceImpl(PetFoodingControl petFoodingControl,
                            PetFoodingControlRepository pfcRepository,
                            SharedPreferences sharedPreferences) {
         this.petFoodingControl = petFoodingControl;
+        petFoodingControl.getAppComponent().inject(this);
         this.pfcRepository = pfcRepository;
         this.sharedPreferences = sharedPreferences;
     }
 
     /**
      * Init the login process.
-     * @param context the Context of the caller
+     * @param disposableOwner the calling object
      */
     @Override
-    public void initLogin(Context context) {
+    public void initLogin(DisposableOwner disposableOwner) {
         String autoLogin = sharedPreferences.getString(AUTO_LOGIN_TOKEN,"");
         if (!autoLogin.isEmpty()) {
             Log.i(TAG, "Auto login value stored in preferences : " + autoLogin);
-            tryToAutologin(context, autoLogin);
+            tryToAutologin(disposableOwner, autoLogin);
         } else {
             petFoodingControl.getUserLogged().setValue(null);
         }
@@ -65,9 +64,10 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
 
     /**
      * Try to log with auto login with the local token given as a parameter.
+     * @param disposableOwner the calling object
      * @param autoLoginLocalToken the local auto login token
      */
-    private void tryToAutologin(Context context, String autoLoginLocalToken) {
+    private void tryToAutologin(DisposableOwner disposableOwner, String autoLoginLocalToken) {
         Disposable disposable = pfcRepository.getUserByAutoLogin(autoLoginLocalToken).subscribe(
                 user -> {
                     Log.i(TAG, "User from AutoLogin successfully retrieved");
@@ -76,7 +76,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                     Log.e(TAG, "AutoLogin failed", throwable);
                     petFoodingControl.getUserLogged().setValue(null);
                 });
-        addToCompositeDisposable(context, disposable);
+        disposableManager.addDisposable(disposableOwner, disposable);
     }
 
     /**
@@ -84,11 +84,13 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      * in preferences if necessary.
      * Return a SingleLiveEvent<Integer> taking the value 0 in case of success, 1 in case
      * of wrong password and 2 In case of user retrieval problem.
-     * @param context the Context of the caller
+     * @param disposableOwner the calling object
      * @return logInResult SingleLiveEvent<Integer> result of the try
      */
     @Override
-    public SingleLiveEvent<Integer> tryToLog(Context context, String email, String password,
+    public SingleLiveEvent<Integer> tryToLog(DisposableOwner disposableOwner,
+                                             String email,
+                                             String password,
                                              boolean isKeepLogged) {
         SingleLiveEvent<Integer> logInResult = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.getUserByEmail(email).subscribe(
@@ -96,7 +98,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                         () -> {
                             petFoodingControl.getUserLogged().setValue(user);
                             if (isKeepLogged) {
-                                setAutoLogin(context);
+                                setAutoLogin(disposableOwner);
                             }
                             logInResult.setValue(0);
                             Log.i(TAG, "Log in success.");
@@ -108,15 +110,15 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                     logInResult.setValue(2);
                     Log.e(TAG, "Log in failure ", throwable);
                 });
-        addToCompositeDisposable(context, disposable);
+        disposableManager.addDisposable(disposableOwner, disposable);
         return logInResult;
     }
 
     /**
      * Save in db and if successful, store in preferences the AutoLogin given in parameter.
-     * @param context the Context of the caller
+     * @param disposableOwner the calling object
      */
-    private void setAutoLogin(Context context) {
+    private void setAutoLogin(DisposableOwner disposableOwner) {
         AutoLogin autoLogin = new AutoLogin(
                 AutoLoginUtils.getInstance().getUuid().toString(),
                 OffsetDateTime.now().plusWeeks(1L),
@@ -130,7 +132,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                 },
                 throwable -> Log.e(TAG, "AutoLogin failed to be inserted for user " +
                         autoLogin.getUserId()));
-        addToCompositeDisposable(context, disposable);
+        disposableManager.addDisposable(disposableOwner, disposable);
     }
 
     /**
@@ -148,12 +150,12 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      * Save the user in the data source.
      * Return a SingleLiveEvent<Integer> taking the value 0 in case of success and 1 in case
      * of failure.
-     * @param context the Context of the caller
+     * @param disposableOwner the calling object
      * @param user User to save
      * @return logInResult SingleLiveEvent<Integer> result of the operation
      */
     @Override
-    public SingleLiveEvent<User> save(Context context, User user) {
+    public SingleLiveEvent<User> save(DisposableOwner disposableOwner, User user) {
         SingleLiveEvent<User> saveUserResult = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.saveUser(user).subscribe(
                 (userId) -> {
@@ -165,7 +167,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                     saveUserResult.setValue(null);
                     Log.e(TAG, "User saving failure", throwable);
                 });
-        addToCompositeDisposable(context, disposable);
+        disposableManager.addDisposable(disposableOwner, disposable);
         return saveUserResult;
     }
 
@@ -173,12 +175,12 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      * Update the user in the data source.
      * Return a SingleLiveEvent<Integer> taking the value 0 in case of success and 1 in case
      * of failure.
-     * @param context the Context of the caller
+     * @param disposableOwner the calling object
      * @param user User to save
      * @return updateUserResult SingleLiveEvent<Integer> result of the operation
      */
     @Override
-    public SingleLiveEvent<Integer> update(Context context, User user) {
+    public SingleLiveEvent<Integer> update(DisposableOwner disposableOwner, User user) {
         SingleLiveEvent<Integer> updateUserResult = new SingleLiveEvent<>();
         Disposable disposable = pfcRepository.updateUser(user).subscribe(
                 () -> {
@@ -189,7 +191,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                     updateUserResult.setValue(1);
                     Log.e(TAG, "User " + user.getUserId() + " update failure : ", throwable);
                 });
-        addToCompositeDisposable(context, disposable);
+        disposableManager.addDisposable(disposableOwner, disposable);
         return updateUserResult;
     }
 
@@ -197,12 +199,12 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
      * Update the user in the data source.
      * Return a SingleLiveEvent<Integer> taking the value 0 in case of success and 1 in case
      * of failure.
-     * @param object the caller
+     * @param disposableOwner the caller
      * @param userData the updated user data
      * @return updateUserResult SingleLiveEvent<Integer> result of the operation
      */
     @Override
-    public SingleLiveEvent<Integer> update(Object object,
+    public SingleLiveEvent<Integer> update(DisposableOwner disposableOwner,
                                            Map<UserServiceKeysEnum, String> userData) {
         SingleLiveEvent<Integer> updateUserResult = new SingleLiveEvent<>();
         managePasswordData(userData);
@@ -226,7 +228,7 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
                             updateUserResult.setValue(1);
                             Log.e(TAG, "User update failure", throwable);
                         });
-                addToCompositeDisposable(object, disposable);
+                disposableManager.addDisposable(disposableOwner, disposable);
             }
         } else {
             updateUserResult.setValue(0);
@@ -284,11 +286,6 @@ public class UserServiceImpl extends PetFoodingControlService implements UserSer
     @Override
     public void leave() {
         petFoodingControl.getUserLogged().setValue(null);
-    }
-
-    @Override
-    public void clearDisposables(Object object) {
-        compositeDisposableClear(object);
     }
 
     @Override

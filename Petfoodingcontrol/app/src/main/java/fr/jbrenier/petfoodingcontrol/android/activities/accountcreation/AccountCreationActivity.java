@@ -18,6 +18,8 @@ import fr.jbrenier.petfoodingcontrol.android.application.PetFoodingControl;
 import fr.jbrenier.petfoodingcontrol.R;
 import fr.jbrenier.petfoodingcontrol.domain.entities.photo.Photo;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableManager;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableOwner;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserService;
 import fr.jbrenier.petfoodingcontrol.services.userservice.UserServiceKeysEnum;
@@ -29,7 +31,7 @@ import fr.jbrenier.petfoodingcontrol.utils.CryptographyUtils;
  * @author Jérôme Brenier
  */
 public class AccountCreationActivity extends AppCompatActivity
-        implements AccountCreationFormFragment.OnSaveButtonClickListener {
+        implements AccountCreationFormFragment.OnSaveButtonClickListener, DisposableOwner {
 
     private static final String DUMMY_TITLE = " ";
 
@@ -37,6 +39,9 @@ public class AccountCreationActivity extends AppCompatActivity
     private static final String TAG = "AccountCreationActivity";
 
     private PetFoodingControl petFoodingControl;
+
+    @Inject
+    DisposableManager disposableManager;
 
     @Inject
     UserService userService;
@@ -127,7 +132,12 @@ public class AccountCreationActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        userService.clearDisposables(this);
+        clearDisposables();
         super.onDestroy();
+    }
+
+    @Override
+    public void clearDisposables() {
+        disposableManager.clear(this);
     }
 }

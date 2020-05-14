@@ -23,6 +23,8 @@ import fr.jbrenier.petfoodingcontrol.domain.entities.pet.Pet;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.food.Fooding;
 import fr.jbrenier.petfoodingcontrol.domain.entities.pet.weight.Weighing;
 import fr.jbrenier.petfoodingcontrol.domain.entities.user.User;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableManager;
+import fr.jbrenier.petfoodingcontrol.services.disposablemanagement.DisposableOwner;
 import fr.jbrenier.petfoodingcontrol.services.petservice.PetService;
 import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
 
@@ -30,7 +32,10 @@ import fr.jbrenier.petfoodingcontrol.services.photoservice.PhotoService;
  * The pet fooding view model
  * @author Jérôme Brenier
  */
-public class PetFoodingViewModel extends ViewModel {
+public class PetFoodingViewModel extends ViewModel implements DisposableOwner {
+
+    @Inject
+    DisposableManager disposableManager;
 
     @Inject
     PetService petService;
@@ -222,5 +227,10 @@ public class PetFoodingViewModel extends ViewModel {
 
     public MutableLiveData<Integer> getWeightTrend() {
         return weightTrend;
+    }
+
+    @Override
+    public void clearDisposables() {
+        disposableManager.clear(this);
     }
 }
