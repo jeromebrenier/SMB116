@@ -10,7 +10,13 @@ import javax.inject.Inject;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
+/**
+ * The class responsible for storing the Disposable and managing them, clearing them when they
+ * become useless.
+ * @author Jerome Brenier
+ */
 public class DisposableManager {
+    /** Logging */
     private static final String TAG = "Disposable Manager";
 
     /** Disposable management storing map */
